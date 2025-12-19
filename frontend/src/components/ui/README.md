@@ -5,9 +5,15 @@
 ## Быстрый старт
 
 ```tsx
-import { Button, Input, Card, Avatar, Select } from '@/components/ui';
+import { Button, Input, Card, Avatar, Select, Loader } from '@/components/ui';
 
 function MyComponent() {
+  const [loading, setLoading] = useState(false);
+
+  if (loading) {
+    return <Loader text="Caricamento..." />;
+  }
+
   return (
     <Card>
       <Avatar gender="male" size="lg" />
@@ -32,6 +38,7 @@ function MyComponent() {
 - **Card** - Контейнеры для группировки контента
 - **Avatar** - Аватары с поддержкой изображений и плейсхолдеров
 - **Select** - Кастомизируемые выпадающие списки с поиском
+- **Loader** - Анимированный индикатор загрузки
 
 ## Документация
 

@@ -52,17 +52,6 @@
   }
 }
 
-.loading {
-  @include flex-center;
-  @include flex-column;
-  padding: 60px 20px;
-  gap: 20px;
-}
-
-.spinner {
-  @include spinner(40px);
-}
-
 .error {
   background: #fee;
   border: 1px solid #fcc;

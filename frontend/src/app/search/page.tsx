@@ -8,7 +8,7 @@ import { personApi } from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
 import Link from 'next/link';
-import { Card, Avatar, Button } from '@/components/ui';
+import { Card, Avatar, Button, Loader } from '@/components/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 
@@ -115,10 +115,7 @@ function SearchContent() {
           )}
 
           {loading && (
-            <div className={styles.loading}>
-              <div className={styles.spinner}></div>
-              <p>Ricerca in corso...</p>
-            </div>
+            <Loader text="Ricerca in corso..." />
           )}
 
           {error && (

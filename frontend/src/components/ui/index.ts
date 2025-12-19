@@ -17,3 +17,4 @@ export type { SelectProps, SelectOption } from './Select/Select';
 export { GenderSelect } from './GenderSelect/GenderSelect';
 export type { GenderSelectProps, GenderValue } from './GenderSelect/GenderSelect';
 
+export { default as Loader } from './Loader/Loader';
