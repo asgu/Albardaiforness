@@ -43,7 +43,7 @@
     grid-template-columns: 1fr;
     gap: 0;
 
-    button:first-child {
+    > button {
       grid-column: 1 / -1;
     }
 
