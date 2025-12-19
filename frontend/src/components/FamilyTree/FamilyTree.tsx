@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Person } from '@/types';
+import { Button } from '@/components/ui';
 import styles from './FamilyTree.module.scss';
 
 interface FamilyTreeProps {
@@ -120,9 +121,26 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
   return (
     <div className={styles.treeContainer}>
       <div className={styles.controls}>
-        <button onClick={() => setScale(prev => Math.min(2, prev * 1.2))}>+</button>
-        <button onClick={() => setScale(prev => Math.max(0.3, prev * 0.8))}>-</button>
-        <button onClick={resetView}>Reset</button>
+        <Button 
+          onClick={() => setScale(prev => Math.min(2, prev * 1.2))} 
+          variant="primary"
+          className={styles.zoomButton}
+        >
+          +
+        </Button>
+        <Button 
+          onClick={() => setScale(prev => Math.max(0.3, prev * 0.8))} 
+          variant="primary"
+          className={styles.zoomButton}
+        >
+          -
+        </Button>
+        <Button 
+          onClick={resetView} 
+          variant="secondary"
+        >
+          Reset
+        </Button>
         <span className={styles.scaleInfo}>{Math.round(scale * 100)}%</span>
       </div>
 

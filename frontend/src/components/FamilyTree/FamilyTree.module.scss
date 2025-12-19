@@ -19,28 +19,12 @@
   padding: 10px;
   border-radius: $radius-md;
   box-shadow: $shadow-md;
+}
 
-  button {
-    width: 40px;
-    height: 40px;
-    border: none;
-    background: $primary-color;
-    color: white;
-    border-radius: $radius-sm;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    transition: all $transition-base;
-
-    &:hover {
-      background: darken($primary-color, 10%);
-      transform: scale(1.05);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
+.zoomButton {
+  min-width: 44px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .scaleInfo {
@@ -157,12 +141,11 @@
     right: 10px;
     padding: 8px;
     gap: 8px;
+  }
 
-    button {
-      width: 36px;
-      height: 36px;
-      font-size: 16px;
-    }
+  .zoomButton {
+    min-width: 40px;
+    font-size: 18px;
   }
 
   .scaleInfo {
