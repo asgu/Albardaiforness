@@ -144,14 +144,41 @@ export class PersonController {
 
   async search(req: Request, res: Response) {
     try {
-      const { q, server } = req.query;
-      if (!q || typeof q !== 'string') {
-        return res.status(400).json({ error: 'Query parameter required' });
+      const { 
+        q, 
+        server, 
+        firstName, 
+        lastName, 
+        nickName, 
+        birthYear, 
+        deathYear, 
+        gender,
+        birthPlace,
+        occupation,
+        note 
+      } = req.query;
+
+      // Build filters object
+      const filters: any = {};
+      if (firstName) filters.firstName = firstName as string;
+      if (lastName) filters.lastName = lastName as string;
+      if (nickName) filters.nickName = nickName as string;
+      if (birthYear) filters.birthYear = parseInt(birthYear as string);
+      if (deathYear) filters.deathYear = parseInt(deathYear as string);
+      if (gender) filters.gender = gender as string;
+      if (birthPlace) filters.birthPlace = birthPlace as string;
+      if (occupation) filters.occupation = occupation as string;
+      if (note) filters.note = note as string;
+
+      // At least one search parameter is required
+      if (!q && Object.keys(filters).length === 0) {
+        return res.status(400).json({ error: 'At least one search parameter required' });
       }
 
       const persons = await personService.search(
-        q,
-        server as string | undefined
+        q as string | undefined,
+        server as string | undefined,
+        Object.keys(filters).length > 0 ? filters : undefined
       );
 
       res.json(convertBigIntToString(persons));

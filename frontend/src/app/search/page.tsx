@@ -15,6 +15,15 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const serverParam = searchParams.get('server');
+  const firstName = searchParams.get('firstName') || '';
+  const lastName = searchParams.get('lastName') || '';
+  const nickName = searchParams.get('nickName') || '';
+  const birthYear = searchParams.get('birthYear');
+  const deathYear = searchParams.get('deathYear');
+  const gender = searchParams.get('gender') || '';
+  const birthPlace = searchParams.get('birthPlace') || '';
+  const occupation = searchParams.get('occupation') || '';
+  const note = searchParams.get('note') || '';
   
   const currentServerCode = useAppSelector(selectCurrentServer);
   const servers = useAppSelector(selectServers);
@@ -24,10 +33,10 @@ function SearchContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (query) {
+    if (query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) {
       performSearch();
     }
-  }, [query, serverParam]);
+  }, [query, serverParam, firstName, lastName, nickName, birthYear, deathYear, gender, birthPlace, occupation, note]);
 
   const performSearch = async () => {
     setLoading(true);
@@ -35,7 +44,20 @@ function SearchContent() {
     
     try {
       const server = serverParam || currentServer?.code;
-      const response = await personApi.search(query, server);
+      const params: any = { server };
+      
+      if (query) params.q = query;
+      if (firstName) params.firstName = firstName;
+      if (lastName) params.lastName = lastName;
+      if (nickName) params.nickName = nickName;
+      if (birthYear) params.birthYear = parseInt(birthYear);
+      if (deathYear) params.deathYear = parseInt(deathYear);
+      if (gender) params.gender = gender;
+      if (birthPlace) params.birthPlace = birthPlace;
+      if (occupation) params.occupation = occupation;
+      if (note) params.note = note;
+      
+      const response = await personApi.search(params);
       setResults(response.data);
     } catch (err: any) {
       console.error('Search error:', err);
@@ -49,14 +71,29 @@ function SearchContent() {
     return person.originalId || person.id;
   };
 
+  const getSearchSummary = () => {
+    const parts: string[] = [];
+    if (query) parts.push(`"${query}"`);
+    if (firstName) parts.push(`Nome: ${firstName}`);
+    if (lastName) parts.push(`Cognome: ${lastName}`);
+    if (nickName) parts.push(`Soprannome: ${nickName}`);
+    if (birthYear) parts.push(`Anno di nascita: ${birthYear}`);
+    if (deathYear) parts.push(`Anno di morte: ${deathYear}`);
+    if (gender) parts.push(`Sesso: ${gender === 'male' ? 'Maschio' : 'Femmina'}`);
+    if (birthPlace) parts.push(`Luogo di nascita: ${birthPlace}`);
+    if (occupation) parts.push(`Professione: ${occupation}`);
+    if (note) parts.push(`Note: ${note}`);
+    return parts.join(', ');
+  };
+
   return (
     <main className={styles.main}>
         <div className={styles.container}>
           <h1>Ricerca</h1>
           
-          {query && (
+          {(query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.searchInfo}>
-              <p>Risultati per: <strong>{query}</strong></p>
+              <p>Risultati per: <strong>{getSearchSummary()}</strong></p>
               {serverParam && <p>Server: <strong>{serverParam}</strong></p>}
             </div>
           )}
@@ -74,7 +111,7 @@ function SearchContent() {
             </div>
           )}
 
-          {!loading && !error && results.length === 0 && query && (
+          {!loading && !error && results.length === 0 && (query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.noResults}>
               <p>Nessun risultato trovato</p>
             </div>

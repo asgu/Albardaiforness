@@ -52,8 +52,20 @@ export const authApi = {
 };
 
 export const personApi = {
-  search: (query: string, server?: string) =>
-    api.get('/api/search', { params: { q: query, server } }),
+  search: (params: {
+    q?: string;
+    server?: string;
+    firstName?: string;
+    lastName?: string;
+    nickName?: string;
+    birthYear?: number;
+    deathYear?: number;
+    gender?: string;
+    birthPlace?: string;
+    occupation?: string;
+    note?: string;
+  }) =>
+    api.get('/api/search', { params }),
   
   getById: (id: number) =>
     api.get(`/api/person/${id}`),

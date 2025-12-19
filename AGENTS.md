@@ -2,26 +2,35 @@
 
 ## Project Overview
 
-**Albero** - это веб-приложение для управления генеалогическим древом семьи с поддержкой нескольких городов.
+**Albero** - это веб-приложение для управления генеалогическим древом семьи с поддержкой нескольких серверов (городов).
 
 ### Технологический стек:
 
 **Backend:**
 - Node.js + Express.js
 - TypeScript
-- TypeORM (ORM для MySQL)
+- Prisma ORM (для MySQL)
 - JWT аутентификация
 - MySQL/MariaDB база данных
+- PM2 для управления процессами
 
 **Frontend:**
-- Next.js (latest version)
+- Next.js 15+ (latest version, App Router, SSR)
 - TypeScript
-- React
+- React 19+
 - SCSS (без Tailwind)
 - Redux Toolkit (state management)
+- next-intl (мультиязычность)
+- axios (HTTP клиент)
+- classnames (условные CSS классы)
 
 **Legacy:**
 - PHP Symfony 2 (старая версия, постепенно мигрируем на Node.js)
+
+**Infrastructure:**
+- Nginx (reverse proxy, SSL)
+- Certbot (SSL сертификаты)
+- Git + GitHub (версионирование)
 
 ## Правила разработки
 
@@ -30,41 +39,82 @@
 - ✅ Использовать только SCSS (миксины, переменные)
 - ✅ Использовать дизайн-систему из `frontend/src/components/ui/`
 - ✅ Минимизировать использование токенов
+- ✅ Все кнопки и инпуты имеют высоту 44px
+- ✅ Использовать `classnames` для условных CSS классов
+- ✅ SSR для страниц персон (SEO)
+
+### Архитектура
+- ✅ Централизованные типы в `frontend/src/types/`
+- ✅ Утилиты в `frontend/src/utils/`
+- ✅ Компоненты дизайн-системы в `frontend/src/components/ui/`
+- ✅ URL персон используют `originalId` для SEO и совместимости
 
 ## Структура проекта
 
 ```
 albero/
-├── api/              # Node.js API сервер (новый)
+├── api/                    # Node.js API сервер
 │   ├── src/
-│   │   ├── entities/      # TypeORM модели
-│   │   ├── controllers/   # Контроллеры
-│   │   ├── services/      # Бизнес-логика
-│   │   ├── routes/        # API роуты
-│   │   └── middleware/    # Middleware (auth, etc)
+│   │   ├── controllers/    # API контроллеры
+│   │   ├── services/       # Бизнес-логика
+│   │   ├── routes/         # API роуты
+│   │   ├── middleware/     # Middleware (auth, etc)
+│   │   ├── lib/            # Prisma client
+│   │   └── scripts/        # Миграции и утилиты
+│   ├── prisma/
+│   │   └── schema.prisma   # Prisma схема
 │   └── package.json
-├── albard/           # Symfony 2 проект (legacy)
-├── albar/            # Symfony 2 проект (legacy)
-├── gallery/          # Галерея (Symfony 6)
-└── AGENTS.md         # Этот файл
+├── frontend/               # Next.js фронтенд
+│   ├── src/
+│   │   ├── app/            # Next.js App Router
+│   │   ├── components/     # React компоненты
+│   │   ├── store/          # Redux store
+│   │   ├── types/          # TypeScript типы
+│   │   ├── utils/          # Утилиты
+│   │   ├── i18n/           # Переводы
+│   │   └── styles/         # Глобальные стили
+│   └── package.json
+├── infrastructure/         # Конфигурация инфраструктуры
+│   ├── nginx/              # Nginx конфиги
+│   ├── pm2/                # PM2 конфиги
+│   └── deploy.sh           # Скрипт деплоя
+├── albard/                 # Symfony 2 (legacy, не в git)
+├── albar/                  # Symfony 2 (legacy, не в git)
+├── gallery/                # Symfony 6 (legacy, не в git)
+├── push-deploy.sh          # Git push + deploy
+└── AGENTS.md               # Этот файл
 ```
 
 ## Основные сущности
 
+### Server (Сервер/Город)
+- Серверы: albaro, preone, raveo
+- Домены: new.albardaiforness.org, new.alberodipreone.org, new.alberodiraveo.org
+- Каждый сервер имеет свой цвет для UI
+
 ### Person (Персона)
 - Основная сущность - человек в генеалогическом древе
-- Поля: firstName, lastName, birthYear, birthDate, deathYear, avatar, etc.
-- Связи: parents, children, spouses (marriages), photos, files, videos
-- Поддержка нескольких городов через PersonCityLink
+- Поля: firstName, lastName, nickName, birthYear/Month/Day, deathYear/Month/Day, gender, note, privateNote
+- Связи: mother, father, children, spouses (через marriages), media
+- Поддержка гибких дат (год/месяц/день могут быть null)
+- `originalId` и `sourceDb` для отслеживания происхождения из старых БД
+- `primaryServer` - основной сервер персоны
 
-### City (Город)
-- Города: Albaro, Fornezza, Santa Maria
-- Одна персона может быть связана с несколькими городами
+### Marriage (Брак)
+- Связывает двух персон (person1, person2)
+- Поля: marriageYear/Month/Day, divorceYear/Month/Day
+- Гибкие даты
 
-### PersonDuplicate
+### Media (Медиа)
+- Фотографии, документы, видео
+- Связь с персонами через MediaPerson
+- Используется для аватаров (avatarMediaId + avatarCrop)
+
+### Duplicate (Дубликат)
 - Система поиска и слияния дубликатов персон
-- Алгоритм сравнения: имя + фамилия + год рождения
+- Алгоритм: имя + фамилия + год рождения
 - Fuzzy matching с Levenshtein distance
+- Поддержка слияния персон из разных источников
 
 ## API Endpoints
 
@@ -73,14 +123,14 @@ albero/
 
 ### Персоны
 - `GET /api/today` - дни рождения сегодня
-- `GET /person/:id` - информация о персоне
-- `GET /search?q=query&city=code` - поиск персон
+- `GET /api/person/:id` - информация о персоне (поддерживает originalId)
+- `GET /api/search?q=query&server=code` - поиск персон
 - `GET /admin/person/load?ids=1,2,3` - загрузка по ID (auth)
 
-### Города
-- `GET /api/cities` - список городов
-- `GET /api/cities/:code` - информация о городе
-- `GET /api/cities/:code/persons` - персоны города
+### Серверы
+- `GET /api/servers` - список серверов
+- `GET /api/servers/:code` - информация о сервере
+- `GET /api/servers/:code/persons` - персоны сервера
 
 ### Дубликаты
 - `GET /api/duplicates` - список дубликатов (auth)
@@ -88,24 +138,47 @@ albero/
 - `POST /api/duplicates/:id/merge` - объединить персоны (auth)
 - `POST /api/duplicates/:id/reject` - отклонить дубликат (auth)
 
-### Галерея
-- `GET /gallery` - список файлов галереи
-
 ## База данных
 
 ### Подключение
 - Host: 127.0.0.1
 - Port: 3306
 - Database: albard_new
-- User: root
-- Password: в `.env` файле (NH3q5QMHutdNvJDk)
+- User: albard_new
+- Password: NH3q5QMHutdNvJDk
 
-### Миграция к единой БД
-Ранее было 3 отдельные базы для каждого города. Сейчас мигрируем к единой базе с поддержкой мультитенантности.
+### Архитектура
+Единая база данных с поддержкой мультитенантности через таблицу `servers`.
+Ранее было 3 отдельные базы для каждого города - мигрировали к единой.
 
-См. подробности в `api/MIGRATION_PLAN.md`
+См. подробности в `api/DATABASE_DESIGN.md`
+
+### Миграции
+```bash
+# Применить схему
+npm run prisma:push
+
+# Миграция данных Preone
+npm run migrate:preone
+
+# Исправление связей
+npm run fix:parent-links
+npm run fix:marriages
+```
 
 ## Деплой
+
+### Быстрый деплой (Git + Deploy)
+
+```bash
+./push-deploy.sh "Commit message"
+```
+
+Автоматически выполняет:
+1. `git add .`
+2. `git commit -m "message"`
+3. `git push`
+4. `./infrastructure/deploy.sh`
 
 ### Автоматический деплой
 
@@ -113,7 +186,12 @@ albero/
 ./infrastructure/deploy.sh
 ```
 
-Скрипт автоматически выполняет сборку, загрузку на сервер и перезапуск сервисов.
+Скрипт автоматически выполняет:
+1. Локальный билд (API + Frontend)
+2. Создание бэкапа на сервере
+3. Загрузку через rsync
+4. Установку зависимостей на сервере
+5. Перезапуск PM2 процессов
 
 ### Процесс деплоя
 
@@ -130,6 +208,7 @@ cd ../frontend && npm run build
 
 rsync -avz --exclude='node_modules' --exclude='.env' ./api/ venezia:/var/www/albard/api/
 rsync -avz --exclude='node_modules' --exclude='.env.local' ./frontend/ venezia:/var/www/albard/frontend/
+rsync -avz ./infrastructure/nginx/albero.conf venezia:/etc/nginx/sites-available/
 ```
 
 **3. На сервере:**
@@ -139,6 +218,7 @@ cd /var/www/albard/api && npm install --production
 cd /var/www/albard/frontend && npm install --production
 pm2 restart albero-api
 pm2 restart albero-frontend
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### Конфигурация SSH
@@ -146,8 +226,8 @@ pm2 restart albero-frontend
 Добавить в `~/.ssh/config`:
 ```
 Host venezia
-    HostName your-server-ip
-    User your-username
+    HostName 185.251.38.72
+    User root
     Port 22
     IdentityFile ~/.ssh/id_rsa
 ```
@@ -163,13 +243,26 @@ DB_PORT=3306
 DB_NAME=albard_new
 DB_USER=albard_new
 DB_PASSWORD=NH3q5QMHutdNvJDk
+DATABASE_URL=mysql://albard_new:NH3q5QMHutdNvJDk@127.0.0.1:3306/albard_new
 JWT_SECRET=your_production_secret_key
-CORS_ORIGIN=https://new.albardaiforness.org
+CORS_ORIGIN=https://new.albardaiforness.org,https://new.alberodipreone.org,https://new.alberodiraveo.org
 ```
 
 **Frontend** (`/var/www/albard/frontend/.env.local`):
 ```env
 NEXT_PUBLIC_API_URL=https://new.albardaiforness.org
+```
+
+### SSL Сертификаты
+
+```bash
+# Получить сертификаты для всех доменов
+sudo certbot --nginx -d new.albardaiforness.org
+sudo certbot --nginx -d new.alberodipreone.org
+sudo certbot --nginx -d new.alberodiraveo.org
+
+# Автообновление
+sudo certbot renew --dry-run
 ```
 
 ## Разработка
@@ -185,7 +278,7 @@ cp env.example .env
 npm run dev
 ```
 
-**Frontend (когда будет создан):**
+**Frontend:**
 ```bash
 cd frontend
 npm install
@@ -198,16 +291,17 @@ npm run dev
 # TypeScript проверка
 npm run build
 
-# TypeORM миграции
-npm run migration:generate -- MigrationName
-npm run migration:run
-npm run migration:revert
+# Prisma миграции
+npm run prisma:push
+npm run prisma:generate
 
-# Поиск дубликатов (когда скрипт будет создан)
-npm run find-duplicates
+# Поиск дубликатов
+npm run find:duplicates
 
-# Импорт данных (когда скрипт будет создан)
-npm run import-data
+# Импорт данных
+npm run migrate:preone
+npm run fix:parent-links
+npm run fix:marriages
 ```
 
 ## Важные заметки
@@ -215,25 +309,32 @@ npm run import-data
 1. **Пароли PHP vs Node.js**: Symfony использует FOSUserBundle с bcrypt. При аутентификации в Node.js нужно учитывать формат хеширования паролей.
 
 2. **Миграция данных**: При импорте из трех старых баз нужно:
-   - Создать города в таблице City
-   - Импортировать персоны с установкой cityId
-   - Создать PersonCityLink для связей
+   - Создать серверы в таблице `servers`
+   - Импортировать персоны с установкой `primaryServerId`
+   - Запустить скрипты исправления связей
    - Запустить поиск дубликатов
 
 3. **Uploads**: Файлы загружаются в `uploads/photos`, `uploads/files`, `uploads/gallery`
 
 4. **CORS**: Настроить правильный origin для production
 
+5. **originalId**: В URL используется `originalId` для SEO и совместимости с локальными Excel базами
+
 ## Roadmap
 
 - [x] Создать Node.js API сервер
 - [x] Реализовать основные endpoints
-- [x] Добавить поддержку городов
+- [x] Добавить поддержку серверов (городов)
 - [x] Реализовать систему дубликатов
-- [ ] Создать скрипты миграции данных
-- [ ] Создать Next.js фронтенд
+- [x] Создать скрипты миграции данных
+- [x] Создать Next.js фронтенд
+- [x] Реализовать UI для поиска и просмотра персон
+- [x] Деплой на production сервер
+- [x] Настроить SSL сертификаты
+- [x] Создать дизайн-систему компонентов
+- [x] Добавить мультиязычность
 - [ ] Реализовать UI для слияния дубликатов
-- [ ] Деплой на production сервер
+- [ ] Добавить галерею
 - [ ] Настроить CI/CD
 
 ## Контакты и ссылки

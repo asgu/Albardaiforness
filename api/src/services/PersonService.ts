@@ -261,15 +261,65 @@ export class PersonService {
   /**
    * Search persons
    */
-  async search(query: string, serverCode?: string, limit: number = 50) {
+  async search(
+    query?: string,
+    serverCode?: string,
+    filters?: {
+      firstName?: string;
+      lastName?: string;
+      nickName?: string;
+      birthYear?: number;
+      deathYear?: number;
+      gender?: string;
+      birthPlace?: string;
+      occupation?: string;
+      note?: string;
+    },
+    limit: number = 50
+  ) {
     const where: Prisma.PersonWhereInput = {
       isMerged: false,
-      OR: [
+    };
+
+    // Simple search by query
+    if (query) {
+      where.OR = [
         { firstName: { contains: query } },
         { lastName: { contains: query } },
         { nickName: { contains: query } },
-      ],
-    };
+      ];
+    }
+
+    // Advanced search by specific fields
+    if (filters) {
+      if (filters.firstName) {
+        where.firstName = { contains: filters.firstName };
+      }
+      if (filters.lastName) {
+        where.lastName = { contains: filters.lastName };
+      }
+      if (filters.nickName) {
+        where.nickName = { contains: filters.nickName };
+      }
+      if (filters.birthYear) {
+        where.birthYear = filters.birthYear;
+      }
+      if (filters.deathYear) {
+        where.deathYear = filters.deathYear;
+      }
+      if (filters.gender) {
+        where.gender = filters.gender as any;
+      }
+      if (filters.birthPlace) {
+        where.birthPlace = { contains: filters.birthPlace };
+      }
+      if (filters.occupation) {
+        where.occupation = { contains: filters.occupation };
+      }
+      if (filters.note) {
+        where.note = { contains: filters.note };
+      }
+    }
 
     if (serverCode) {
       where.primaryServer = {
