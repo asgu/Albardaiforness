@@ -3,11 +3,12 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header/Header';
+import SearchBox from '@/components/SearchBox/SearchBox';
 import { personApi } from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
 import Link from 'next/link';
-import { Card, Avatar } from '@/components/ui';
+import { Card, Avatar, Button } from '@/components/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 
@@ -31,6 +32,7 @@ function SearchContent() {
   const [results, setResults] = useState<PersonSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSearchForm, setShowSearchForm] = useState(false);
 
   useEffect(() => {
     if (query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) {
@@ -89,7 +91,21 @@ function SearchContent() {
   return (
     <main className={styles.main}>
         <div className={styles.container}>
-          <h1>Ricerca</h1>
+          <div className={styles.header}>
+            <h1>Ricerca</h1>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowSearchForm(!showSearchForm)}
+            >
+              {showSearchForm ? 'Nascondi filtri' : 'Modifica ricerca'}
+            </Button>
+          </div>
+
+          {showSearchForm && (
+            <div className={styles.searchFormWrapper}>
+              <SearchBox />
+            </div>
+          )}
           
           {(query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.searchInfo}>
