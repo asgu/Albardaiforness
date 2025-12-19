@@ -3,7 +3,7 @@
 
 .searchBox {
   width: 100%;
-  max-width: 900px;
+  max-width: 600px;
 }
 
 .simpleForm {
@@ -39,13 +39,19 @@
   }
 
   .formActions {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-    margin-top: $spacing-lg;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
 
-    @include md {
-      flex-direction: row;
+    button:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .secondRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      grid-column: 1 / -1;
     }
   }
 }

@@ -155,12 +155,14 @@ export default function SearchBox() {
             <Button type="submit" variant="primary">
               CERCA
             </Button>
-            <Button type="button" onClick={handleReset} variant="secondary">
-              CANCELLA
-            </Button>
-            <Button type="button" onClick={() => setShowAdvanced(false)} variant="outline">
-              RICERCA AVANZATA
-            </Button>
+            <div className={styles.secondRow}>
+              <Button type="button" onClick={handleReset} variant="secondary">
+                CANCELLA
+              </Button>
+              <Button type="button" onClick={() => setShowAdvanced(false)} variant="outline">
+                RICERCA AVANZATA
+              </Button>
+            </div>
           </div>
         </form>
       )}
