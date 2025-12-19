@@ -103,7 +103,20 @@ function SearchContent() {
 
           {showSearchForm && (
             <div className={styles.searchFormWrapper}>
-              <SearchBox />
+              <SearchBox 
+                initialValues={{
+                  q: query,
+                  firstName,
+                  lastName,
+                  nickName,
+                  birthYear: birthYear || '',
+                  deathYear: deathYear || '',
+                  birthPlace,
+                  occupation,
+                  note,
+                  gender,
+                }}
+              />
             </div>
           )}
           

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer } from '@/store/slices/serverSlice';
@@ -8,24 +8,59 @@ import { Input, Button, Card, GenderSelect, GenderValue } from '@/components/ui'
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './SearchBox.module.scss';
 
-export default function SearchBox() {
+interface SearchBoxProps {
+  initialValues?: {
+    q?: string;
+    firstName?: string;
+    lastName?: string;
+    nickName?: string;
+    birthYear?: string;
+    deathYear?: string;
+    birthPlace?: string;
+    deathPlace?: string;
+    occupation?: string;
+    note?: string;
+    gender?: string;
+  };
+}
+
+export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
   const router = useRouter();
   const currentServer = useAppSelector(selectCurrentServer);
   const { t } = useTranslations();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialValues?.q || '');
   const [showAdvanced, setShowAdvanced] = useState(true);
   const [advancedFilters, setAdvancedFilters] = useState({
-    firstName: '',
-    lastName: '',
-    nickName: '',
-    birthYear: '',
-    deathYear: '',
-    birthPlace: '',
-    deathPlace: '',
-    occupation: '',
-    note: '',
-    gender: '',
+    firstName: initialValues?.firstName || '',
+    lastName: initialValues?.lastName || '',
+    nickName: initialValues?.nickName || '',
+    birthYear: initialValues?.birthYear || '',
+    deathYear: initialValues?.deathYear || '',
+    birthPlace: initialValues?.birthPlace || '',
+    deathPlace: initialValues?.deathPlace || '',
+    occupation: initialValues?.occupation || '',
+    note: initialValues?.note || '',
+    gender: initialValues?.gender || '',
   });
+
+  // Update filters when initialValues change
+  useEffect(() => {
+    if (initialValues) {
+      setQuery(initialValues.q || '');
+      setAdvancedFilters({
+        firstName: initialValues.firstName || '',
+        lastName: initialValues.lastName || '',
+        nickName: initialValues.nickName || '',
+        birthYear: initialValues.birthYear || '',
+        deathYear: initialValues.deathYear || '',
+        birthPlace: initialValues.birthPlace || '',
+        deathPlace: initialValues.deathPlace || '',
+        occupation: initialValues.occupation || '',
+        note: initialValues.note || '',
+        gender: initialValues.gender || '',
+      });
+    }
+  }, [initialValues]);
 
   const handleSimpleSearch = (e: FormEvent) => {
     e.preventDefault();

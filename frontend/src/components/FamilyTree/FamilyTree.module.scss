@@ -1,0 +1,169 @@
+@use '@/styles/variables' as *;
+
+.treeContainer {
+  width: 100%;
+  height: calc(100vh - 60px);
+  position: relative;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 10px;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+
+  button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: $primary-color;
+    color: white;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.2s;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+.scaleInfo {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 14px;
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  position: relative;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.tree {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+}
+
+.connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.node {
+  position: absolute;
+  text-decoration: none;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+    z-index: 5;
+  }
+}
+
+.card {
+  width: 180px;
+  height: 100px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: $radius-md;
+  padding: 12px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: $shadow-lg;
+  }
+
+  &.current {
+    border-color: $primary-color;
+    border-width: 3px;
+    background: linear-gradient(135deg, #fff 0%, #f0f9ff 100%);
+    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+  }
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-color;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.years {
+  font-size: 12px;
+  color: $text-secondary;
+  margin-bottom: 2px;
+}
+
+.nickname {
+  font-size: 11px;
+  color: $text-secondary;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+    gap: 8px;
+
+    button {
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+    }
+  }
+
+  .scaleInfo {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
