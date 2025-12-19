@@ -1,0 +1,81 @@
+{
+  "common": {
+    "search": "Search",
+    "home": "Home",
+    "gallery": "Gallery",
+    "contacts": "Contacts",
+    "admin": "Admin",
+    "login": "Login",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "error": "Error",
+    "notFound": "Not found",
+    "back": "Back",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "clear": "Clear"
+  },
+  "header": {
+    "searchPlaceholder": "Search by name...",
+    "advancedSearch": "Advanced search",
+    "selectServer": "Select city"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search for a person...",
+    "advancedSearch": "Advanced search",
+    "simpleSearch": "Simple search",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "birthYear": "Birth year",
+    "deathYear": "Death year",
+    "birthPlace": "Birth place",
+    "occupation": "Occupation",
+    "gender": "Gender",
+    "anyYear": "Any year",
+    "anyGender": "Any gender",
+    "male": "Male",
+    "female": "Female",
+    "noResults": "No results found for \"{query}\"",
+    "searchError": "Search error"
+  },
+  "person": {
+    "id": "ID",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "unknown": "Unknown",
+    "birth": "Birth",
+    "death": "Death",
+    "birthPlace": "Birth place",
+    "deathPlace": "Death place",
+    "burialPlace": "Burial place",
+    "age": "Age",
+    "years": "years",
+    "occupation": "Occupation",
+    "note": "Note",
+    "privateNote": "Private note",
+    "parents": "Parents",
+    "spouses": "Spouses",
+    "children": "Children",
+    "siblings": "Siblings",
+    "tree": "Tree",
+    "notFound": "Person not found"
+  },
+  "splash": {
+    "title": "Forni Savorgnani",
+    "years": "1326 - 1797",
+    "fornidiSopra": "Forni di Sopra",
+    "fornidiSotto": "Forni di Sotto",
+    "enter": "Enter the site",
+    "disclaimer": "We specify that the purpose of this site is not for profit-making but to educate and to read. The access is free, and does not require any registration, it does not keep any information relating to the user, it does not carry out any commercial activity, does not promote products. All information contained on this site can already be found in the public domain and has been obtained from state archives, genealogical sites published by associations and private individuals, various publications, photo galleries, social networks and sites that can be easily traced on the web."
+  },
+  "birthdays": {
+    "title": "Birthdays today",
+    "noOne": "No birthdays today"
+  }
+}
+

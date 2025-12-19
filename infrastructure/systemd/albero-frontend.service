@@ -1,0 +1,26 @@
+[Unit]
+Description=Albero Frontend Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/albard/frontend
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/var/www/albard/logs/frontend-out.log
+StandardError=append:/var/www/albard/logs/frontend-error.log
+
+# Environment
+Environment=NODE_ENV=production
+Environment=PORT=3301
+EnvironmentFile=/var/www/albard/frontend/.env.local
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+

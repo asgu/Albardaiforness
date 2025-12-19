@@ -1,0 +1,145 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.splashOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  backdrop-filter: blur(4px);
+}
+
+.splashScreen {
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: $spacing-xl;
+  
+  @include md {
+    padding: $spacing-2xl;
+  }
+}
+
+.splashRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-xl;
+}
+
+.savorgnani {
+  text-align: center;
+  
+  h2 {
+    margin: 0;
+    font-size: $font-size-3xl;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-style: italic;
+    color: $text-color;
+    
+    @include md {
+      font-size: 48px;
+    }
+  }
+  
+  .emblem {
+    margin: $spacing-lg 0;
+  }
+  
+  .emblemIcon {
+    font-size: 80px;
+    display: inline-block;
+    
+    @include md {
+      font-size: 100px;
+    }
+  }
+  
+  .years {
+    font-size: $font-size-xl !important;
+    color: $text-light;
+    
+    @include md {
+      font-size: $font-size-2xl !important;
+    }
+  }
+}
+
+.forni {
+  flex: 1;
+  padding: $spacing-xl;
+  text-align: center;
+  transition: all $transition-base;
+  border-radius: $radius-md;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+  
+  &.diSopra {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-right: $spacing-sm;
+  }
+  
+  &.diSotto {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    margin-left: $spacing-sm;
+  }
+  
+  .wrapper {
+    @include flex-column;
+    align-items: center;
+    gap: $spacing-md;
+  }
+  
+  .pennant {
+    font-size: 60px;
+    
+    @include md {
+      font-size: 80px;
+    }
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: 600;
+    
+    @include md {
+      font-size: $font-size-xl;
+    }
+  }
+}
+
+.disclaimer {
+  margin: $spacing-xl 0;
+  padding: $spacing-lg;
+  background: $bg-secondary;
+  border-radius: $radius-md;
+  border-left: 4px solid $primary-color;
+  
+  p {
+    margin: 0;
+    font-size: $font-size-xs;
+    line-height: 1.6;
+    color: $text-light;
+    
+    @include md {
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.actions {
+  margin-top: $spacing-xl;
+}

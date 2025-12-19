@@ -1,0 +1,107 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.relativeCard {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $bg-color;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+  text-decoration: none;
+  color: $text-color;
+
+  &:hover {
+    background: $bg-light;
+    border-color: $primary-color;
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $bg-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .noPhoto {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $bg-light 0%, $bg-secondary 100%);
+    color: $text-light;
+    font-size: $font-size-2xl;
+  }
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  min-width: 0; // Allow text truncation
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .lastName {
+    font-size: $font-size-base;
+    font-weight: 700;
+    color: $text-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .firstName {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-color;
+  }
+}
+
+.nickName {
+  font-size: $font-size-xs;
+  color: $text-light;
+  font-style: italic;
+}
+
+.maidenName {
+  font-size: $font-size-xs;
+  color: $text-light;
+}
+
+.lifespan {
+  font-size: $font-size-xs;
+  color: $text-light;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.marriage {
+  font-size: $font-size-xs;
+  color: $accent-color;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+

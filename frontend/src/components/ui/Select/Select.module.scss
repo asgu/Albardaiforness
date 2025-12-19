@@ -1,0 +1,239 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.select {
+  position: relative;
+  width: 100%;
+
+  &.fullWidth {
+    width: 100%;
+  }
+
+  &:not(.fullWidth) {
+    width: auto;
+    min-width: 200px;
+  }
+}
+
+.label {
+  display: block;
+  margin-bottom: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.selectContainer {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.selectTrigger {
+  @include input;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  .select.disabled & {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: $bg-light;
+  }
+
+  .select.error & {
+    border-color: $error-color;
+  }
+
+  .select.open & {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+  }
+
+  &:hover:not(.select.disabled &) {
+    border-color: $primary-color;
+  }
+}
+
+.selectedOption {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+}
+
+.placeholder {
+  color: $text-light;
+  font-style: italic;
+}
+
+.arrow {
+  font-size: $font-size-xs;
+  color: $text-light;
+  transition: transform $transition-base;
+
+  .select.open & {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: $bg-color;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  z-index: 1000;
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 150ms ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.searchContainer {
+  padding: $spacing-sm;
+  border-bottom: 1px solid $border-color;
+}
+
+.searchInput {
+  @include input;
+  width: 100%;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+  }
+}
+
+.optionsList {
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  font-size: $font-size-base;
+
+  &:hover:not(.optionDisabled) {
+    background-color: $bg-light;
+  }
+
+  &.selected {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: $primary-color;
+    font-weight: 500;
+  }
+
+  &.optionDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkmark {
+  color: $primary-color;
+  font-weight: bold;
+  font-size: $font-size-lg;
+}
+
+.noOptions {
+  padding: $spacing-md;
+  text-align: center;
+  color: $text-light;
+  font-style: italic;
+}
+
+.errorText {
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $error-color;
+}
+
+.helperText {
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $text-light;
+}
+
+// Size variants
+.select.sm {
+  .selectTrigger {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+
+  .option {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+.select.md {
+  .selectTrigger {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+  }
+
+  .option {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+  }
+}
+
+.select.lg {
+  .selectTrigger {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+  }
+
+  .option {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+  }
+}
+

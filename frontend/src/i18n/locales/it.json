@@ -1,0 +1,81 @@
+{
+  "common": {
+    "search": "Cerca",
+    "home": "Home",
+    "gallery": "Galleria",
+    "contacts": "Contatti",
+    "admin": "Admin",
+    "login": "Accedi",
+    "logout": "Esci",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "notFound": "Non trovato",
+    "back": "Indietro",
+    "close": "Chiudi",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "clear": "Pulisci"
+  },
+  "header": {
+    "searchPlaceholder": "Cerca per nome...",
+    "advancedSearch": "Ricerca avanzata",
+    "selectServer": "Seleziona città"
+  },
+  "search": {
+    "title": "Ricerca",
+    "placeholder": "Cerca una persona...",
+    "advancedSearch": "Ricerca avanzata",
+    "simpleSearch": "Ricerca semplice",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "birthYear": "Anno di nascita",
+    "deathYear": "Anno di morte",
+    "birthPlace": "Luogo di nascita",
+    "occupation": "Professione",
+    "gender": "Sesso",
+    "anyYear": "Qualsiasi anno",
+    "anyGender": "Qualsiasi sesso",
+    "male": "Maschio",
+    "female": "Femmina",
+    "noResults": "Nessun risultato trovato per \"{query}\"",
+    "searchError": "Errore durante la ricerca"
+  },
+  "person": {
+    "id": "ID",
+    "gender": "Sesso",
+    "male": "Maschio",
+    "female": "Femmina",
+    "unknown": "Sconosciuto",
+    "birth": "Nascita",
+    "death": "Morte",
+    "birthPlace": "Luogo di nascita",
+    "deathPlace": "Luogo di morte",
+    "burialPlace": "Luogo di sepoltura",
+    "age": "Età",
+    "years": "anni",
+    "occupation": "Professione",
+    "note": "Nota",
+    "privateNote": "Nota privata",
+    "parents": "Genitori",
+    "spouses": "Coniugi",
+    "children": "Figli",
+    "siblings": "Fratelli",
+    "tree": "Albero",
+    "notFound": "Persona non trovata"
+  },
+  "splash": {
+    "title": "Forni Savorgnani",
+    "years": "1326 - 1797",
+    "fornidiSopra": "Forni di Sopra",
+    "fornidiSotto": "Forni di Sotto",
+    "enter": "Entra nel sito",
+    "disclaimer": "Specifichiamo che lo scopo di questo sito non è a scopo di lucro ma per educare e leggere. L'accesso è gratuito e non richiede alcuna registrazione, non conserva alcuna informazione relativa all'utente, non svolge alcuna attività commerciale, non promuove prodotti. Tutte le informazioni contenute in questo sito possono già essere trovate nel dominio pubblico e sono state ottenute da archivi di stato, siti genealogici pubblicati da associazioni e privati, varie pubblicazioni, gallerie fotografiche, social network e siti facilmente rintracciabili sul web."
+  },
+  "birthdays": {
+    "title": "Compleanni di oggi",
+    "noOne": "Nessun compleanno oggi"
+  }
+}
+

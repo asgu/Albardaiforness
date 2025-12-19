@@ -1,0 +1,167 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.header {
+  background: $bg-color;
+  border-top: 4px solid $primary-color;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: border-top-color $transition-base;
+  height: 60px;
+}
+
+.container {
+  @include container;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-top: 0;
+  padding-bottom: 0;
+  gap: $spacing-lg;
+
+  @include lg {
+    gap: $spacing-xl;
+  }
+}
+
+.logo {
+  flex-shrink: 0;
+
+  a {
+    @include flex-column;
+    gap: $spacing-xs;
+    color: $text-color;
+
+    &:hover {
+      color: $text-color;
+    }
+  }
+
+  h1 {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    margin: 0;
+
+    @include md {
+      font-size: $font-size-xl;
+    }
+  }
+
+  .cityName {
+    font-size: $font-size-xs;
+    color: $text-light;
+    font-weight: 500;
+  }
+}
+
+.nav {
+  display: none;
+  gap: $spacing-lg;
+
+  @include md {
+    display: flex;
+    align-items: center;
+  }
+
+  @include lg {
+    gap: $spacing-xl;
+  }
+
+  a {
+    font-size: $font-size-base;
+    font-weight: 500;
+    color: $text-color;
+    transition: color $transition-base;
+    white-space: nowrap;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  margin-left: auto;
+}
+
+.searchWrapper {
+  display: none;
+  position: relative;
+
+  @include md {
+    display: block;
+  }
+
+  &.expanded {
+    .searchInput {
+      width: 300px;
+      box-shadow: $shadow-lg;
+    }
+  }
+}
+
+.searchForm {
+  .searchInput {
+    width: 200px;
+    transition: all $transition-base;
+
+    &:focus {
+      width: 250px;
+      box-shadow: $shadow-md;
+    }
+  }
+}
+
+.searchDropdown {
+  position: absolute;
+  top: calc(100% + $spacing-xs);
+  left: 0;
+  right: 0;
+  background: $bg-color;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  padding: $spacing-sm;
+  z-index: 1000;
+  animation: slideDown $transition-fast;
+
+  .advancedLink {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    color: $text-color;
+    font-size: $font-size-sm;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+    white-space: nowrap;
+
+    &:hover {
+      background: $bg-light;
+      color: $primary-color;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+

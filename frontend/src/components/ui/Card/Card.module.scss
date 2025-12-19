@@ -1,0 +1,65 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.card {
+  background: $bg-color;
+  border-radius: $radius-xl;
+  transition: all $transition-base;
+}
+
+// Variants
+.default {
+  box-shadow: $shadow-sm;
+}
+
+.outlined {
+  border: 1px solid $border-color;
+}
+
+.elevated {
+  box-shadow: $shadow-md;
+}
+
+// Padding
+.padding-none {
+  padding: 0;
+}
+
+.padding-sm {
+  padding: 12px;
+}
+
+.padding-md {
+  padding: 20px;
+}
+
+.padding-lg {
+  padding: 32px;
+}
+
+// Hoverable
+.hoverable {
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+}
+
+// Card sections
+.header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 16px;
+}
+
+.body {
+  flex: 1;
+}
+
+.footer {
+  padding-top: 16px;
+  border-top: 1px solid $border-color;
+  margin-top: 16px;
+}
+

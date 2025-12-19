@@ -1,0 +1,106 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.genderSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-color;
+  margin-bottom: 4px;
+}
+
+.options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.option {
+  flex: 1;
+  min-width: 100px;
+  height: 44px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: $font-size-base;
+  font-weight: 500;
+  color: $text-light;
+  box-sizing: border-box;
+  
+  &:hover:not(:disabled) {
+    border-color: darken($border-color, 10%);
+    background: $bg-light;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &.selected {
+    border-color: $primary-color;
+    background: $primary-color;
+    color: white;
+    
+    .icon {
+      color: white;
+    }
+    
+    &:hover:not(:disabled) {
+      background: darken($primary-color, 8%);
+      border-color: darken($primary-color, 8%);
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.icon {
+  font-size: 20px;
+  transition: all 0.2s ease;
+  color: $text-light;
+}
+
+.optionLabel {
+  font-size: $font-size-base;
+  font-weight: 500;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .option {
+    min-width: 80px;
+    height: 44px;
+    padding: 10px 12px;
+  }
+  
+  .icon {
+    font-size: 18px;
+  }
+  
+  .optionLabel {
+    font-size: $font-size-sm;
+  }
+}
+

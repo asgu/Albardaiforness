@@ -1,0 +1,144 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.main {
+  min-height: calc(100vh - 80px);
+  background: #f5f7fa;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0 0 30px 0;
+  }
+}
+
+.searchInfo {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  p {
+    margin: 5px 0;
+    color: $text-color;
+    font-size: 16px;
+
+    strong {
+      color: $primary-color;
+    }
+  }
+}
+
+.loading {
+  @include flex-center;
+  @include flex-column;
+  padding: 60px 20px;
+  gap: 20px;
+}
+
+.spinner {
+  @include spinner(40px);
+}
+
+.error {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+
+  p {
+    color: $error-color;
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.noResults {
+  background: white;
+  padding: 60px 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  p {
+    color: #999;
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+.results {
+  .count {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 20px 0;
+  }
+}
+
+.resultsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.resultLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.resultCard {
+  height: 100%;
+}
+
+.cardContent {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: $text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .nickName {
+      color: #666;
+      font-weight: 400;
+      font-size: 14px;
+    }
+  }
+
+  .dates {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .resultsList {
+    grid-template-columns: 1fr;
+  }
+
+  .container h1 {
+    font-size: 24px;
+  }
+}
+

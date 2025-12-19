@@ -1,0 +1,33 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.infoRow {
+  border-bottom: 1px solid $border-color;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  td {
+    padding: $spacing-md;
+    vertical-align: top;
+  }
+}
+
+.label {
+  font-weight: 600;
+  color: $text-light;
+  white-space: nowrap;
+  width: 180px;
+  
+  @media (max-width: 768px) {
+    width: 120px;
+    font-size: $font-size-sm;
+  }
+}
+
+.value {
+  color: $text-color;
+  word-break: break-word;
+}
+

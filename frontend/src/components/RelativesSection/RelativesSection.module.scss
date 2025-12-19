@@ -1,0 +1,51 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.relativeSection {
+  margin-bottom: $spacing-2xl;
+
+  h2 {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $text-color;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid $border-color;
+  }
+}
+
+.relatives {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Special grid for parents section
+.parentsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fatherSlot {
+  // Father always on the left (first column)
+  grid-column: 1;
+}
+
+.motherSlot {
+  // Mother always on the right (second column)
+  grid-column: 2;
+
+  @media (max-width: 768px) {
+    grid-column: 1;
+  }
+}
+

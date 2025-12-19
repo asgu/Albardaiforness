@@ -1,0 +1,11 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.main {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}

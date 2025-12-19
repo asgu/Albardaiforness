@@ -1,0 +1,147 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: $font-family;
+  font-weight: 500;
+  border: none;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+  box-sizing: border-box;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+// Sizes
+.sm {
+  padding: 6px 12px;
+  font-size: $font-size-sm;
+  height: 36px;
+}
+
+.md {
+  padding: 10px 20px;
+  font-size: $font-size-base;
+  height: 44px;
+}
+
+.lg {
+  padding: 14px 28px;
+  font-size: $font-size-lg;
+  height: 52px;
+}
+
+// Variants
+.primary {
+  background: $primary-color;
+  color: white;
+  border: 1px solid $primary-color;
+
+  &:hover:not(:disabled) {
+    background: darken($primary-color, 8%);
+    border-color: darken($primary-color, 8%);
+  }
+
+  &:active:not(:disabled) {
+    background: darken($primary-color, 12%);
+  }
+}
+
+.secondary {
+  background: $secondary-color;
+  color: white;
+  border: 1px solid $secondary-color;
+
+  &:hover:not(:disabled) {
+    background: darken($secondary-color, 8%);
+    border-color: darken($secondary-color, 8%);
+  }
+
+  &:active:not(:disabled) {
+    background: darken($secondary-color, 12%);
+  }
+}
+
+.outline {
+  background: white;
+  color: $primary-color;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: $bg-light;
+    border-color: $primary-color;
+  }
+
+  &:active:not(:disabled) {
+    background: $bg-secondary;
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: $text-color;
+  border: 1px solid transparent;
+
+  &:hover:not(:disabled) {
+    background: $bg-light;
+  }
+}
+
+.danger {
+  background: $error-color;
+  color: white;
+  border: 1px solid $error-color;
+
+  &:hover:not(:disabled) {
+    background: darken($error-color, 8%);
+    border-color: darken($error-color, 8%);
+  }
+
+  &:active:not(:disabled) {
+    background: darken($error-color, 12%);
+  }
+}
+
+// Modifiers
+.fullWidth {
+  width: 100%;
+}
+
+.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @include spinner(20px);
+  border-color: currentColor transparent transparent transparent;
+}
+
+.iconLeft,
+.iconRight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+

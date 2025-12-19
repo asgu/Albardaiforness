@@ -1,0 +1,26 @@
+[Unit]
+Description=Albero API Service
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/albard/api
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/var/www/albard/logs/api-out.log
+StandardError=append:/var/www/albard/logs/api-error.log
+
+# Environment
+Environment=NODE_ENV=production
+Environment=PORT=3300
+EnvironmentFile=/var/www/albard/api/.env
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+

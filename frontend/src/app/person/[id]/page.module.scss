@@ -1,0 +1,53 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.main {
+  min-height: calc(100vh - 80px);
+  background: #f5f7fa;
+  padding: 20px 0;
+}
+
+.loading,
+.error {
+  @include flex-center;
+  @include flex-column;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.spinner {
+  @include spinner(40px);
+}
+
+.error {
+  h1 {
+    font-size: 72px;
+    color: #e0e0e0;
+    margin: 0;
+  }
+
+  h2 {
+    color: #dc3545;
+    margin: 10px 0;
+  }
+  
+  p {
+    color: #999;
+    margin: 10px 0 20px;
+  }
+}
+
+.backLink {
+  display: inline-block;
+  padding: 12px 24px;
+  background: $primary-color;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+

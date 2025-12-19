@@ -1,0 +1,350 @@
+// Prisma Schema для Albero Family Tree
+// База данных: MySQL/MariaDBс
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Серверы (ранее города)
+model Server {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique @db.VarChar(50)
+  name        String   @db.VarChar(255)
+  fullName    String?  @db.VarChar(255)
+  description String?  @db.Text
+  color       String?  @db.VarChar(7)
+  domain      String?  @db.VarChar(255)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  persons Person[]
+
+  @@map("servers")
+}
+
+// 2. Персоны
+model Person {
+  id        BigInt   @id @default(autoincrement())
+  
+  // Основная информация
+  firstName  String  @db.VarChar(255)
+  lastName   String  @db.VarChar(255)
+  maidenName String? @db.VarChar(255)
+  nickName   String? @db.VarChar(255)
+
+  // Даты рождения (гибкая структура)
+  birthDate  DateTime? @db.Date
+  birthYear  Int?      @db.SmallInt
+  birthMonth Int?      @db.TinyInt
+  birthDay   Int?      @db.TinyInt
+
+  // Даты смерти
+  deathDate  DateTime? @db.Date
+  deathYear  Int?      @db.SmallInt
+  deathMonth Int?      @db.TinyInt
+  deathDay   Int?      @db.TinyInt
+
+  // Дополнительная информация
+  gender     Gender   @default(unknown)
+  occupation String?  @db.VarChar(255)
+  note       String?  @db.Text
+  privateNote String? @db.Text
+
+  // Места
+  birthPlace  String? @db.VarChar(255)
+  deathPlace  String? @db.VarChar(255)
+  burialPlace String? @db.VarChar(255)
+
+  // Аватар
+  avatarMediaId BigInt? @db.BigInt
+  avatarCrop    Json?   // {x, y, width, height}
+
+  // Родители
+  motherId BigInt? @db.BigInt
+  fatherId BigInt? @db.BigInt
+
+  // Сервер
+  primaryServerId Int?
+
+  // Метаданные
+  isPublic Boolean @default(true)
+
+  // Дубликаты и слияние
+  isMerged     Boolean @default(false)
+  mergedIntoId BigInt? @db.BigInt
+  sourceDb     String? @db.VarChar(50)
+  originalId   BigInt? @db.BigInt
+
+  // Audit
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy Int?
+  updatedBy Int?
+
+  // Relations
+  primaryServer Server?  @relation(fields: [primaryServerId], references: [id])
+  avatarMedia   Media?   @relation("PersonAvatar", fields: [avatarMediaId], references: [id])
+  mother        Person?  @relation("PersonMother", fields: [motherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  father        Person?  @relation("PersonFather", fields: [fatherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mergedInto    Person?  @relation("PersonMerge", fields: [mergedIntoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Обратные связи
+  childrenAsMother Person[] @relation("PersonMother")
+  childrenAsFather Person[] @relation("PersonFather")
+  mergedPersons    Person[] @relation("PersonMerge")
+
+  media             Media[]
+  marriagesAsPerson1 Marriage[] @relation("MarriagePerson1")
+  marriagesAsPerson2 Marriage[] @relation("MarriagePerson2")
+  taggedInMedia     MediaPerson[]
+  duplicatesAsPerson1 Duplicate[] @relation("DuplicatePerson1")
+  duplicatesAsPerson2 Duplicate[] @relation("DuplicatePerson2")
+  users             User[]
+
+  @@index([lastName, firstName])
+  @@index([motherId])
+  @@index([fatherId])
+  @@index([avatarMediaId])
+  @@index([birthYear])
+  @@index([birthDate])
+  @@index([deathYear])
+  @@index([primaryServerId])
+  @@index([gender])
+  @@index([deletedAt])
+  @@index([isMerged, mergedIntoId])
+  @@index([sourceDb, originalId])
+  @@map("persons")
+}
+
+enum Gender {
+  male
+  female
+  unknown
+}
+
+// 3. Браки
+model Marriage {
+  id       BigInt @id @default(autoincrement())
+  person1Id BigInt @db.BigInt
+  person2Id BigInt @db.BigInt
+
+  // Даты брака
+  marriageDate  DateTime? @db.Date
+  marriageYear  Int?      @db.SmallInt
+  marriagePlace String?   @db.VarChar(255)
+
+  // Даты развода
+  divorceDate DateTime? @db.Date
+  divorceYear Int?      @db.SmallInt
+
+  // Статус
+  isCurrent Boolean @default(true)
+  notes     String? @db.Text
+
+  // Audit
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy Int?
+
+  // Relations
+  person1 Person @relation("MarriagePerson1", fields: [person1Id], references: [id])
+  person2 Person @relation("MarriagePerson2", fields: [person2Id], references: [id])
+
+  @@index([person1Id])
+  @@index([person2Id])
+  @@index([isCurrent])
+  @@index([deletedAt])
+  @@map("marriages")
+}
+
+// 4. Медиафайлы
+model Media {
+  id       BigInt    @id @default(autoincrement())
+  personId BigInt?   @db.BigInt
+  mediaType MediaType
+
+  // Файл
+  filePath      String  @db.VarChar(500)
+  fileName      String  @db.VarChar(255)
+  fileSize      Int?
+  mimeType      String? @db.VarChar(100)
+  thumbnailPath String? @db.VarChar(500)
+
+  // Метаданные
+  title       String?   @db.VarChar(255)
+  description String?   @db.Text
+  dateTaken   DateTime? @db.Date
+  location    String?   @db.VarChar(255)
+
+  // Порядок
+  sortOrder Int @default(0)
+
+  // Права доступа
+  isPublic  Boolean @default(true)
+  isPrimary Boolean @default(false)
+
+  // Audit
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  uploadedBy Int?
+
+  // Relations
+  person        Person?       @relation(fields: [personId], references: [id])
+  taggedPersons MediaPerson[]
+  personAvatars Person[]      @relation("PersonAvatar")
+
+  @@index([personId])
+  @@index([mediaType])
+  @@index([deletedAt])
+  @@index([isPrimary])
+  @@map("media")
+}
+
+enum MediaType {
+  photo
+  video
+  document
+  audio
+}
+
+// 5. Люди на фото/видео
+model MediaPerson {
+  id       BigInt  @id @default(autoincrement())
+  mediaId  BigInt  @db.BigInt
+  personId BigInt  @db.BigInt
+
+  // Координаты на фото (%)
+  positionX Decimal? @db.Decimal(5, 2)
+  positionY Decimal? @db.Decimal(5, 2)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  media  Media  @relation(fields: [mediaId], references: [id])
+  person Person @relation(fields: [personId], references: [id])
+
+  @@unique([mediaId, personId])
+  @@index([mediaId])
+  @@index([personId])
+  @@map("media_persons")
+}
+
+// 6. Потенциальные дубликаты
+model Duplicate {
+  id        BigInt  @id @default(autoincrement())
+  person1Id BigInt  @db.BigInt
+  person2Id BigInt  @db.BigInt
+
+  similarityScore Decimal @db.Decimal(5, 2)
+  matchReasons    Json?   // {"firstName": 0.95, "birthYear": 1.0}
+
+  status        DuplicateStatus @default(pending)
+  mergeStrategy MergeStrategy?
+
+  reviewedBy Int?
+  reviewedAt DateTime?
+  notes      String?   @db.Text
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  person1 Person @relation("DuplicatePerson1", fields: [person1Id], references: [id])
+  person2 Person @relation("DuplicatePerson2", fields: [person2Id], references: [id])
+
+  @@unique([person1Id, person2Id])
+  @@index([status])
+  @@index([similarityScore])
+  @@index([person1Id])
+  @@index([person2Id])
+  @@map("duplicates")
+}
+
+enum DuplicateStatus {
+  pending
+  confirmed
+  rejected
+  merged
+}
+
+enum MergeStrategy {
+  keep_first
+  keep_second
+  merge_data
+}
+
+// 7. История изменений
+model AuditLog {
+  id         BigInt     @id @default(autoincrement())
+  entityType String     @db.VarChar(50)
+  entityId   BigInt     @db.BigInt
+  action     AuditAction
+
+  oldValues Json?
+  newValues Json?
+
+  userId    Int?
+  ipAddress String? @db.VarChar(45)
+  userAgent String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+enum AuditAction {
+  create
+  update
+  delete
+  merge
+}
+
+// 8. Пользователи
+model User {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique @db.VarChar(100)
+  email        String? @unique @db.VarChar(255)
+  passwordHash String  @db.VarChar(255)
+  fullName     String? @db.VarChar(255)
+  avatarUrl    String? @db.VarChar(500)
+
+  role UserRole @default(viewer)
+
+  personId BigInt? @db.BigInt
+
+  isActive      Boolean @default(true)
+  emailVerified Boolean @default(false)
+
+  accessToken  String? @db.VarChar(500)
+  refreshToken String? @db.VarChar(500)
+  lastLoginAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  person Person? @relation(fields: [personId], references: [id])
+
+  @@index([role])
+  @@index([isActive])
+  @@map("users")
+}
+
+enum UserRole {
+  admin
+  editor
+  viewer
+}
