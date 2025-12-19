@@ -1,12 +1,6 @@
-import Header from '@/components/Header/Header';
-import { Loader } from '@/components/ui';
+import Loader from '@/components/ui/Loader/Loader';
 
 export default function Loading() {
-  return (
-    <>
-      <Header />
-      <Loader text="Caricamento..." fullScreen />
-    </>
-  );
+  return <Loader text="Caricamento..." fullScreen />;
 }
 
