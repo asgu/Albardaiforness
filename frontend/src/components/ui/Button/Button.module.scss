@@ -7,15 +7,35 @@
   justify-content: center;
   gap: 8px;
   font-family: $font-family;
-  font-weight: 500;
+  font-weight: $font-semibold;
   border: none;
-  border-radius: $radius-lg;
+  border-radius: $radius-full;
   cursor: pointer;
   transition: all $transition-base;
   white-space: nowrap;
   user-select: none;
   text-decoration: none;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
 
   &:disabled {
     opacity: 0.5;
@@ -23,7 +43,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid $primary-color;
+    outline: 3px solid rgba($primary-color, 0.3);
     outline-offset: 2px;
   }
 }
@@ -49,13 +69,14 @@
 
 // Variants
 .primary {
-  background: $primary-color;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
   color: white;
-  border: 1px solid $primary-color;
+  border: 1px solid transparent;
+  box-shadow: $shadow-md;
 
   &:hover:not(:disabled) {
-    background: darken($primary-color, 8%);
-    border-color: darken($primary-color, 8%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
   }
 
   &:active:not(:disabled) {

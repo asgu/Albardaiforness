@@ -1,15 +1,19 @@
-// Colors
-$primary-color: #2563eb;
-$secondary-color: #64748b;
-$accent-color: #0ea5e9;
-$text-color: #0f172a;
+// Colors - Modern 2025 palette
+$primary-color: #6366f1;
+$primary-hover: #4f46e5;
+$secondary-color: #8b5cf6;
+$accent-color: #06b6d4;
+$text-color: #1e293b;
 $text-light: #64748b;
+$text-muted: #94a3b8;
 $bg-color: #ffffff;
-$bg-light: #f8fafc;
-$bg-secondary: #e2e8f0;
-$border-color: #cbd5e1;
-$error-color: #dc2626;
-$success-color: #16a34a;
+$bg-light: #fafbfc;
+$bg-secondary: #f1f5f9;
+$border-color: #e2e8f0;
+$border-light: #f1f5f9;
+$error-color: #ef4444;
+$success-color: #10b981;
+$warning-color: #f59e0b;
 
 // City colors
 $albaro-color: #0ea5e9;
@@ -24,30 +28,36 @@ $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
 $spacing-2xl: 3rem;
 
-// Typography
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-$font-size-xs: 0.75rem;
-$font-size-sm: 0.875rem;
-$font-size-base: 1rem;
-$font-size-lg: 1.125rem;
-$font-size-xl: 1.25rem;
-$font-size-2xl: 1.5rem;
-$font-size-3xl: 1.875rem;
-$font-size-4xl: 2.25rem;
+// Typography - Modern system fonts
+$font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+$font-size-xs: 0.75rem;    // 12px
+$font-size-sm: 0.875rem;   // 14px
+$font-size-base: 1rem;     // 16px
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.25rem;    // 20px
+$font-size-2xl: 1.5rem;    // 24px
+$font-size-3xl: 1.875rem;  // 30px
+$font-size-4xl: 2.25rem;   // 36px
 
-// Border radius
-$radius-sm: 4px;
-$radius-md: 6px;
-$radius-lg: 8px;
-$radius-xl: 12px;
-$radius-full: 50%;
+// Font weights
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
 
-// Shadows
-$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 4px 8px 0 rgba(0, 0, 0, 0.12);
-$shadow-xl: 0 8px 16px 0 rgba(0, 0, 0, 0.16);
+// Border radius - Modern, softer
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+$radius-full: 9999px;
+
+// Shadows - Softer, more depth
+$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 
 // Breakpoints
 $breakpoint-sm: 640px;

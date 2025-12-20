@@ -4,6 +4,17 @@
 .searchBox {
   width: 100%;
   max-width: 600px;
+  background: $bg-color;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-2xl;
+  border: 1px solid $border-light;
+  backdrop-filter: blur(10px);
+  transition: all $transition-base;
+  
+  &:hover {
+    box-shadow: $shadow-xl;
+    transform: translateY(-2px);
+  }
 }
 
 .simpleForm {
