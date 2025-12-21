@@ -35,10 +35,22 @@ interface FOSUser {
 
 /**
  * Определяет роль пользователя на основе roles из FOSUserBundle
+ * Формат: a:1:{i:0;s:10:"ROLE_ADMIN";} (PHP serialized array)
  */
-function mapRole(rolesJson: string): 'admin' | 'editor' | 'viewer' {
+function mapRole(rolesPhp: string): 'admin' | 'editor' | 'viewer' {
   try {
-    const roles = JSON.parse(rolesJson);
+    // PHP serialized format: a:1:{i:0;s:10:"ROLE_ADMIN";}
+    // Простой парсинг для извлечения ролей
+    const roleMatches = rolesPhp.match(/s:\d+:"([^"]+)"/g);
+    
+    if (!roleMatches) {
+      return 'viewer';
+    }
+    
+    const roles = roleMatches.map(match => {
+      const roleMatch = match.match(/s:\d+:"([^"]+)"/);
+      return roleMatch ? roleMatch[1] : '';
+    });
     
     if (roles.includes('ROLE_SUPER_ADMIN') || roles.includes('ROLE_ADMIN')) {
       return 'admin';
@@ -50,7 +62,7 @@ function mapRole(rolesJson: string): 'admin' | 'editor' | 'viewer' {
     
     return 'viewer';
   } catch (error) {
-    console.error('Error parsing roles:', rolesJson, error);
+    console.error('Error parsing roles:', rolesPhp, error);
     return 'viewer';
   }
 }
@@ -101,15 +113,18 @@ async function migrateUsers() {
         // Определяем роль
         const role = mapRole(fosUser.roles);
 
+        // Формируем пароль в формате FOSUserBundle: {hash}{salt}
+        const passwordHash = `{${fosUser.password}}{${fosUser.salt}}`;
+        
         // Создаем пользователя
         await prisma.user.create({
           data: {
             username: fosUser.username,
             email: fosUser.email || null,
-            passwordHash: fosUser.password, // Сохраняем в формате FOSUserBundle
+            passwordHash: passwordHash, // Формат FOSUserBundle: {hash}{salt}
             role: role,
-            isActive: fosUser.enabled,
-            emailVerified: fosUser.enabled,
+            isActive: Boolean(fosUser.enabled),
+            emailVerified: Boolean(fosUser.enabled),
             accessToken: fosUser.access_token || null,
             lastLoginAt: fosUser.last_login || null,
             createdAt: new Date(),
