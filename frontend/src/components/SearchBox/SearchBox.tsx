@@ -29,7 +29,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
   const currentServer = useAppSelector(selectCurrentServer);
   const { t } = useTranslations();
   const [query, setQuery] = useState(initialValues?.q || '');
-  const [showAdvanced, setShowAdvanced] = useState(true);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
     firstName: initialValues?.firstName || '',
     lastName: initialValues?.lastName || '',
@@ -210,6 +210,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setShowAdvanced(true)}
               placeholder={t('search.placeholder')}
               autoFocus
             />

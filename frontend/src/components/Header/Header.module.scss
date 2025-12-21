@@ -8,8 +8,14 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: border-top-color $transition-base;
+  transition: all $transition-base;
   height: 60px;
+  
+  &.authenticated {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border-top-color: $success-color;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  }
 }
 
 .container {

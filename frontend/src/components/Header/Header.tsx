@@ -46,7 +46,10 @@ export default function Header() {
   };
 
   return (
-    <header className={styles.header} style={{ borderTopColor: serverInfo?.color || '#0ea5e9' }}>
+    <header 
+      className={`${styles.header} ${isAuthenticated ? styles.authenticated : ''}`} 
+      style={{ borderTopColor: serverInfo?.color || '#0ea5e9' }}
+    >
       <div className={styles.container}>
         <div className={styles.logo}>
           <Link href="/">
@@ -90,10 +93,16 @@ export default function Header() {
           <div className={styles.actions}>
             <LanguageSwitcher />
 
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <Button onClick={handleLogout} variant="secondary">
                 {t('common.logout')}
               </Button>
+            ) : (
+              <Link href="/login">
+                <Button variant="primary">
+                  {t('common.login')}
+                </Button>
+              </Link>
             )}
           </div>
         </div>
