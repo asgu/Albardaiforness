@@ -1,9 +1,47 @@
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { User } from '@prisma/client';
 
 export class AuthService {
+  /**
+   * Verify password against FOSUserBundle SHA-512 hash
+   * Format: {encoded_hash}{salt}
+   */
+  private verifyFOSPassword(password: string, encodedPassword: string): boolean {
+    // FOSUserBundle format: {hash}{salt}
+    // Hash is base64 encoded SHA-512
+    const parts = encodedPassword.split('{');
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    const hash = parts[1].replace('}', '');
+    const salt = parts[2].replace('}', '');
+
+    // Generate SHA-512 hash with salt
+    const testHash = crypto
+      .createHash('sha512')
+      .update(password + '{' + salt + '}')
+      .digest('base64');
+
+    return testHash === hash;
+  }
+
+  /**
+   * Verify password (supports both bcrypt and FOSUserBundle SHA-512)
+   */
+  private async verifyPassword(password: string, passwordHash: string): Promise<boolean> {
+    // Check if it's FOSUserBundle format (contains {})
+    if (passwordHash.includes('{') && passwordHash.includes('}')) {
+      return this.verifyFOSPassword(password, passwordHash);
+    }
+
+    // Otherwise, use bcrypt
+    return await bcrypt.compare(password, passwordHash);
+  }
+
   async authenticate(username: string, password: string): Promise<{ token: string } | null> {
     const user = await prisma.user.findUnique({
       where: { username },
@@ -13,8 +51,8 @@ export class AuthService {
       return null;
     }
 
-    // Verify password
-    const isValid = await bcrypt.compare(password, user.passwordHash);
+    // Verify password (supports both formats)
+    const isValid = await this.verifyPassword(password, user.passwordHash);
 
     if (!isValid) {
       return null;

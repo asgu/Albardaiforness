@@ -116,10 +116,18 @@ albero/
 - Fuzzy matching с Levenshtein distance
 - Поддержка слияния персон из разных источников
 
+### User (Пользователь)
+- Управление пользователями и авторизация
+- Поля: username, email, passwordHash, role, isActive
+- Роли: admin, editor, viewer
+- Поддержка паролей из FOSUserBundle (SHA-512) и bcrypt
+- JWT токены для аутентификации
+
 ## API Endpoints
 
 ### Аутентификация
 - `POST /api/auth` - вход пользователя (JWT)
+- Поддержка паролей: FOSUserBundle SHA-512 и bcrypt
 
 ### Персоны
 - `GET /api/today` - дни рождения сегодня
@@ -161,10 +169,19 @@ npm run prisma:push
 # Миграция данных Preone
 npm run migrate:preone
 
+# Миграция пользователей из FOSUserBundle
+npm run migrate:users
+
 # Исправление связей
 npm run fix:parent-links
 npm run fix:marriages
 ```
+
+### Миграция пользователей
+Старая система использовала FOSUserBundle (Symfony 2) с SHA-512 хешированием паролей.
+Новая система поддерживает оба формата: SHA-512 (для мигрированных) и bcrypt (для новых).
+
+См. подробности в `api/USER_MIGRATION.md`
 
 ## Деплой
 
