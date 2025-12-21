@@ -8,10 +8,11 @@ export class AuthService {
   /**
    * Verify password against FOSUserBundle SHA-512 hash
    * Format: {encoded_hash}{salt}
+   * FOSUserBundle uses: hash_pbkdf2('sha512', password, salt, 5000, 40, true)
    */
   private verifyFOSPassword(password: string, encodedPassword: string): boolean {
     // FOSUserBundle format: {hash}{salt}
-    // Hash is base64 encoded SHA-512
+    // Hash is base64 encoded SHA-512 with PBKDF2
     const parts = encodedPassword.split('{');
     if (parts.length !== 3) {
       return false;
@@ -20,11 +21,10 @@ export class AuthService {
     const hash = parts[1].replace('}', '');
     const salt = parts[2].replace('}', '');
 
-    // Generate SHA-512 hash with salt
+    // FOSUserBundle uses PBKDF2 with SHA-512, 5000 iterations, 40 bytes length
     const testHash = crypto
-      .createHash('sha512')
-      .update(password + '{' + salt + '}')
-      .digest('base64');
+      .pbkdf2Sync(password, salt, 5000, 40, 'sha512')
+      .toString('base64');
 
     return testHash === hash;
   }
