@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
 import { Person } from '@/types';
-import { Button, Input, Select } from '@/components/ui';
+import { Button, Input, Select } from '@/ui';
 import { personApi } from '@/lib/api';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import EditableField from '@/components/EditableField/EditableField';

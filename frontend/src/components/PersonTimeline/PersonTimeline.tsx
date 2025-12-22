@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { Card } from '@/components/ui';
+import { Card } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import { capitalizeWords } from '@/utils/string';
 import { Person } from '@/types';

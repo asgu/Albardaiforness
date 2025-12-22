@@ -1,7 +1,7 @@
 'use client';
 
 import { Person, Marriage } from '@/types';
-import { Button } from '@/components/ui';
+import { Button } from '@/ui';
 import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import styles from './RelativesSection.module.scss';
 

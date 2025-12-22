@@ -3,9 +3,6 @@
  * Централизованный экспорт всех компонентов
  */
 
-// UI Components (Design System)
-export * from './ui';
-
 // Layout Components
 export { default as Header } from './Header/Header';
 export { default as SplashScreen } from './SplashScreen/SplashScreen';
@@ -32,8 +29,4 @@ export { default as BirthdayList } from './BirthdayList/BirthdayList';
 export { default as EditableField } from './EditableField/EditableField';
 export { default as AddRelativeModal } from './AddRelativeModal/AddRelativeModal';
 export { default as LanguageSwitcher } from './LanguageSwitcher/LanguageSwitcher';
-
-// Providers
-export { ReduxProvider } from './providers/ReduxProvider';
-export { AuthProvider } from './providers/AuthProvider';
 

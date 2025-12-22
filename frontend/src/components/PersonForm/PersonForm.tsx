@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
-import { Button, Input, Card, GenderSelect } from '@/components/ui';
+import { Button, Input, Card, GenderSelect } from '@/ui';
 import { personApi } from '@/lib/api';
 import { Person } from '@/types';
 import styles from './PersonForm.module.scss';

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Person } from '@/types';
-import { Button } from '@/components/ui';
+import { Button } from '@/ui';
 import { getPersonUrlId, getFullName, getLifeYears } from '@/utils/person';
 import styles from './FamilyTree.module.scss';
 

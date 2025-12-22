@@ -4,7 +4,7 @@ import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer } from '@/store/slices/serverSlice';
-import { Input, Button, Card, GenderSelect, GenderValue } from '@/components/ui';
+import { Input, Button, Card, GenderSelect, GenderValue } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './SearchBox.module.scss';
 

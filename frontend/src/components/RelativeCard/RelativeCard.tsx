@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { PersonSummary } from '@/types';
-import { Avatar } from '@/components/ui';
+import { Avatar } from '@/ui';
 import { capitalizeWords } from '@/utils/string';
 import { getPersonUrlId, getGenderIcon, getLifeYears } from '@/utils/person';
 import styles from './RelativeCard.module.scss';

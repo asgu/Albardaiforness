@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { personApi } from '@/lib/api';
-import { Card } from '@/components/ui';
+import { Card } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import { Person } from '@/types';

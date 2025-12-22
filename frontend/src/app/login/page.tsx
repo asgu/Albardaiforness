@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { login, selectAuthLoading, selectAuthError } from '@/store/slices/authSlice';
-import { Input, Button, Card } from '@/components/ui';
+import { Input, Button, Card } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './page.module.scss';
 

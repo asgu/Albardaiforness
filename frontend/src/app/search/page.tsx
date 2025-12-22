@@ -10,7 +10,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import { useTranslations } from '@/i18n/useTranslations';
-import { Button, Loader } from '@/components/ui';
+import { Button, Loader } from '@/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 

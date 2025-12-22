@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Input, Button, Modal } from '@/components/ui';
+import { Input, Button, Modal } from '@/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
 import { PersonSummary } from '@/types';

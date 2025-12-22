@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.scss';
-import { ReduxProvider } from '@/components/providers/ReduxProvider';
+import { ReduxProvider } from '@/providers/ReduxProvider';
 
 export const metadata: Metadata = {
   title: 'Albero - Family Tree',

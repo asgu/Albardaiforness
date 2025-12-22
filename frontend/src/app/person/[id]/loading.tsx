@@ -1,6 +1,6 @@
 'use client';
 
-import Loader from '@/components/ui/Loader/Loader';
+import Loader from '@/ui/Loader/Loader';
 import { useTranslations } from '@/i18n/useTranslations';
 
 export default function Loading() {

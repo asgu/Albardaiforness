@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServerInfo } from '@/store/slices/serverSlice';
 import { logout, selectIsAuthenticated } from '@/store/slices/authSlice';
-import { Button, Input } from '@/components/ui';
+import { Button, Input } from '@/ui';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './Header.module.scss';

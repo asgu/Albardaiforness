@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Input } from '@/components/ui';
+import { Input } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import classNames from 'classnames';
 import styles from './EditableField.module.scss';
