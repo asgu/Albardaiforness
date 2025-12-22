@@ -1,20 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { Person } from '@/types';
+import { PersonSummary } from '@/types';
 import { Avatar } from '@/components/ui';
 import { capitalizeWords } from '@/utils/string';
 import styles from './RelativeCard.module.scss';
 
 interface RelativeCardProps {
-  person: Person;
+  person: PersonSummary & {
+    maidenName?: string;
+  };
   marriageYear?: number | null;
   marriageDate?: string | null;
   showMarriageInfo?: boolean;
 }
 
 // Helper to get person ID for URLs (prefer originalId for SEO)
-function getPersonUrlId(person: Person): string {
+function getPersonUrlId(person: PersonSummary): string {
   return person.originalId || person.id;
 }
 
