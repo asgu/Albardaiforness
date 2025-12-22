@@ -471,6 +471,7 @@ export class PersonService {
       }
     }
 
+    // First create the person without originalId
     const person = await prisma.person.create({
       data: {
         firstName: cleanData.firstName,
@@ -494,6 +495,12 @@ export class PersonService {
         createdBy: userId,
         updatedBy: userId,
       },
+    });
+
+    // Update originalId to match id
+    const updatedPerson = await prisma.person.update({
+      where: { id: person.id },
+      data: { originalId: person.id },
       include: {
         primaryServer: true,
         mother: true,
@@ -502,7 +509,7 @@ export class PersonService {
       },
     });
 
-    return person;
+    return updatedPerson;
   }
 
   /**
