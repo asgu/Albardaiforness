@@ -1,6 +1,6 @@
 'use client';
 
-import { Server } from '@/lib/serverDetector';
+import { Server } from '@/types';
 import { Card, Button } from '@/components/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './SplashScreen.module.scss';
