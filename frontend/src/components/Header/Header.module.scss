@@ -10,9 +10,10 @@
   z-index: 100;
   transition: all $transition-base;
   height: 60px;
+  backdrop-filter: none;
   
   &.authenticated {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
     border-top-color: #059669;
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
   }
