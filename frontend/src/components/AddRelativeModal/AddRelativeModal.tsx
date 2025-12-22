@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Input, Button, Card } from '@/components/ui';
+import { Input, Button, Modal } from '@/components/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './AddRelativeModal.module.scss';
@@ -59,8 +59,6 @@ export default function AddRelativeModal({
     }
   };
 
-  if (!isOpen) return null;
-
   const getRelationTitle = () => {
     switch (relationType) {
       case 'father': return t('person.father');
@@ -72,63 +70,57 @@ export default function AddRelativeModal({
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <Card className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>
-            {t('common.add')} {getRelationTitle()}
-          </h2>
-          <button className={styles.closeButton} onClick={onClose}>
-            ×
-          </button>
-        </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${t('common.add')} ${getRelationTitle()}`}
+      size="md"
+    >
+      <div className={styles.searchSection}>
+        <Input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={t('search.placeholder')}
+          fullWidth
+        />
+        <Button onClick={handleSearch} disabled={loading}>
+          {loading ? t('common.loading') : t('common.search')}
+        </Button>
+      </div>
 
-        <div className={styles.searchSection}>
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={t('search.placeholder')}
-            fullWidth
-          />
-          <Button onClick={handleSearch} disabled={loading}>
-            {loading ? t('common.loading') : t('common.search')}
-          </Button>
-        </div>
-
-        <div className={styles.results}>
-          {results.length === 0 && !loading && searchQuery && (
-            <div className={styles.noResults}>
-              {t('search.noResults')}
-            </div>
-          )}
-          
-          {results.map((person) => (
-            <div
-              key={person.id}
-              className={styles.resultItem}
-              onClick={() => {
-                onSelect(person, relationType);
-                onClose();
-              }}
-            >
-              <div className={styles.personInfo}>
-                <div className={styles.personName}>
-                  {person.firstName} {person.lastName}
-                </div>
-                {person.birthYear && (
-                  <div className={styles.personDates}>
-                    {person.birthYear}
-                    {person.deathYear && ` - ${person.deathYear}`}
-                  </div>
-                )}
+      <div className={styles.results}>
+        {results.length === 0 && !loading && searchQuery && (
+          <div className={styles.noResults}>
+            {t('search.noResults')}
+          </div>
+        )}
+        
+        {results.map((person) => (
+          <div
+            key={person.id}
+            className={styles.resultItem}
+            onClick={() => {
+              onSelect(person, relationType);
+              onClose();
+            }}
+          >
+            <div className={styles.personInfo}>
+              <div className={styles.personName}>
+                {person.firstName} {person.lastName}
               </div>
+              {person.birthYear && (
+                <div className={styles.personDates}>
+                  {person.birthYear}
+                  {person.deathYear && ` - ${person.deathYear}`}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      </Card>
-    </div>
+          </div>
+        ))}
+      </div>
+    </Modal>
   );
 }
 

@@ -254,4 +254,74 @@ export class PersonController {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const data = req.body;
+      
+      // Find person by originalId or internal ID
+      let personId: bigint;
+      const personByOriginalId = await personService.getByOriginalId(id);
+      if (personByOriginalId) {
+        personId = personByOriginalId.id;
+      } else {
+        personId = BigInt(id);
+      }
+
+      const updatedPerson = await personService.update(personId, data, userId);
+      
+      res.json(convertBigIntToString(updatedPerson));
+    } catch (error) {
+      console.error('Update person error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  async addRelative(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { relativeId, relationType } = req.body;
+      const userId = (req as any).user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      if (!relativeId || !relationType) {
+        return res.status(400).json({ error: 'relativeId and relationType are required' });
+      }
+
+      // Find person by originalId or internal ID
+      let personId: bigint;
+      const personByOriginalId = await personService.getByOriginalId(id);
+      if (personByOriginalId) {
+        personId = personByOriginalId.id;
+      } else {
+        personId = BigInt(id);
+      }
+
+      // Find relative by originalId or internal ID
+      let relativeIdBigInt: bigint;
+      const relativeByOriginalId = await personService.getByOriginalId(relativeId);
+      if (relativeByOriginalId) {
+        relativeIdBigInt = relativeByOriginalId.id;
+      } else {
+        relativeIdBigInt = BigInt(relativeId);
+      }
+
+      await personService.addRelative(personId, relativeIdBigInt, relationType, userId);
+      
+      res.json({ message: 'Relative added successfully' });
+    } catch (error) {
+      console.error('Add relative error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }

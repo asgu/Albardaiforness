@@ -18,3 +18,6 @@ export { GenderSelect } from './GenderSelect/GenderSelect';
 export type { GenderSelectProps, GenderValue } from './GenderSelect/GenderSelect';
 
 export { default as Loader } from './Loader/Loader';
+
+export { Modal } from './Modal/Modal';
+export type { ModalProps } from './Modal/Modal';

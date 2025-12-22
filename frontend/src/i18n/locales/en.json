@@ -20,6 +20,7 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
+    "done": "Done",
     "clear": "Clear"
   },
   "header": {
@@ -69,10 +70,20 @@
     "privateNote": "Private note",
     "parents": "Parents",
     "spouses": "Spouses",
-    "children": "Children",
     "siblings": "Siblings",
     "tree": "Tree",
-    "notFound": "Person not found"
+    "notFound": "Person not found",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "nickName": "Nickname",
+    "maidenName": "Maiden name",
+    "basicInfo": "Basic information",
+    "additionalInfo": "Additional information",
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+    "requiredFields": "First name and last name are required",
+    "editPerson": "Edit person"
   },
   "splash": {
     "title": "Forni Savorgnani",

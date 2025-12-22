@@ -325,11 +325,20 @@ export class PersonService {
 
     // Simple search by query
     if (query) {
+      // Check if query is a number (potential ID)
+      const isNumeric = /^\d+$/.test(query);
+      
       where.OR = [
         { firstName: { contains: query } },
         { lastName: { contains: query } },
         { nickName: { contains: query } },
+        { originalId: { contains: query } },
       ];
+      
+      // If numeric, also search by ID
+      if (isNumeric) {
+        where.OR.push({ id: BigInt(query) });
+      }
     }
 
     // Advanced search by specific fields
@@ -485,6 +494,87 @@ export class PersonService {
         updatedBy: userId,
       },
     });
+  }
+
+  /**
+   * Update person fields
+   */
+  async update(id: bigint, data: any, userId: number) {
+    return prisma.person.update({
+      where: { id },
+      data: {
+        ...data,
+        updatedBy: userId,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Add a relative to a person
+   */
+  async addRelative(personId: bigint, relativeId: bigint, relationType: string, userId: number) {
+    switch (relationType) {
+      case 'father':
+        return prisma.person.update({
+          where: { id: personId },
+          data: {
+            fatherId: relativeId,
+            updatedBy: userId,
+            updatedAt: new Date(),
+          },
+        });
+      
+      case 'mother':
+        return prisma.person.update({
+          where: { id: personId },
+          data: {
+            motherId: relativeId,
+            updatedBy: userId,
+            updatedAt: new Date(),
+          },
+        });
+      
+      case 'child':
+        // Determine if the person is the father or mother based on gender
+        const person = await prisma.person.findUnique({
+          where: { id: personId },
+          select: { gender: true },
+        });
+        
+        if (person?.gender === 'male') {
+          return prisma.person.update({
+            where: { id: relativeId },
+            data: {
+              fatherId: personId,
+              updatedBy: userId,
+              updatedAt: new Date(),
+            },
+          });
+        } else {
+          return prisma.person.update({
+            where: { id: relativeId },
+            data: {
+              motherId: personId,
+              updatedBy: userId,
+              updatedAt: new Date(),
+            },
+          });
+        }
+      
+      case 'spouse':
+        // Create a marriage record
+        return prisma.marriage.create({
+          data: {
+            person1Id: personId,
+            person2Id: relativeId,
+            createdBy: userId,
+          },
+        });
+      
+      default:
+        throw new Error(`Unknown relation type: ${relationType}`);
+    }
   }
 }
 

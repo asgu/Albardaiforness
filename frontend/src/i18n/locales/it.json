@@ -20,6 +20,7 @@
     "cancel": "Annulla",
     "delete": "Elimina",
     "edit": "Modifica",
+    "done": "Fine",
     "clear": "Pulisci"
   },
   "header": {
@@ -69,10 +70,20 @@
     "privateNote": "Nota privata",
     "parents": "Genitori",
     "spouses": "Coniugi",
-    "children": "Figli",
     "siblings": "Fratelli",
     "tree": "Albero",
-    "notFound": "Persona non trovata"
+    "notFound": "Persona non trovata",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "nickName": "Soprannome",
+    "maidenName": "Nome da nubile",
+    "basicInfo": "Informazioni di base",
+    "additionalInfo": "Informazioni aggiuntive",
+    "year": "Anno",
+    "month": "Mese",
+    "day": "Giorno",
+    "requiredFields": "Nome e cognome sono obbligatori",
+    "editPerson": "Modifica persona"
   },
   "splash": {
     "title": "Forni Savorgnani",

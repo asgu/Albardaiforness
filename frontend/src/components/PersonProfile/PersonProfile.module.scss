@@ -24,6 +24,23 @@
   gap: 30px;
 }
 
+// Timeline visibility control
+.timelineDesktop {
+  display: block;
+  
+  @media (max-width: 968px) {
+    display: none;
+  }
+}
+
+.timelineMobile {
+  display: none;
+  
+  @media (max-width: 968px) {
+    display: block;
+  }
+}
+
 .profile {
   background: white;
   border-radius: 12px;

@@ -75,6 +75,15 @@ export const personApi = {
   
   loadByIds: (ids: number[]) =>
     api.get('/api/persons/load', { params: { ids: ids.join(',') } }),
+  
+  update: (id: string, data: Record<string, any>) =>
+    api.patch(`/api/person/${id}`, data),
+  
+  create: (data: Record<string, any>) =>
+    api.post('/admin/person', data),
+  
+  addRelative: (personId: string, relativeId: string, relationType: 'father' | 'mother' | 'spouse' | 'child') =>
+    api.post(`/api/person/${personId}/relative`, { relativeId, relationType }),
 };
 
 export const serverApi = {

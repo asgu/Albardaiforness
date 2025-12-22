@@ -1,0 +1,163 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.modal {
+  border: none;
+  border-radius: $radius-xl;
+  padding: 0;
+  max-height: 90vh;
+  box-shadow: $shadow-2xl;
+  background: $bg-color;
+  
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn $transition-base;
+  }
+
+  &[open] {
+    animation: slideUp $transition-base;
+  }
+
+  // Sizes
+  &.sm {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  &.md {
+    width: 90%;
+    max-width: 600px;
+  }
+
+  &.lg {
+    width: 90%;
+    max-width: 800px;
+  }
+
+  &.xl {
+    width: 90%;
+    max-width: 1000px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-xl;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-bold;
+  color: $text-color;
+  margin: 0;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: $radius-full;
+  font-size: 28px;
+  line-height: 1;
+  color: $text-light;
+  cursor: pointer;
+  transition: all $transition-base;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: $bg-light;
+    color: $text-color;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.modalBody {
+  padding: $spacing-xl;
+  overflow-y: auto;
+  flex: 1;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $bg-light;
+    border-radius: $radius-sm;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color;
+    border-radius: $radius-sm;
+    
+    &:hover {
+      background: $text-light;
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .modal {
+    width: 95%;
+    max-height: 95vh;
+    
+    &.sm,
+    &.md,
+    &.lg,
+    &.xl {
+      width: 95%;
+    }
+  }
+
+  .modalHeader {
+    padding: $spacing-lg;
+  }
+
+  .modalBody {
+    padding: $spacing-lg;
+  }
+
+  .modalTitle {
+    font-size: $font-size-lg;
+  }
+}
+
