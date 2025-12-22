@@ -1,0 +1,135 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-xl;
+  animation: fadeIn $transition-base;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp $transition-base;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-color;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-bold;
+  color: $text-color;
+  margin: 0;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: $radius-full;
+  font-size: 28px;
+  line-height: 1;
+  color: $text-light;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: $bg-light;
+    color: $text-color;
+  }
+}
+
+.searchSection {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.results {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+  max-height: 400px;
+}
+
+.noResults {
+  text-align: center;
+  padding: $spacing-2xl;
+  color: $text-light;
+}
+
+.resultItem {
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: $bg-light;
+  }
+  
+  &:not(:last-child) {
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.personInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.personName {
+  font-size: $font-size-base;
+  font-weight: $font-medium;
+  color: $text-color;
+}
+
+.personDates {
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+

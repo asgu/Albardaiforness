@@ -1,12 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import { Person, Gender } from '@/types';
+import { Button } from '@/components/ui';
 import RelativesSection from '@/components/RelativesSection/RelativesSection';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import PersonTimeline from '@/components/PersonTimeline/PersonTimeline';
+import EditableField from '@/components/EditableField/EditableField';
+import AddRelativeModal from '@/components/AddRelativeModal/AddRelativeModal';
 import styles from './PersonProfile.module.scss';
 
 interface PersonProfileProps {
@@ -21,6 +25,24 @@ function getPersonUrlId(person: Person): string {
 
 export default function PersonProfile({ person, serverColor }: PersonProfileProps) {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const [isEditing, setIsEditing] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalRelationType, setModalRelationType] = useState<'father' | 'mother' | 'spouse' | 'child'>('father');
+
+  const handleSaveField = async (field: string, value: string) => {
+    console.log('Saving field:', field, value);
+    // TODO: API call to update person
+  };
+
+  const handleAddRelative = (relationType: 'father' | 'mother' | 'spouse' | 'child') => {
+    setModalRelationType(relationType);
+    setModalOpen(true);
+  };
+
+  const handleSelectRelative = async (selectedPerson: any, relationType: string) => {
+    console.log('Adding relative:', selectedPerson, relationType);
+    // TODO: API call to link relative
+  };
 
   const formatName = (firstName: string) => {
     const parts = firstName.split(' ');
@@ -81,46 +103,111 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
                   <button className={styles.treeButton}>Albero</button>
                 </Link>
                 {isAuthenticated && (
-                  <Link href={`/admin/person/${getPersonUrlId(person)}/edit`}>
-                    <button className={styles.editButton}>Modifica</button>
-                  </Link>
+                  <Button 
+                    variant={isEditing ? 'secondary' : 'primary'}
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    {isEditing ? 'Fine' : 'Modifica'}
+                  </Button>
                 )}
               </div>
             </div>
 
             <div className={styles.profileInfo}>
-              <div className={styles.lastName}>{person.lastName.toUpperCase()}</div>
-              <div className={styles.firstName}>{formatName(person.firstName)}</div>
-              {person.nickName && (
-                <div className={styles.nickName}>
-                  <span className={styles.secondary}>"{person.nickName}"</span>
-                </div>
-              )}
-              {person.maidenName && (
-                <div className={styles.maidenName}>
-                  <span className={styles.secondary}>({person.maidenName})</span>
-                </div>
+              {isEditing ? (
+                <>
+                  <EditableField
+                    value={person.lastName}
+                    onSave={(value) => handleSaveField('lastName', value)}
+                    placeholder="Cognome"
+                  />
+                  <EditableField
+                    value={person.firstName}
+                    onSave={(value) => handleSaveField('firstName', value)}
+                    placeholder="Nome"
+                  />
+                  <EditableField
+                    value={person.nickName || ''}
+                    onSave={(value) => handleSaveField('nickName', value)}
+                    placeholder="Soprannome"
+                  />
+                  <EditableField
+                    value={person.maidenName || ''}
+                    onSave={(value) => handleSaveField('maidenName', value)}
+                    placeholder="Nome da nubile"
+                  />
+                </>
+              ) : (
+                <>
+                  <div className={styles.lastName}>{person.lastName.toUpperCase()}</div>
+                  <div className={styles.firstName}>{formatName(person.firstName)}</div>
+                  {person.nickName && (
+                    <div className={styles.nickName}>
+                      <span className={styles.secondary}>"{person.nickName}"</span>
+                    </div>
+                  )}
+                  {person.maidenName && (
+                    <div className={styles.maidenName}>
+                      <span className={styles.secondary}>({person.maidenName})</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
-            {person.occupation && (
-              <div className={styles.fullWidthInfo}>
-                <strong>Professione:</strong> {person.occupation}
-              </div>
-            )}
+            {isEditing ? (
+              <>
+                <div className={styles.fullWidthInfo}>
+                  <strong>Professione:</strong>
+                  <EditableField
+                    value={person.occupation || ''}
+                    onSave={(value) => handleSaveField('occupation', value)}
+                    placeholder="Professione"
+                  />
+                </div>
+                <div className={styles.fullWidthInfo}>
+                  <strong>Nota:</strong>
+                  <EditableField
+                    value={person.note || ''}
+                    onSave={(value) => handleSaveField('note', value)}
+                    placeholder="Nota"
+                    type="textarea"
+                  />
+                </div>
+                {isAuthenticated && (
+                  <div className={styles.fullWidthInfo}>
+                    <strong>Nota privata:</strong>
+                    <EditableField
+                      value={person.privateNote || ''}
+                      onSave={(value) => handleSaveField('privateNote', value)}
+                      placeholder="Nota privata"
+                      type="textarea"
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {person.occupation && (
+                  <div className={styles.fullWidthInfo}>
+                    <strong>Professione:</strong> {person.occupation}
+                  </div>
+                )}
 
-            {person.note && (
-              <div className={styles.fullWidthInfo}>
-                <strong>Nota:</strong> {person.note}
-              </div>
-            )}
+                {person.note && (
+                  <div className={styles.fullWidthInfo}>
+                    <strong>Nota:</strong> {person.note}
+                  </div>
+                )}
 
-            {isAuthenticated && person.privateNote && (
-              <div className={styles.fullWidthInfo}>
-                <span className={styles.privateNote}>
-                  <strong>Nota privata:</strong> {person.privateNote}
-                </span>
-              </div>
+                {isAuthenticated && person.privateNote && (
+                  <div className={styles.fullWidthInfo}>
+                    <span className={styles.privateNote}>
+                      <strong>Nota privata:</strong> {person.privateNote}
+                    </span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -158,6 +245,8 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
             title="Genitori"
             relatives={[person.father, person.mother].filter(Boolean) as Person[]}
             isParentsSection={true}
+            isEditing={isEditing}
+            onAddRelative={() => handleAddRelative('father')}
           />
 
           {/* Spouses */}
@@ -165,18 +254,30 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
             title="Coniugi"
             relatives={person.spouses}
             showMarriageInfo={true}
+            isEditing={isEditing}
+            onAddRelative={() => handleAddRelative('spouse')}
           />
 
           {/* Children */}
           <RelativesSection 
             title={`Figli${person.children ? ` (${person.children.length})` : ''}`}
             relatives={person.children}
+            isEditing={isEditing}
+            onAddRelative={() => handleAddRelative('child')}
           />
 
           {/* Timeline */}
           <PersonTimeline person={person} />
         </div>
       </div>
+
+      {/* Add Relative Modal */}
+      <AddRelativeModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSelect={handleSelectRelative}
+        relationType={modalRelationType}
+      />
     </div>
   );
 }

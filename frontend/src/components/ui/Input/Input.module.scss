@@ -112,3 +112,42 @@
   color: $error-color;
 }
 
+.hint {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: $text-color;
+  color: $bg-color;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  box-shadow: $shadow-lg;
+  z-index: 1000;
+  animation: slideDown $transition-fast;
+  white-space: pre-line;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 16px;
+    width: 8px;
+    height: 8px;
+    background: $text-color;
+    transform: rotate(45deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

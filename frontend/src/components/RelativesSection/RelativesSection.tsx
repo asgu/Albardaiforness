@@ -1,6 +1,7 @@
 'use client';
 
 import { Person, Marriage } from '@/types';
+import { Button } from '@/components/ui';
 import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import styles from './RelativesSection.module.scss';
 
@@ -9,29 +10,38 @@ interface RelativesSectionProps {
   relatives?: Person[] | { person: Person; marriageYear?: number; marriageDate?: string }[];
   showMarriageInfo?: boolean;
   isParentsSection?: boolean;
+  isEditing?: boolean;
+  onAddRelative?: () => void;
 }
 
 export default function RelativesSection({ 
   title, 
   relatives,
   showMarriageInfo = false,
-  isParentsSection = false
+  isParentsSection = false,
+  isEditing = false,
+  onAddRelative
 }: RelativesSectionProps) {
-  if (!relatives || relatives.length === 0) {
-    return null;
-  }
+  const hasRelatives = relatives && relatives.length > 0;
 
-  const isMarriageArray = relatives.length > 0 && 'person' in relatives[0];
+  const isMarriageArray = hasRelatives && relatives!.length > 0 && 'person' in relatives![0];
 
   // Special handling for parents section
   if (isParentsSection && !isMarriageArray) {
-    const persons = relatives as Person[];
+    const persons = (relatives as Person[]) || [];
     const father = persons.find(p => p.gender === 'male');
     const mother = persons.find(p => p.gender === 'female');
 
     return (
       <div className={styles.relativeSection}>
-        <h2>{title}</h2>
+        <div className={styles.sectionHeader}>
+          <h2>{title}</h2>
+          {isEditing && onAddRelative && (
+            <Button variant="secondary" onClick={onAddRelative}>
+              + Aggiungi
+            </Button>
+          )}
+        </div>
         <div className={`${styles.relatives} ${styles.parentsGrid}`}>
           <div className={styles.fatherSlot}>
             {father && (
@@ -56,27 +66,43 @@ export default function RelativesSection({
 
   return (
     <div className={styles.relativeSection}>
-      <h2>{title}</h2>
+      <div className={styles.sectionHeader}>
+        <h2>{title}</h2>
+        {isEditing && onAddRelative && (
+          <Button variant="secondary" onClick={onAddRelative}>
+            + Aggiungi
+          </Button>
+        )}
+      </div>
       <div className={styles.relatives}>
-        {isMarriageArray ? (
-          // Marriages with spouse info
-          (relatives as { person: Person; marriageYear?: number; marriageDate?: string }[]).map((item, index) => (
-            <RelativeCard 
-              key={index}
-              person={item.person}
-              marriageYear={item.marriageYear}
-              marriageDate={item.marriageDate}
-              showMarriageInfo={showMarriageInfo}
-            />
-          ))
-        ) : (
-          // Regular persons
-          (relatives as Person[]).map((person) => (
-            <RelativeCard 
-              key={person.id}
-              person={person}
-            />
-          ))
+        {hasRelatives && (
+          <>
+            {isMarriageArray ? (
+              // Marriages with spouse info
+              (relatives as { person: Person; marriageYear?: number; marriageDate?: string }[]).map((item, index) => (
+                <RelativeCard 
+                  key={index}
+                  person={item.person}
+                  marriageYear={item.marriageYear}
+                  marriageDate={item.marriageDate}
+                  showMarriageInfo={showMarriageInfo}
+                />
+              ))
+            ) : (
+              // Regular persons
+              (relatives as Person[]).map((person) => (
+                <RelativeCard 
+                  key={person.id}
+                  person={person}
+                />
+              ))
+            )}
+          </>
+        )}
+        {!hasRelatives && isEditing && (
+          <div className={styles.emptyState}>
+            Nessun parente aggiunto
+          </div>
         )}
       </div>
     </div>

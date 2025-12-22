@@ -3,14 +3,21 @@
 
 .relativeSection {
   margin-bottom: $spacing-2xl;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid $border-color;
 
   h2 {
     font-size: $font-size-xl;
     font-weight: 700;
     color: $text-color;
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-sm;
-    border-bottom: 2px solid $border-color;
+    margin: 0;
   }
 }
 
@@ -47,5 +54,12 @@
   @media (max-width: 768px) {
     grid-column: 1;
   }
+}
+
+.emptyState {
+  padding: $spacing-xl;
+  text-align: center;
+  color: $text-light;
+  font-style: italic;
 }
 
