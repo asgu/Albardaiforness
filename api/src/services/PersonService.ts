@@ -307,6 +307,7 @@ export class PersonService {
     query?: string,
     serverCode?: string,
     filters?: {
+      id?: string;
       firstName?: string;
       lastName?: string;
       nickName?: string;
@@ -343,6 +344,16 @@ export class PersonService {
 
     // Advanced search by specific fields
     if (filters) {
+      if (filters.id) {
+        // Search by ID or originalId
+        const isNumeric = /^\d+$/.test(filters.id);
+        if (isNumeric) {
+          where.OR = [
+            { id: BigInt(filters.id) },
+            { originalId: BigInt(filters.id) },
+          ];
+        }
+      }
       if (filters.firstName) {
         where.firstName = { contains: filters.firstName };
       }

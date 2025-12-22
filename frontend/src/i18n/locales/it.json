@@ -33,6 +33,7 @@
     "placeholder": "Cerca una persona...",
     "advancedSearch": "Ricerca avanzata",
     "simpleSearch": "Ricerca semplice",
+    "id": "ID",
     "firstName": "Nome",
     "lastName": "Cognome",
     "nickName": "Soprannome",

@@ -4,54 +4,9 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui';
 import { useTranslations } from '@/i18n/useTranslations';
+import { capitalizeWords } from '@/utils/string';
+import { Person } from '@/types';
 import styles from './PersonTimeline.module.scss';
-
-interface Person {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthYear?: number;
-  birthMonth?: number;
-  birthDay?: number;
-  deathYear?: number;
-  deathMonth?: number;
-  deathDay?: number;
-  gender?: string;
-  father?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  } | null;
-  mother?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  } | null;
-  children?: Array<{
-    id: string;
-    firstName: string;
-    lastName: string;
-    birthYear?: number;
-    gender?: string;
-  }>;
-  marriages?: Array<{
-    id: string;
-    marriageYear?: number;
-    marriageMonth?: number;
-    marriageDay?: number;
-    divorceYear?: number;
-    person1?: {
-      id: string;
-      firstName: string;
-      lastName: string;
-    };
-    person2?: {
-      id: string;
-      firstName: string;
-      lastName: string;
-    };
-  }>;
-}
 
 interface TimelineEvent {
   year: number;
@@ -83,18 +38,18 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
     }
 
     // Браки
-    person.marriages?.forEach((marriage) => {
-      const spouse = marriage.person1?.id === person.id ? marriage.person2 : marriage.person1;
+    person.spouses?.forEach((marriage) => {
+      const spouse = marriage.person;
       
       if (marriage.marriageYear && spouse) {
         timelineEvents.push({
           year: marriage.marriageYear,
           type: 'marriage',
           description: t('timeline.married'),
-          relatedPerson: {
-            id: spouse.id,
-            name: `${spouse.firstName} ${spouse.lastName}`,
-          },
+        relatedPerson: {
+          id: spouse.id,
+          name: `${capitalizeWords(spouse.firstName)} ${capitalizeWords(spouse.lastName)}`,
+        },
         });
       }
 
@@ -103,10 +58,10 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
           year: marriage.divorceYear,
           type: 'divorce',
           description: t('timeline.divorced'),
-          relatedPerson: {
-            id: spouse.id,
-            name: `${spouse.firstName} ${spouse.lastName}`,
-          },
+        relatedPerson: {
+          id: spouse.id,
+          name: `${capitalizeWords(spouse.firstName)} ${capitalizeWords(spouse.lastName)}`,
+        },
         });
       }
     });
@@ -122,10 +77,10 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
           year: child.birthYear,
           type: 'child_birth',
           description: childType,
-          relatedPerson: {
-            id: child.id,
-            name: `${child.firstName} ${child.lastName}`,
-          },
+        relatedPerson: {
+          id: child.id,
+          name: `${capitalizeWords(child.firstName)} ${capitalizeWords(child.lastName)}`,
+        },
         });
       }
     });

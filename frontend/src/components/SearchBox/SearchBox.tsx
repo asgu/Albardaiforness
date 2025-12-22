@@ -11,6 +11,7 @@ import styles from './SearchBox.module.scss';
 interface SearchBoxProps {
   initialValues?: {
     q?: string;
+    id?: string;
     firstName?: string;
     lastName?: string;
     nickName?: string;
@@ -31,6 +32,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
   const [query, setQuery] = useState(initialValues?.q || '');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
+    id: initialValues?.id || '',
     firstName: initialValues?.firstName || '',
     lastName: initialValues?.lastName || '',
     nickName: initialValues?.nickName || '',
@@ -48,6 +50,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
     if (initialValues) {
       setQuery(initialValues.q || '');
       setAdvancedFilters({
+        id: initialValues.id || '',
         firstName: initialValues.firstName || '',
         lastName: initialValues.lastName || '',
         nickName: initialValues.nickName || '',
@@ -86,6 +89,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
   const handleReset = () => {
     setQuery('');
     setAdvancedFilters({
+      id: '',
       firstName: '',
       lastName: '',
       nickName: '',
@@ -105,6 +109,15 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
       {showAdvanced && (
         <form onSubmit={handleAdvancedSearch} className={styles.advancedForm}>
           <div className={styles.formGrid}>
+            <div className={styles.fullWidth}>
+              <Input
+                type="text"
+                value={advancedFilters.id}
+                onChange={(e) => setAdvancedFilters({...advancedFilters, id: e.target.value})}
+                placeholder={t('search.id')}
+              />
+            </div>
+
             <div className={styles.fullWidth}>
               <Input
                 type="text"
@@ -219,7 +232,6 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => setShowAdvanced(true)}
               placeholder={t('search.placeholder')}
             />
           </div>

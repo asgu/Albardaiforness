@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Person } from '@/types';
 import { Avatar } from '@/components/ui';
+import { capitalizeWords } from '@/utils/string';
 import styles from './RelativeCard.module.scss';
 
 interface RelativeCardProps {
@@ -68,16 +69,16 @@ export default function RelativeCard({
 
       <div className={styles.info}>
         <div className={styles.name}>
-          <span className={styles.lastName}>{person.lastName}</span>
-          <span className={styles.firstName}>{person.firstName}</span>
+          <span className={styles.lastName}>{capitalizeWords(person.lastName)}</span>
+          <span className={styles.firstName}>{capitalizeWords(person.firstName)}</span>
         </div>
 
         {person.nickName && (
-          <div className={styles.nickName}>"{person.nickName}"</div>
+          <div className={styles.nickName}>"{capitalizeWords(person.nickName)}"</div>
         )}
 
         {person.maidenName && (
-          <div className={styles.maidenName}>({person.maidenName})</div>
+          <div className={styles.maidenName}>({capitalizeWords(person.maidenName)})</div>
         )}
 
         {lifespan && (

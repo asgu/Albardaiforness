@@ -4,11 +4,11 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header/Header';
 import SearchBox from '@/components/SearchBox/SearchBox';
+import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import { personApi } from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
-import Link from 'next/link';
-import { Card, Avatar, Button, Loader } from '@/components/ui';
+import { Button, Loader } from '@/components/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 
@@ -16,6 +16,7 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const serverParam = searchParams.get('server');
+  const id = searchParams.get('id') || '';
   const firstName = searchParams.get('firstName') || '';
   const lastName = searchParams.get('lastName') || '';
   const nickName = searchParams.get('nickName') || '';
@@ -35,10 +36,10 @@ function SearchContent() {
   const [showSearchForm, setShowSearchForm] = useState(false);
 
   useEffect(() => {
-    if (query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) {
+    if (query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) {
       performSearch();
     }
-  }, [query, serverParam, firstName, lastName, nickName, birthYear, deathYear, gender, birthPlace, occupation, note]);
+  }, [query, serverParam, id, firstName, lastName, nickName, birthYear, deathYear, gender, birthPlace, occupation, note]);
 
   const performSearch = async () => {
     setLoading(true);
@@ -49,6 +50,7 @@ function SearchContent() {
       const params: any = { server };
       
       if (query) params.q = query;
+      if (id) params.id = id;
       if (firstName) params.firstName = firstName;
       if (lastName) params.lastName = lastName;
       if (nickName) params.nickName = nickName;
@@ -69,13 +71,10 @@ function SearchContent() {
     }
   };
 
-  const getPersonUrlId = (person: PersonSearchResult): string => {
-    return person.originalId || person.id;
-  };
-
   const getSearchSummary = () => {
     const parts: string[] = [];
     if (query) parts.push(`"${query}"`);
+    if (id) parts.push(`ID: ${id}`);
     if (firstName) parts.push(`Nome: ${firstName}`);
     if (lastName) parts.push(`Cognome: ${lastName}`);
     if (nickName) parts.push(`Soprannome: ${nickName}`);
@@ -106,6 +105,7 @@ function SearchContent() {
               <SearchBox 
                 initialValues={{
                   q: query,
+                  id,
                   firstName,
                   lastName,
                   nickName,
@@ -120,7 +120,7 @@ function SearchContent() {
             </div>
           )}
           
-          {(query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
+          {(query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.searchInfo}>
               <p>Risultati per: <strong>{getSearchSummary()}</strong></p>
               {serverParam && <p>Server: <strong>{serverParam}</strong></p>}
@@ -137,7 +137,7 @@ function SearchContent() {
             </div>
           )}
 
-          {!loading && !error && results.length === 0 && (query || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
+          {!loading && !error && results.length === 0 && (query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.noResults}>
               <p>Nessun risultato trovato</p>
             </div>
@@ -148,30 +148,10 @@ function SearchContent() {
               <p className={styles.count}>Trovati {results.length} risultati</p>
               <div className={styles.resultsList}>
                 {results.map((person) => (
-                  <Link
-                    key={person.id}
-                    href={`/person/${getPersonUrlId(person)}`}
-                    className={styles.resultLink}
-                  >
-                    <Card hoverable padding="md" className={styles.resultCard}>
-                      <div className={styles.cardContent}>
-                        <Avatar 
-                          gender={person.gender}
-                        />
-                        <div className={styles.info}>
-                          <h3>
-                            {person.lastName.toUpperCase()} {person.firstName}
-                            {person.nickName && (
-                              <span className={styles.nickName}> "{person.nickName}"</span>
-                            )}
-                          </h3>
-                          <p className={styles.dates}>
-                            {person.birthYear || '?'} - {person.deathYear || '?'}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
+                  <RelativeCard 
+                    key={person.id} 
+                    person={person}
+                  />
                 ))}
               </div>
             </div>

@@ -9,6 +9,7 @@ import { Button, Input, Select } from '@/components/ui';
 import { personApi } from '@/lib/api';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import EditableField from '@/components/EditableField/EditableField';
+import { capitalizeWords } from '@/utils/string';
 import styles from './PersonalInfo.module.scss';
 
 interface PersonalInfoProps {
@@ -152,16 +153,16 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
             </>
           ) : (
             <>
-              <div className={styles.lastName}>{person.lastName.toUpperCase()}</div>
-              <div className={styles.firstName}>{formatName(person.firstName)}</div>
+              <div className={styles.lastName}>{capitalizeWords(person.lastName).toUpperCase()}</div>
+              <div className={styles.firstName}>{formatName(capitalizeWords(person.firstName))}</div>
               {person.nickName && (
                 <div className={styles.nickName}>
-                  <span className={styles.secondary}>"{person.nickName}"</span>
+                  <span className={styles.secondary}>"{capitalizeWords(person.nickName)}"</span>
                 </div>
               )}
               {person.maidenName && (
                 <div className={styles.maidenName}>
-                  <span className={styles.secondary}>({person.maidenName})</span>
+                  <span className={styles.secondary}>({capitalizeWords(person.maidenName)})</span>
                 </div>
               )}
             </>
@@ -228,7 +229,7 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
       <div className={styles.profile}>
         <table className={styles.profileDetails}>
           <tbody>
-            <PersonInfoRow label={t('person.id')} value={person.id} />
+            <PersonInfoRow label={t('person.id')} value={person.originalId || person.id} />
             
             {isEditing ? (
               <tr>

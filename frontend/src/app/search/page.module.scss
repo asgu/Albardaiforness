@@ -89,58 +89,14 @@
 }
 
 .resultsList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.resultLink {
-  text-decoration: none;
-  color: inherit;
-}
-
-.resultCard {
-  height: 100%;
-}
-
-.cardContent {
   display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.info {
-  flex: 1;
-  min-width: 0;
-
-  h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 5px 0;
-    color: $text-color;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    .nickName {
-      color: #666;
-      font-weight: 400;
-      font-size: 14px;
-    }
-  }
-
-  .dates {
-    font-size: 14px;
-    color: #999;
-    margin: 0;
-  }
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-  .resultsList {
-    grid-template-columns: 1fr;
-  }
-
   .container h1 {
     font-size: 24px;
   }

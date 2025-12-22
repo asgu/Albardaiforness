@@ -33,6 +33,7 @@
     "placeholder": "Найти человека...",
     "advancedSearch": "Расширенный поиск",
     "simpleSearch": "Простой поиск",
+    "id": "ID",
     "firstName": "Имя",
     "lastName": "Фамилия",
     "nickName": "Прозвище",

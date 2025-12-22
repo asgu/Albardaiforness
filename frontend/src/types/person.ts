@@ -65,14 +65,21 @@ export interface Person {
 }
 
 export interface Marriage {
-  person: Person;
+  id?: string;
+  person?: Person;
+  person1?: Person;
+  person2?: Person;
   marriageYear?: number;
+  marriageMonth?: number;
+  marriageDay?: number;
   marriageDate?: string;
   marriagePlace?: string;
   divorceYear?: number;
+  divorceMonth?: number;
+  divorceDay?: number;
   divorceDate?: string;
   divorcePlace?: string;
-  isCurrent: boolean;
+  isCurrent?: boolean;
   notes?: string;
 }
 

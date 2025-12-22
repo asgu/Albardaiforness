@@ -33,6 +33,7 @@
     "placeholder": "Search for a person...",
     "advancedSearch": "Advanced search",
     "simpleSearch": "Simple search",
+    "id": "ID",
     "firstName": "First name",
     "lastName": "Last name",
     "nickName": "Nickname",
