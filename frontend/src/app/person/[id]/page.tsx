@@ -11,7 +11,7 @@ async function getPerson(id: string): Promise<Person | null> {
       ? 'http://localhost:3300'
       : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300');
     
-    const response = await fetch(`${apiUrl}/person/${id}`, {
+    const response = await fetch(`${apiUrl}/api/person/${id}`, {
       cache: 'no-store', // Всегда получаем свежие данные
     });
 
