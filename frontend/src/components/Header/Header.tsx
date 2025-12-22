@@ -61,9 +61,15 @@ export default function Header() {
         <nav className={styles.nav}>
           <Link href="/">{t('common.home')}</Link>
           <Link href="/gallery">{t('common.gallery')}</Link>
-          <Link href="/contacts">{t('common.contacts')}</Link>
+          {!isAuthenticated && (
+            <Link href="/contacts">{t('common.contacts')}</Link>
+          )}
           {isAuthenticated && (
-            <Link href="/admin">{t('common.admin')}</Link>
+            <>
+              <Link href="/person/new">{t('common.addPerson')}</Link>
+              <Link href="/users">{t('common.users')}</Link>
+              <Link href="/messages">{t('common.messages')}</Link>
+            </>
           )}
         </nav>
 

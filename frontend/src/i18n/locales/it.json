@@ -7,6 +7,9 @@
     "admin": "Admin",
     "login": "Accedi",
     "logout": "Esci",
+    "addPerson": "Aggiungi persona",
+    "users": "Utenti",
+    "messages": "Messaggi",
     "loading": "Caricamento...",
     "error": "Errore",
     "notFound": "Non trovato",
@@ -76,6 +79,16 @@
   "birthdays": {
     "title": "Compleanni di oggi",
     "noOne": "Nessun compleanno oggi"
+  },
+  "timeline": {
+    "title": "Eventi della vita",
+    "born": "Nato/a",
+    "died": "Morto/a",
+    "married": "Sposato/a con",
+    "divorced": "Divorziato/a da",
+    "childBorn": "Nato/a figlio/a",
+    "sonBorn": "Nato figlio",
+    "daughterBorn": "Nata figlia"
   }
 }
 

@@ -6,6 +6,7 @@ import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import { Person, Gender } from '@/types';
 import RelativesSection from '@/components/RelativesSection/RelativesSection';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
+import PersonTimeline from '@/components/PersonTimeline/PersonTimeline';
 import styles from './PersonProfile.module.scss';
 
 interface PersonProfileProps {
@@ -171,6 +172,9 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
             title={`Figli${person.children ? ` (${person.children.length})` : ''}`}
             relatives={person.children}
           />
+
+          {/* Timeline */}
+          <PersonTimeline person={person} />
         </div>
       </div>
     </div>

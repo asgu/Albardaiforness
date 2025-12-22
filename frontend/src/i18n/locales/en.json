@@ -7,6 +7,9 @@
     "admin": "Admin",
     "login": "Login",
     "logout": "Logout",
+    "addPerson": "Add person",
+    "users": "Users",
+    "messages": "Messages",
     "loading": "Loading...",
     "error": "Error",
     "notFound": "Not found",
@@ -76,6 +79,16 @@
   "birthdays": {
     "title": "Birthdays today",
     "noOne": "No birthdays today"
+  },
+  "timeline": {
+    "title": "Life Events",
+    "born": "Born",
+    "died": "Died",
+    "married": "Married to",
+    "divorced": "Divorced from",
+    "childBorn": "Child born",
+    "sonBorn": "Son born",
+    "daughterBorn": "Daughter born"
   }
 }
 

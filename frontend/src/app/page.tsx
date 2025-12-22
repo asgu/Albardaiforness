@@ -5,6 +5,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServerInfo } from '@/store/slices/serverSlice';
 import Header from '@/components/Header/Header';
 import SearchBox from '@/components/SearchBox/SearchBox';
+import BirthdayList from '@/components/BirthdayList/BirthdayList';
 import SplashScreen from '@/components/SplashScreen/SplashScreen';
 import styles from './page.module.scss';
 
@@ -32,6 +33,7 @@ export default function Home() {
       {showSplash && <SplashScreen onClose={handleCloseSplash} serverInfo={serverInfo} />}
       <main className={styles.main}>
         <SearchBox />
+        <BirthdayList />
       </main>
     </>
   );

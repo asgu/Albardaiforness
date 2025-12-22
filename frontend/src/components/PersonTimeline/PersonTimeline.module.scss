@@ -1,0 +1,105 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.timeline {
+  margin-top: $spacing-xl;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-bold;
+  color: $text-color;
+  margin: 0 0 $spacing-xl 0;
+}
+
+.events {
+  position: relative;
+  padding-left: $spacing-xl;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $border-color;
+  }
+}
+
+.event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 60px auto 1fr;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  align-items: start;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.year {
+  font-size: $font-size-sm;
+  font-weight: $font-semibold;
+  color: $text-light;
+  text-align: right;
+  padding-top: 2px;
+}
+
+.marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $bg-color;
+  border: 3px solid $primary-color;
+  position: relative;
+  margin-top: 4px;
+  z-index: 1;
+}
+
+.content {
+  padding-bottom: $spacing-md;
+}
+
+.description {
+  font-size: $font-size-base;
+  color: $text-color;
+  margin-bottom: $spacing-xs;
+}
+
+.relatedPerson {
+  display: inline-block;
+  font-size: $font-size-sm;
+  color: $primary-color;
+  font-weight: $font-medium;
+  transition: color $transition-base;
+  
+  &:hover {
+    color: $primary-hover;
+    text-decoration: underline;
+  }
+}
+
+// Event type colors
+.birth .marker {
+  border-color: #10b981;
+}
+
+.marriage .marker {
+  border-color: #f59e0b;
+}
+
+.divorce .marker {
+  border-color: #ef4444;
+}
+
+.child_birth .marker {
+  border-color: #06b6d4;
+}
+
+.death .marker {
+  border-color: #64748b;
+}
+
