@@ -7,7 +7,7 @@ import { capitalizeWords } from '@/utils/string';
 import { getPersonUrlId, getGenderIcon, getLifeYears } from '@/utils/person';
 import styles from './RelativeCard.module.scss';
 
-interface RelativeCardProps {
+export interface RelativeCardProps {
   person: PersonSummary & {
     maidenName?: string;
   };

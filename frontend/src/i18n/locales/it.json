@@ -21,7 +21,8 @@
     "delete": "Elimina",
     "edit": "Modifica",
     "done": "Fine",
-    "clear": "Pulisci"
+    "clear": "Pulisci",
+    "clickToEdit": "Clicca per modificare"
   },
   "header": {
     "searchPlaceholder": "Cerca per nome...",

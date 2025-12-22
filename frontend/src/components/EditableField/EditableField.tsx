@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui';
+import { useTranslations } from '@/i18n/useTranslations';
 import classNames from 'classnames';
 import styles from './EditableField.module.scss';
 
@@ -22,6 +23,7 @@ export default function EditableField({
   className,
   hint,
 }: EditableFieldProps) {
+  const { t } = useTranslations();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +71,7 @@ export default function EditableField({
         className={classNames(styles.displayValue, className)}
         onClick={() => setIsEditing(true)}
       >
-        {value || <span className={styles.placeholder}>{placeholder || 'Clicca per modificare'}</span>}
+        {value || <span className={styles.placeholder}>{placeholder || t('common.clickToEdit')}</span>}
       </div>
     );
   }

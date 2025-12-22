@@ -21,7 +21,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "done": "Done",
-    "clear": "Clear"
+    "clear": "Clear",
+    "clickToEdit": "Click to edit"
   },
   "header": {
     "searchPlaceholder": "Search by name...",
