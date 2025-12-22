@@ -8,11 +8,14 @@ export class AuthService {
   /**
    * Verify password against FOSUserBundle SHA-512 hash
    * Format: {encoded_hash}{salt}
-   * FOSUserBundle uses: hash_pbkdf2('sha512', password, salt, 5000, 40, true)
+   * FOSUserBundle sha512 algorithm:
+   * 1. salted = password + '{' + salt + '}'
+   * 2. digest = sha512(salted) [binary]
+   * 3. for i = 1 to 4999: digest = sha512(digest + salted) [binary]
+   * 4. encoded = base64(digest)
    */
   private verifyFOSPassword(password: string, encodedPassword: string): boolean {
     // FOSUserBundle format: {hash}{salt}
-    // Hash is base64 encoded SHA-512 with PBKDF2
     const parts = encodedPassword.split('{');
     if (parts.length !== 3) {
       return false;
@@ -21,10 +24,20 @@ export class AuthService {
     const hash = parts[1].replace('}', '');
     const salt = parts[2].replace('}', '');
 
-    // FOSUserBundle uses PBKDF2 with SHA-512, 5000 iterations, 40 bytes length
-    const testHash = crypto
-      .pbkdf2Sync(password, salt, 5000, 40, 'sha512')
-      .toString('base64');
+    // Prepare salted password
+    const salted = password + '{' + salt + '}';
+    
+    // First iteration
+    let digest = crypto.createHash('sha512').update(salted).digest();
+    
+    // Remaining 4999 iterations
+    for (let i = 1; i < 5000; i++) {
+      const combined = Buffer.concat([digest, Buffer.from(salted, 'utf8')]);
+      digest = crypto.createHash('sha512').update(combined).digest();
+    }
+    
+    // Encode to base64
+    const testHash = digest.toString('base64');
 
     return testHash === hash;
   }
