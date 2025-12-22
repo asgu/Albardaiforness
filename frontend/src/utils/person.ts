@@ -155,7 +155,7 @@ export function getAllChildren(person: Person): Person[] {
  */
 export function getAllSpouses(person: Person): Person[] {
   if (!person.spouses) return [];
-  return person.spouses.map((marriage) => marriage.person);
+  return person.spouses.map((marriage) => marriage.person).filter((p): p is Person => !!p);
 }
 
 /**
