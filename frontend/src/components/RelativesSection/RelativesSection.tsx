@@ -24,6 +24,11 @@ export default function RelativesSection({
 }: RelativesSectionProps) {
   const hasRelatives = relatives && relatives.length > 0;
 
+  // Don't show empty sections when not editing
+  if (!hasRelatives && !isEditing) {
+    return null;
+  }
+
   const isMarriageArray = hasRelatives && relatives!.length > 0 && 'person' in relatives![0];
 
   // Special handling for parents section
@@ -31,6 +36,11 @@ export default function RelativesSection({
     const persons = (relatives as Person[]) || [];
     const father = persons.find(p => p.gender === 'male');
     const mother = persons.find(p => p.gender === 'female');
+
+    // Don't show empty parents section when not editing
+    if (!father && !mother && !isEditing) {
+      return null;
+    }
 
     return (
       <div className={styles.relativeSection}>

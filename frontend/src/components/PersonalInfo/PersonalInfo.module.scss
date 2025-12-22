@@ -106,22 +106,6 @@
   }
 }
 
-.treeButton {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  }
-}
 
 .lastName {
   font-size: 32px;
@@ -170,11 +154,23 @@
       font-weight: 600;
       color: #6c757d;
       width: 40%;
+      vertical-align: top;
+      padding-top: 16px;
     }
     
     &:last-child {
       color: #212529;
     }
+  }
+}
+
+.dateInputs {
+  display: flex;
+  gap: 8px;
+  
+  // Make Input components in date row take equal width
+  > div {
+    flex: 1;
   }
 }
 

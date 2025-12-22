@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
 import { Person } from '@/types';
-import { Button } from '@/components/ui';
+import { Button, Input, Select } from '@/components/ui';
 import { personApi } from '@/lib/api';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import EditableField from '@/components/EditableField/EditableField';
@@ -91,7 +91,9 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
 
           <div className={styles.actionButtons}>
             <Link href={`/tree/${getPersonUrlId(person)}`}>
-              <button className={styles.treeButton}>{t('person.tree')}</button>
+              <Button variant="secondary">
+                {t('person.tree')}
+              </Button>
             </Link>
             {isAuthenticated && (
               <Button 
@@ -208,21 +210,134 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
           <tbody>
             <PersonInfoRow label={t('person.id')} value={person.id} />
             
-            <PersonInfoRow label={t('person.gender')}>
-              {getGenderIcon(person.gender)} {getGenderLabel(person.gender)}
-            </PersonInfoRow>
+            {isEditing ? (
+              <tr>
+                <td>{t('person.gender')}</td>
+                <td>
+                  <Select
+                    value={person.gender || ''}
+                    onChange={(value) => handleSaveField('gender', value)}
+                    options={[
+                      { value: '', label: t('person.unknown') },
+                      { value: 'male', label: t('person.male') },
+                      { value: 'female', label: t('person.female') }
+                    ]}
+                  />
+                </td>
+              </tr>
+            ) : (
+              <PersonInfoRow label={t('person.gender')}>
+                {getGenderIcon(person.gender)} {getGenderLabel(person.gender)}
+              </PersonInfoRow>
+            )}
             
-            <PersonInfoRow 
-              label={t('person.birth')} 
-              value={formatDate(person.birthYear, person.birthMonth, person.birthDay, person.birthDate)} 
-            />
-            <PersonInfoRow label={t('person.birthPlace')} value={person.birthPlace} />
-            <PersonInfoRow 
-              label={t('person.death')} 
-              value={formatDate(person.deathYear, person.deathMonth, person.deathDay, person.deathDate)} 
-            />
-            <PersonInfoRow label={t('person.deathPlace')} value={person.deathPlace} />
-            <PersonInfoRow label={t('person.burialPlace')} value={person.burialPlace} />
+            {isEditing ? (
+              <>
+                <tr>
+                  <td>{t('person.birth')}</td>
+                  <td>
+                    <div className={styles.dateInputs}>
+                      <Input
+                        type="number"
+                        placeholder={t('person.year')}
+                        value={person.birthYear || ''}
+                        onChange={(e) => handleSaveField('birthYear', e.target.value)}
+                      />
+                      <Input
+                        type="number"
+                        placeholder={t('person.month')}
+                        min="1"
+                        max="12"
+                        value={person.birthMonth || ''}
+                        onChange={(e) => handleSaveField('birthMonth', e.target.value)}
+                      />
+                      <Input
+                        type="number"
+                        placeholder={t('person.day')}
+                        min="1"
+                        max="31"
+                        value={person.birthDay || ''}
+                        onChange={(e) => handleSaveField('birthDay', e.target.value)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t('person.birthPlace')}</td>
+                  <td>
+                    <EditableField
+                      value={person.birthPlace || ''}
+                      onSave={(value) => handleSaveField('birthPlace', value)}
+                      placeholder={t('person.birthPlace')}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t('person.death')}</td>
+                  <td>
+                    <div className={styles.dateInputs}>
+                      <Input
+                        type="number"
+                        placeholder={t('person.year')}
+                        value={person.deathYear || ''}
+                        onChange={(e) => handleSaveField('deathYear', e.target.value)}
+                      />
+                      <Input
+                        type="number"
+                        placeholder={t('person.month')}
+                        min="1"
+                        max="12"
+                        value={person.deathMonth || ''}
+                        onChange={(e) => handleSaveField('deathMonth', e.target.value)}
+                      />
+                      <Input
+                        type="number"
+                        placeholder={t('person.day')}
+                        min="1"
+                        max="31"
+                        value={person.deathDay || ''}
+                        onChange={(e) => handleSaveField('deathDay', e.target.value)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t('person.deathPlace')}</td>
+                  <td>
+                    <EditableField
+                      value={person.deathPlace || ''}
+                      onSave={(value) => handleSaveField('deathPlace', value)}
+                      placeholder={t('person.deathPlace')}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t('person.burialPlace')}</td>
+                  <td>
+                    <EditableField
+                      value={person.burialPlace || ''}
+                      onSave={(value) => handleSaveField('burialPlace', value)}
+                      placeholder={t('person.burialPlace')}
+                    />
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <>
+                <PersonInfoRow 
+                  label={t('person.birth')} 
+                  value={formatDate(person.birthYear, person.birthMonth, person.birthDay, person.birthDate)} 
+                />
+                <PersonInfoRow label={t('person.birthPlace')} value={person.birthPlace} />
+                <PersonInfoRow 
+                  label={t('person.death')} 
+                  value={formatDate(person.deathYear, person.deathMonth, person.deathDay, person.deathDate)} 
+                />
+                <PersonInfoRow label={t('person.deathPlace')} value={person.deathPlace} />
+                <PersonInfoRow label={t('person.burialPlace')} value={person.burialPlace} />
+              </>
+            )}
+            
             <PersonInfoRow label={t('person.age')} value={person.age ? `${person.age} ${t('person.years')}` : undefined} />
           </tbody>
         </table>
