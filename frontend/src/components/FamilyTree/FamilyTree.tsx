@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Person } from '@/types';
 import { Button } from '@/components/ui';
+import { getPersonUrlId, getFullName, getLifeYears } from '@/utils/person';
 import styles from './FamilyTree.module.scss';
 
 interface FamilyTreeProps {
@@ -73,20 +74,6 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
 
     addNode(person, 2, 0, 1);
     setNodes(treeNodes);
-  };
-
-  const getPersonUrlId = (p: Person): string => {
-    return p.originalId || p.id;
-  };
-
-  const formatName = (p: Person): string => {
-    return `${p.firstName} ${p.lastName}`;
-  };
-
-  const formatYears = (p: Person): string => {
-    const birth = p.birthYear || '?';
-    const death = p.deathYear || '?';
-    return `${birth} - ${death}`;
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -217,8 +204,8 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
               }}
             >
               <div className={`${styles.card} ${node.person.id === person.id ? styles.current : ''}`}>
-                <div className={styles.name}>{formatName(node.person)}</div>
-                <div className={styles.years}>{formatYears(node.person)}</div>
+                <div className={styles.name}>{getFullName(node.person)}</div>
+                <div className={styles.years}>{getLifeYears(node.person)}</div>
                 {node.person.nickName && (
                   <div className={styles.nickname}>"{node.person.nickName}"</div>
                 )}

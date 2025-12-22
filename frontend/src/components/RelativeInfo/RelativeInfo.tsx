@@ -45,6 +45,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         relatives={[person.father, person.mother].filter(Boolean) as Person[]}
         isParentsSection={true}
         isEditing={isEditing}
+        isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('father')}
       />
 
@@ -54,6 +55,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         relatives={person.spouses}
         showMarriageInfo={true}
         isEditing={isEditing}
+        isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('spouse')}
       />
 
@@ -62,6 +64,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         title={`${t('person.children')}${person.children ? ` (${person.children.length})` : ''}`}
         relatives={person.children}
         isEditing={isEditing}
+        isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('child')}
       />
 

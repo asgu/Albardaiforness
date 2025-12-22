@@ -8,12 +8,16 @@ import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import { personApi } from '@/lib/api';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
+import { selectIsAuthenticated } from '@/store/slices/authSlice';
+import { useTranslations } from '@/i18n/useTranslations';
 import { Button, Loader } from '@/components/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 
 function SearchContent() {
+  const { t } = useTranslations();
   const searchParams = useSearchParams();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const query = searchParams.get('q') || '';
   const serverParam = searchParams.get('server');
   const id = searchParams.get('id') || '';
@@ -65,7 +69,7 @@ function SearchContent() {
       setResults(response.data);
     } catch (err: any) {
       console.error('Search error:', err);
-      setError(err.response?.data?.message || 'Errore durante la ricerca');
+      setError(err.response?.data?.message || t('search.searchError'));
     } finally {
       setLoading(false);
     }
@@ -74,16 +78,16 @@ function SearchContent() {
   const getSearchSummary = () => {
     const parts: string[] = [];
     if (query) parts.push(`"${query}"`);
-    if (id) parts.push(`ID: ${id}`);
-    if (firstName) parts.push(`Nome: ${firstName}`);
-    if (lastName) parts.push(`Cognome: ${lastName}`);
-    if (nickName) parts.push(`Soprannome: ${nickName}`);
-    if (birthYear) parts.push(`Anno di nascita: ${birthYear}`);
-    if (deathYear) parts.push(`Anno di morte: ${deathYear}`);
-    if (gender) parts.push(`Sesso: ${gender === 'male' ? 'Maschio' : 'Femmina'}`);
-    if (birthPlace) parts.push(`Luogo di nascita: ${birthPlace}`);
-    if (occupation) parts.push(`Professione: ${occupation}`);
-    if (note) parts.push(`Note: ${note}`);
+    if (id) parts.push(`${t('person.id')}: ${id}`);
+    if (firstName) parts.push(`${t('search.firstName')}: ${firstName}`);
+    if (lastName) parts.push(`${t('search.lastName')}: ${lastName}`);
+    if (nickName) parts.push(`${t('search.nickName')}: ${nickName}`);
+    if (birthYear) parts.push(`${t('search.birthYear')}: ${birthYear}`);
+    if (deathYear) parts.push(`${t('search.deathYear')}: ${deathYear}`);
+    if (gender) parts.push(`${t('search.gender')}: ${gender === 'male' ? t('search.male') : t('search.female')}`);
+    if (birthPlace) parts.push(`${t('search.birthPlace')}: ${birthPlace}`);
+    if (occupation) parts.push(`${t('search.occupation')}: ${occupation}`);
+    if (note) parts.push(`${t('search.note')}: ${note}`);
     return parts.join(', ');
   };
 
@@ -91,12 +95,12 @@ function SearchContent() {
     <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1>Ricerca</h1>
+            <h1>{t('search.title')}</h1>
             <Button 
               variant="outline" 
               onClick={() => setShowSearchForm(!showSearchForm)}
             >
-              {showSearchForm ? 'Nascondi filtri' : 'Modifica ricerca'}
+              {showSearchForm ? t('search.hideFilters') : t('search.editSearch')}
             </Button>
           </div>
 
@@ -116,19 +120,20 @@ function SearchContent() {
                   note,
                   gender,
                 }}
+                isAuthenticated={isAuthenticated}
               />
             </div>
           )}
           
           {(query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.searchInfo}>
-              <p>Risultati per: <strong>{getSearchSummary()}</strong></p>
-              {serverParam && <p>Server: <strong>{serverParam}</strong></p>}
+              <p>{t('search.resultsFor')}: <strong>{getSearchSummary()}</strong></p>
+              {serverParam && <p>{t('search.server')}: <strong>{serverParam}</strong></p>}
             </div>
           )}
 
           {loading && (
-            <Loader text="Ricerca in corso..." />
+            <Loader text={t('search.searching')} />
           )}
 
           {error && (
@@ -139,18 +144,19 @@ function SearchContent() {
 
           {!loading && !error && results.length === 0 && (query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
             <div className={styles.noResults}>
-              <p>Nessun risultato trovato</p>
+              <p>{t('search.noResults')}</p>
             </div>
           )}
 
           {!loading && !error && results.length > 0 && (
             <div className={styles.results}>
-              <p className={styles.count}>Trovati {results.length} risultati</p>
+              <p className={styles.count}>{t('search.found')} {results.length} {t('search.results')}</p>
               <div className={styles.resultsList}>
                 {results.map((person) => (
                   <RelativeCard 
                     key={person.id} 
                     person={person}
+                    isAuthenticated={isAuthenticated}
                   />
                 ))}
               </div>

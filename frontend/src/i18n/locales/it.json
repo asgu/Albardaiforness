@@ -49,8 +49,15 @@
     "male": "Maschio",
     "female": "Femmina",
     "yearHint": "Esempi:\n1950 - anno esatto\n>1950 - dopo il 1950\n<1950 - prima del 1950\n1930-1950 - tra il 1930 e il 1950",
-    "noResults": "Nessun risultato trovato per \"{query}\"",
-    "searchError": "Errore durante la ricerca"
+    "noResults": "Nessun risultato trovato",
+    "searchError": "Errore durante la ricerca",
+    "hideFilters": "Nascondi filtri",
+    "editSearch": "Modifica ricerca",
+    "resultsFor": "Risultati per",
+    "server": "Server",
+    "searching": "Ricerca in corso...",
+    "found": "Trovati",
+    "results": "risultati"
   },
   "person": {
     "id": "ID",

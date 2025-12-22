@@ -49,8 +49,15 @@
     "male": "Male",
     "female": "Female",
     "yearHint": "Examples:\n1950 - exact year\n>1950 - after 1950\n<1950 - before 1950\n1930-1950 - between 1930 and 1950",
-    "noResults": "No results found for \"{query}\"",
-    "searchError": "Search error"
+    "noResults": "No results found",
+    "searchError": "Search error",
+    "hideFilters": "Hide filters",
+    "editSearch": "Edit search",
+    "resultsFor": "Results for",
+    "server": "Server",
+    "searching": "Searching...",
+    "found": "Found",
+    "results": "results"
   },
   "person": {
     "id": "ID",

@@ -118,9 +118,9 @@ export function isAlive(person: Person): boolean {
 /**
  * Получить годы жизни (1900 - 1980)
  */
-export function getLifeYears(person: Person): string {
+export function getLifeYears(person: Person | { birthYear?: number; deathYear?: number; deathDate?: string }): string {
   const birth = person.birthYear || '?';
-  const death = person.deathYear || (isAlive(person) ? '' : '?');
+  const death = person.deathYear || (!person.deathYear && !person.deathDate ? '' : '?');
   return death ? `${birth} - ${death}` : `${birth}`;
 }
 

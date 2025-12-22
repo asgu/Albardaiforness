@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PersonSummary } from '@/types';
 import { Avatar } from '@/components/ui';
 import { capitalizeWords } from '@/utils/string';
+import { getPersonUrlId, getGenderIcon, getLifeYears } from '@/utils/person';
 import styles from './RelativeCard.module.scss';
 
 interface RelativeCardProps {
@@ -13,45 +14,23 @@ interface RelativeCardProps {
   marriageYear?: number | null;
   marriageDate?: string | null;
   showMarriageInfo?: boolean;
+  isAuthenticated?: boolean;
 }
-
-// Helper to get person ID for URLs (prefer originalId for SEO)
-function getPersonUrlId(person: PersonSummary): string {
-  return person.originalId || person.id;
-}
-
-const getGenderIcon = (gender: string) => {
-  if (gender === 'male') return '♂';
-  if (gender === 'female') return '♀';
-  return '⚥';
-};
 
 export default function RelativeCard({ 
   person, 
   marriageYear,
   marriageDate,
-  showMarriageInfo = false 
+  showMarriageInfo = false,
+  isAuthenticated = false
 }: RelativeCardProps) {
-  const formatLifespan = () => {
-    if (person.birthYear && person.deathYear) {
-      return `${person.birthYear} - ${person.deathYear}`;
-    }
-    if (person.birthYear) {
-      return `${person.birthYear} - `;
-    }
-    if (person.deathYear) {
-      return ` - ${person.deathYear}`;
-    }
-    return null;
-  };
-
   const formatMarriageDate = () => {
     if (marriageDate) return marriageDate;
     if (marriageYear) return marriageYear.toString();
     return null;
   };
 
-  const lifespan = formatLifespan();
+  const lifespan = getLifeYears(person);
   const marriage = showMarriageInfo ? formatMarriageDate() : null;
 
   return (
@@ -75,6 +54,10 @@ export default function RelativeCard({
           <span className={styles.firstName}>{capitalizeWords(person.firstName)}</span>
         </div>
 
+        {isAuthenticated && (person.originalId || person.id) && (
+          <div className={styles.personId}>ID: {person.originalId || person.id}</div>
+        )}
+
         {person.nickName && (
           <div className={styles.nickName}>"{capitalizeWords(person.nickName)}"</div>
         )}
@@ -83,7 +66,7 @@ export default function RelativeCard({
           <div className={styles.maidenName}>({capitalizeWords(person.maidenName)})</div>
         )}
 
-        {lifespan && (
+        {lifespan && lifespan !== '?' && (
           <div className={styles.lifespan}>
             {lifespan}
           </div>

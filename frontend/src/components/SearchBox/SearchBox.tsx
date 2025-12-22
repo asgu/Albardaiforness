@@ -23,9 +23,10 @@ interface SearchBoxProps {
     note?: string;
     gender?: string;
   };
+  isAuthenticated?: boolean;
 }
 
-export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
+export default function SearchBox({ initialValues, isAuthenticated = false }: SearchBoxProps = {}) {
   const router = useRouter();
   const currentServer = useAppSelector(selectCurrentServer);
   const { t } = useTranslations();
@@ -109,14 +110,16 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
       {showAdvanced && (
         <form onSubmit={handleAdvancedSearch} className={styles.advancedForm}>
           <div className={styles.formGrid}>
-            <div className={styles.fullWidth}>
-              <Input
-                type="text"
-                value={advancedFilters.id}
-                onChange={(e) => setAdvancedFilters({...advancedFilters, id: e.target.value})}
-                placeholder={t('search.id')}
-              />
-            </div>
+            {isAuthenticated && (
+              <div className={styles.fullWidth}>
+                <Input
+                  type="text"
+                  value={advancedFilters.id}
+                  onChange={(e) => setAdvancedFilters({...advancedFilters, id: e.target.value})}
+                  placeholder={t('search.id')}
+                />
+              </div>
+            )}
 
             <div className={styles.fullWidth}>
               <Input

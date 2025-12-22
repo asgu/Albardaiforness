@@ -10,6 +10,7 @@ import { personApi } from '@/lib/api';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import EditableField from '@/components/EditableField/EditableField';
 import { capitalizeWords } from '@/utils/string';
+import { getPersonUrlId, getGenderIcon, formatDate } from '@/utils/person';
 import styles from './PersonalInfo.module.scss';
 
 interface PersonalInfoProps {
@@ -17,11 +18,6 @@ interface PersonalInfoProps {
   isAuthenticated: boolean;
   isEditing: boolean;
   onEditingChange: (editing: boolean) => void;
-}
-
-// Helper to get person ID for URLs (prefer originalId for SEO)
-function getPersonUrlId(person: Person): string {
-  return person.originalId || person.id;
 }
 
 export default function PersonalInfo({ person, isAuthenticated, isEditing, onEditingChange }: PersonalInfoProps) {
@@ -69,20 +65,6 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
       );
     }
     return <span className={styles.prime}>{firstName}</span>;
-  };
-
-  const formatDate = (year?: number, month?: number, day?: number, fullDate?: string) => {
-    if (fullDate) return fullDate;
-    if (year && month && day) return `${day}/${month}/${year}`;
-    if (year && month) return `${month}/${year}`;
-    if (year) return year.toString();
-    return '';
-  };
-
-  const getGenderIcon = (gender: string) => {
-    if (gender === 'male') return '♂';
-    if (gender === 'female') return '♀';
-    return '⚥';
   };
 
   const getGenderLabel = (gender: string) => {

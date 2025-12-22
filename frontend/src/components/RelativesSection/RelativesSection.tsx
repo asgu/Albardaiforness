@@ -11,6 +11,7 @@ interface RelativesSectionProps {
   showMarriageInfo?: boolean;
   isParentsSection?: boolean;
   isEditing?: boolean;
+  isAuthenticated?: boolean;
   onAddRelative?: () => void;
 }
 
@@ -20,6 +21,7 @@ export default function RelativesSection({
   showMarriageInfo = false,
   isParentsSection = false,
   isEditing = false,
+  isAuthenticated = false,
   onAddRelative
 }: RelativesSectionProps) {
   const hasRelatives = relatives && relatives.length > 0;
@@ -58,6 +60,7 @@ export default function RelativesSection({
               <RelativeCard 
                 key={father.id}
                 person={father}
+                isAuthenticated={isAuthenticated}
               />
             )}
           </div>
@@ -66,6 +69,7 @@ export default function RelativesSection({
               <RelativeCard 
                 key={mother.id}
                 person={mother}
+                isAuthenticated={isAuthenticated}
               />
             )}
           </div>
@@ -96,6 +100,7 @@ export default function RelativesSection({
                   marriageYear={item.marriageYear}
                   marriageDate={item.marriageDate}
                   showMarriageInfo={showMarriageInfo}
+                  isAuthenticated={isAuthenticated}
                 />
               ))
             ) : (
@@ -104,6 +109,7 @@ export default function RelativesSection({
                 <RelativeCard 
                   key={person.id}
                   person={person}
+                  isAuthenticated={isAuthenticated}
                 />
               ))
             )}

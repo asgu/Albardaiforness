@@ -4,20 +4,13 @@ import { useState, useEffect } from 'react';
 import { Input, Button, Modal } from '@/components/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
+import { PersonSummary } from '@/types';
 import styles from './AddRelativeModal.module.scss';
-
-interface Person {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthYear?: number;
-  deathYear?: number;
-}
 
 interface AddRelativeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (person: Person, relationType: string) => void;
+  onSelect: (person: PersonSummary, relationType: string) => void;
   relationType: 'father' | 'mother' | 'spouse' | 'child';
 }
 
@@ -29,7 +22,7 @@ export default function AddRelativeModal({
 }: AddRelativeModalProps) {
   const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
-  const [results, setResults] = useState<Person[]>([]);
+  const [results, setResults] = useState<PersonSummary[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
