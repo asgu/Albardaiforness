@@ -27,21 +27,16 @@ async function getPerson(id: string, host?: string): Promise<Person | null> {
       headers['X-Server-Host'] = host;
     }
     
-    console.log(`[Frontend] getPerson: id=${id}, host=${host}, headers=`, headers);
-    
     const response = await fetch(`${apiUrl}/api/person/${id}`, {
       cache: 'no-store', // Не кешируем
       headers,
     });
 
     if (!response.ok) {
-      console.error(`[Frontend] Response not OK: ${response.status}`);
       return null;
     }
 
-    const data = await response.json();
-    console.log(`[Frontend] Received person data:`, data.firstName, data.lastName, data.sourceDb);
-    return data;
+    return response.json();
   } catch (error) {
     console.error('Error fetching person:', error);
     return null;
