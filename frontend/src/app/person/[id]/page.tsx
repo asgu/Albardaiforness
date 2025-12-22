@@ -21,9 +21,10 @@ async function getPerson(id: string, host?: string): Promise<Person | null> {
     
     const headers: HeadersInit = {};
     
-    // Передаем Host заголовок для определения сервера в API
+    // Передаем кастомный заголовок для определения сервера в API
+    // (заголовок Host не работает с Node.js fetch)
     if (host) {
-      headers['Host'] = host;
+      headers['X-Server-Host'] = host;
     }
     
     console.log(`[Frontend] getPerson: id=${id}, host=${host}, headers=`, headers);
@@ -34,10 +35,13 @@ async function getPerson(id: string, host?: string): Promise<Person | null> {
     });
 
     if (!response.ok) {
+      console.error(`[Frontend] Response not OK: ${response.status}`);
       return null;
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log(`[Frontend] Received person data:`, data.firstName, data.lastName, data.sourceDb);
+    return data;
   } catch (error) {
     console.error('Error fetching person:', error);
     return null;
