@@ -31,7 +31,7 @@ export default function BirthdayList() {
 
   const loadBirthdays = async () => {
     try {
-      const response = await personApi.getBirthdaysToday();
+      const response = await personApi.getTodayBirthdays();
       setBirthdays(response.data);
     } catch (error) {
       console.error('Error loading birthdays:', error);
