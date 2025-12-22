@@ -167,14 +167,19 @@ function SearchContent() {
   );
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
+  const { t } = useTranslations();
   return (
     <>
       <Header />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>{t('common.loading')}</div>}>
         <SearchContent />
       </Suspense>
     </>
   );
+}
+
+export default function SearchPage() {
+  return <SearchPageContent />;
 }
 

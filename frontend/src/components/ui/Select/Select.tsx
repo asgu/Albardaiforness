@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
+import { useTranslations } from '@/i18n/useTranslations';
 import styles from './Select.module.scss';
 
 export interface SelectOption {
@@ -44,6 +45,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
     },
     ref
   ) => {
+    const { t } = useTranslations();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(controlledValue || defaultValue || '');
     const [searchQuery, setSearchQuery] = useState('');
@@ -188,7 +190,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
                     ref={searchInputRef}
                     type="text"
                     className={styles.searchInput}
-                    placeholder="Search..."
+                    placeholder={t('common.search')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onClick={(e) => e.stopPropagation()}

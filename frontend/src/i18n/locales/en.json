@@ -117,6 +117,14 @@
     "childBorn": "Child born",
     "sonBorn": "Son born",
     "daughterBorn": "Daughter born"
+  },
+  "auth": {
+    "login": "Login",
+    "loginSubtitle": "Sign in to your account",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Sign in",
+    "loggingIn": "Signing in..."
   }
 }
 

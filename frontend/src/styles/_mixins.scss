@@ -165,7 +165,6 @@
   transition: transform $transition-base, box-shadow $transition-base;
 
   &:hover {
-    transform: translateY(-2px);
     box-shadow: $shadow-lg;
   }
 }

@@ -69,7 +69,6 @@
     "death": "Morte",
     "birthPlace": "Luogo di nascita",
     "deathPlace": "Luogo di morte",
-    "years": "anni",
     "father": "Padre",
     "mother": "Madre",
     "spouse": "Coniuge",
@@ -118,6 +117,14 @@
     "childBorn": "Nato/a figlio/a",
     "sonBorn": "Nato figlio",
     "daughterBorn": "Nata figlia"
+  },
+  "auth": {
+    "login": "Accesso",
+    "loginSubtitle": "Accedi al tuo account",
+    "username": "Nome utente",
+    "password": "Password",
+    "loginButton": "Accedi",
+    "loggingIn": "Accesso in corso..."
   }
 }
 

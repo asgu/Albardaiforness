@@ -33,8 +33,8 @@ export default function LoginPage() {
     <div className={styles.container}>
       <Card className={styles.loginCard}>
         <div className={styles.header}>
-          <h1 className={styles.title}>Accesso</h1>
-          <p className={styles.subtitle}>Accedi al tuo account</p>
+          <h1 className={styles.title}>{t('auth.login')}</h1>
+          <p className={styles.subtitle}>{t('auth.loginSubtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -42,7 +42,7 @@ export default function LoginPage() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Nome utente"
+            placeholder={t('auth.username')}
             required
             fullWidth
           />
@@ -51,7 +51,7 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder={t('auth.password')}
             required
             fullWidth
           />
@@ -68,7 +68,7 @@ export default function LoginPage() {
             fullWidth
             disabled={isLoading}
           >
-            {isLoading ? 'Accesso in corso...' : 'Accedi'}
+            {isLoading ? t('auth.loggingIn') : t('auth.loginButton')}
           </Button>
         </form>
       </Card>

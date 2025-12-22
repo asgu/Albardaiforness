@@ -117,6 +117,14 @@
     "childBorn": "Родился/лась ребенок",
     "sonBorn": "Родился сын",
     "daughterBorn": "Родилась дочь"
+  },
+  "auth": {
+    "login": "Вход",
+    "loginSubtitle": "Войдите в свой аккаунт",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "loginButton": "Войти",
+    "loggingIn": "Вход..."
   }
 }
 

@@ -1,6 +1,10 @@
+'use client';
+
 import Loader from '@/components/ui/Loader/Loader';
+import { useTranslations } from '@/i18n/useTranslations';
 
 export default function Loading() {
-  return <Loader text="Caricamento..." fullScreen />;
+  const { t } = useTranslations();
+  return <Loader text={t('common.loading')} fullScreen />;
 }
 

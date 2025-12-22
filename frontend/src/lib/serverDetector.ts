@@ -1,14 +1,6 @@
-export type ServerCode = 'albaro' | 'preone' | 'raveo';
+import { Server } from '@/types';
 
-export interface Server {
-  id: number;
-  code: string;
-  name: string;
-  fullName: string | null;
-  domain: string | null;
-  color: string | null;
-  isActive: boolean;
-}
+export type ServerCode = 'albaro' | 'preone' | 'raveo';
 
 // Дефолтные серверы (будут заменены данными из API)
 export const DEFAULT_SERVERS: Record<ServerCode, Server> = {

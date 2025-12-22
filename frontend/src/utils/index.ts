@@ -4,4 +4,5 @@
  */
 
 export * from './person';
+export * from './string';
 
