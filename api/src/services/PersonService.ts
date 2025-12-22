@@ -471,7 +471,7 @@ export class PersonService {
       }
     }
 
-    return prisma.person.create({
+    const person = await prisma.person.create({
       data: {
         firstName: cleanData.firstName,
         lastName: cleanData.lastName,
@@ -494,7 +494,15 @@ export class PersonService {
         createdBy: userId,
         updatedBy: userId,
       },
+      include: {
+        primaryServer: true,
+        mother: true,
+        father: true,
+        avatarMedia: true,
+      },
     });
+
+    return person;
   }
 
   /**

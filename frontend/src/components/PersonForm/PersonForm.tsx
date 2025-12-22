@@ -110,7 +110,9 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
       } else {
         const response = await personApi.create(data);
         if (response.data && response.data.id) {
-          router.push(`/person/${response.data.id}`);
+          // Use internal id for newly created persons
+          const personId = response.data.originalId || response.data.id;
+          router.push(`/person/${personId}`);
         } else {
           router.push('/');
         }
