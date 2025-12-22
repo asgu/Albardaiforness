@@ -9,12 +9,7 @@
   box-shadow: $shadow-2xl;
   border: 1px solid $border-light;
   backdrop-filter: blur(10px);
-  transition: all $transition-base;
-  
-  &:hover {
-    box-shadow: $shadow-xl;
-    transform: translateY(-2px);
-  }
+  transition: box-shadow $transition-base;
 }
 
 .simpleForm {
@@ -34,6 +29,22 @@
 }
 
 .advancedForm {
+  animation: expandForm 0.3s ease-out;
+  transform-origin: top;
+  
+  @keyframes expandForm {
+    from {
+      opacity: 0;
+      transform: scaleY(0.95);
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+      max-height: 1000px;
+    }
+  }
+
   .formGrid {
     display: grid;
     grid-template-columns: 1fr;
