@@ -7,7 +7,7 @@ import styles from './RelativesSection.module.scss';
 
 interface RelativesSectionProps {
   title: string;
-  relatives?: Person[] | { person: Person; marriageYear?: number; marriageDate?: string }[];
+  relatives?: Person[] | Marriage[];
   showMarriageInfo?: boolean;
   isParentsSection?: boolean;
   isEditing?: boolean;
