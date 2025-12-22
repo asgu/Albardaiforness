@@ -9,6 +9,7 @@ import styles from './BirthdayList.module.scss';
 
 interface Person {
   id: string;
+  originalId?: string;
   firstName: string;
   lastName: string;
   birthYear?: number;
@@ -59,10 +60,11 @@ export default function BirthdayList() {
       <div className={styles.list}>
         {birthdays.map((person) => {
           const age = calculateAge(person.birthYear);
+          const personId = person.originalId || person.id;
           return (
             <Link 
               key={person.id} 
-              href={`/person/${person.id}`}
+              href={`/person/${personId}`}
               className={styles.birthdayItem}
             >
               <Avatar
