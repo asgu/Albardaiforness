@@ -221,7 +221,6 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setShowAdvanced(true)}
               placeholder={t('search.placeholder')}
-              autoFocus
             />
           </div>
           <div className={styles.buttonRow}>

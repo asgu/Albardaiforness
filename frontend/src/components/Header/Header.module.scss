@@ -9,7 +9,7 @@
   top: 0;
   z-index: 100;
   transition: all $transition-base;
-  height: 60px;
+  height: $header-height;
   backdrop-filter: none;
   
   &.authenticated {
