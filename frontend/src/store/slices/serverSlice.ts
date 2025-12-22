@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ServerCode, DEFAULT_SERVERS, Server } from '@/lib/serverDetector';
+import { ServerCode, DEFAULT_SERVERS } from '@/lib/serverDetector';
+import { Server } from '@/types';
 
 interface ServerState {
   currentServer: ServerCode;
