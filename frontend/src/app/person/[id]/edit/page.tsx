@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { personApi } from '@/lib/api';
+import Header from '@/components/Header/Header';
 import PersonForm from '@/components/PersonForm/PersonForm';
 import { cookies } from 'next/headers';
 
@@ -33,6 +34,11 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
     notFound();
   }
 
-  return <PersonForm mode="edit" person={person} />;
+  return (
+    <>
+      <Header />
+      <PersonForm mode="edit" person={person} />
+    </>
+  );
 }
 

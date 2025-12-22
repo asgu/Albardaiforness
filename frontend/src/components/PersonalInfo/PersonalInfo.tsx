@@ -26,15 +26,35 @@ function getPersonUrlId(person: Person): string {
 export default function PersonalInfo({ person, isAuthenticated, isEditing, onEditingChange }: PersonalInfoProps) {
   const { t } = useTranslations();
   const router = useRouter();
+  const [dateFields, setDateFields] = useState({
+    birthYear: person.birthYear?.toString() || '',
+    birthMonth: person.birthMonth?.toString() || '',
+    birthDay: person.birthDay?.toString() || '',
+    deathYear: person.deathYear?.toString() || '',
+    deathMonth: person.deathMonth?.toString() || '',
+    deathDay: person.deathDay?.toString() || '',
+  });
 
   const handleSaveField = async (field: string, value: string) => {
     try {
-      await personApi.update(person.id, { [field]: value });
+      // Convert empty strings to null for number fields
+      const processedValue = value === '' ? null : value;
+      await personApi.update(person.id, { [field]: processedValue });
       router.refresh();
     } catch (error) {
       console.error('Error saving field:', error);
       alert(t('common.error'));
     }
+  };
+
+  const handleDateFieldChange = (field: keyof typeof dateFields, value: string) => {
+    setDateFields(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDateFieldBlur = async (field: string, value: string) => {
+    // Convert to number or null
+    const numValue = value === '' ? null : parseInt(value, 10);
+    await handleSaveField(field, numValue as any);
   };
 
   const formatName = (firstName: string) => {
@@ -240,24 +260,27 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                       <Input
                         type="number"
                         placeholder={t('person.year')}
-                        value={person.birthYear || ''}
-                        onChange={(e) => handleSaveField('birthYear', e.target.value)}
+                        value={dateFields.birthYear}
+                        onChange={(e) => handleDateFieldChange('birthYear', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('birthYear', e.target.value)}
                       />
                       <Input
                         type="number"
                         placeholder={t('person.month')}
                         min="1"
                         max="12"
-                        value={person.birthMonth || ''}
-                        onChange={(e) => handleSaveField('birthMonth', e.target.value)}
+                        value={dateFields.birthMonth}
+                        onChange={(e) => handleDateFieldChange('birthMonth', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('birthMonth', e.target.value)}
                       />
                       <Input
                         type="number"
                         placeholder={t('person.day')}
                         min="1"
                         max="31"
-                        value={person.birthDay || ''}
-                        onChange={(e) => handleSaveField('birthDay', e.target.value)}
+                        value={dateFields.birthDay}
+                        onChange={(e) => handleDateFieldChange('birthDay', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('birthDay', e.target.value)}
                       />
                     </div>
                   </td>
@@ -279,24 +302,27 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                       <Input
                         type="number"
                         placeholder={t('person.year')}
-                        value={person.deathYear || ''}
-                        onChange={(e) => handleSaveField('deathYear', e.target.value)}
+                        value={dateFields.deathYear}
+                        onChange={(e) => handleDateFieldChange('deathYear', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('deathYear', e.target.value)}
                       />
                       <Input
                         type="number"
                         placeholder={t('person.month')}
                         min="1"
                         max="12"
-                        value={person.deathMonth || ''}
-                        onChange={(e) => handleSaveField('deathMonth', e.target.value)}
+                        value={dateFields.deathMonth}
+                        onChange={(e) => handleDateFieldChange('deathMonth', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('deathMonth', e.target.value)}
                       />
                       <Input
                         type="number"
                         placeholder={t('person.day')}
                         min="1"
                         max="31"
-                        value={person.deathDay || ''}
-                        onChange={(e) => handleSaveField('deathDay', e.target.value)}
+                        value={dateFields.deathDay}
+                        onChange={(e) => handleDateFieldChange('deathDay', e.target.value)}
+                        onBlur={(e) => handleDateFieldBlur('deathDay', e.target.value)}
                       />
                     </div>
                   </td>

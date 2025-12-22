@@ -133,7 +133,7 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
             
             <div className={styles.row}>
               <Input
-                label={`${t('person.firstName')} *`}
+                label={t('person.firstName')}
                 value={formData.firstName}
                 onChange={(e) => handleChange('firstName', e.target.value)}
                 required
@@ -143,7 +143,7 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
 
             <div className={styles.row}>
               <Input
-                label={`${t('person.lastName')} *`}
+                label={t('person.lastName')}
                 value={formData.lastName}
                 onChange={(e) => handleChange('lastName', e.target.value)}
                 required
