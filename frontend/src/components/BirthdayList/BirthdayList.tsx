@@ -55,7 +55,7 @@ export default function BirthdayList() {
 
   return (
     <Card className={styles.birthdayCard}>
-      <h2 className={styles.title}>{t('birthday.todayTitle')}</h2>
+      <h2 className={styles.title}>{t('birthdays.title')}</h2>
       <div className={styles.list}>
         {birthdays.map((person) => {
           const age = calculateAge(person.birthYear);
@@ -76,7 +76,7 @@ export default function BirthdayList() {
                 </div>
                 {age && (
                   <div className={styles.age}>
-                    {age} {t('birthday.years')}
+                    {age} {t('person.years')}
                   </div>
                 )}
               </div>
