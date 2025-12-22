@@ -38,7 +38,7 @@ export class PersonController {
       const { id } = req.params;
       
       // Определяем сервер по домену запроса
-      const host = req.get('x-server-host') || req.get('host') || '';
+      const host = req.get('host') || '';
       let sourceDb: string | undefined;
       
       if (host.includes('albardaiforness')) {
@@ -261,7 +261,7 @@ export class PersonController {
       const data = req.body;
       
       // Определяем сервер по домену запроса
-      const host = req.get('x-server-host') || req.get('host') || '';
+      const host = req.get('host') || '';
       let sourceDb: string | undefined;
       
       if (host.includes('albardaiforness')) {
@@ -305,7 +305,7 @@ export class PersonController {
       }
 
       // Определяем сервер по домену запроса
-      const host = req.get('x-server-host') || req.get('host') || '';
+      const host = req.get('host') || '';
       let sourceDb: string | undefined;
       
       if (host.includes('albardaiforness')) {
