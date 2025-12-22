@@ -80,7 +80,7 @@ export const personApi = {
     api.patch(`/api/person/${id}`, data),
   
   create: (data: Record<string, any>) =>
-    api.post('/admin/person', data),
+    api.post('/api/admin/person', data),
   
   addRelative: (personId: string, relativeId: string, relationType: 'father' | 'mother' | 'spouse' | 'child') =>
     api.post(`/api/person/${personId}/relative`, { relativeId, relationType }),

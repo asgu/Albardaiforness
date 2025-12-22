@@ -65,7 +65,7 @@ app.use('/api', authRoutes);
 app.use('/api', apiRoutes);
 app.use('/api', serverRoutes);
 app.use('/api', duplicateRoutes);
-app.use('/', personRoutes);
+app.use('/api', personRoutes);
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
