@@ -110,7 +110,7 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
       } else {
         const response = await personApi.create(data);
         if (response.data && response.data.id) {
-          // Use internal id for newly created persons
+          // Redirect to person view page after creation (with edit mode available)
           const personId = response.data.originalId || response.data.id;
           router.push(`/person/${personId}`);
         } else {

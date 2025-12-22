@@ -110,7 +110,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
                 type="text"
                 value={advancedFilters.firstName}
                 onChange={(e) => setAdvancedFilters({...advancedFilters, firstName: e.target.value})}
-                placeholder="NOME"
+                placeholder={t('search.firstName')}
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
                 type="text"
                 value={advancedFilters.lastName}
                 onChange={(e) => setAdvancedFilters({...advancedFilters, lastName: e.target.value})}
-                placeholder="COGNOME"
+                placeholder={t('search.lastName')}
               />
             </div>
 
@@ -128,7 +128,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
                 type="text"
                 value={advancedFilters.nickName}
                 onChange={(e) => setAdvancedFilters({...advancedFilters, nickName: e.target.value})}
-                placeholder="SOPRANNOME"
+                placeholder={t('search.nickName')}
               />
             </div>
 
@@ -143,30 +143,30 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
               type="text"
               value={advancedFilters.birthYear}
               onChange={(e) => setAdvancedFilters({...advancedFilters, birthYear: e.target.value})}
-              placeholder="DATA DI NASCITA"
-              hint="Esempi:\n1950 - anno esatto\n>1950 - dopo il 1950\n<1950 - prima del 1950\n1930-1950 - tra il 1930 e il 1950"
+              placeholder={t('search.birthYear')}
+              hint={t('search.yearHint')}
             />
 
             <Input
               type="text"
               value={advancedFilters.deathYear}
               onChange={(e) => setAdvancedFilters({...advancedFilters, deathYear: e.target.value})}
-              placeholder="DATA DI MORTE"
-              hint="Esempi:\n1950 - anno esatto\n>1950 - dopo il 1950\n<1950 - prima del 1950\n1930-1950 - tra il 1930 e il 1950"
+              placeholder={t('search.deathYear')}
+              hint={t('search.yearHint')}
             />
 
             <Input
               type="text"
               value={advancedFilters.birthPlace}
               onChange={(e) => setAdvancedFilters({...advancedFilters, birthPlace: e.target.value})}
-              placeholder="LUOGO DI NASCITA"
+              placeholder={t('search.birthPlace')}
             />
 
             <Input
               type="text"
               value={advancedFilters.deathPlace}
               onChange={(e) => setAdvancedFilters({...advancedFilters, deathPlace: e.target.value})}
-              placeholder="LUOGO DI MORTE"
+              placeholder={t('search.deathPlace')}
             />
 
             <div className={styles.fullWidth}>
@@ -174,7 +174,7 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
                 type="text"
                 value={advancedFilters.occupation}
                 onChange={(e) => setAdvancedFilters({...advancedFilters, occupation: e.target.value})}
-                placeholder="CONDIZIONE"
+                placeholder={t('search.occupation')}
               />
             </div>
 
@@ -183,21 +183,28 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
                 type="text"
                 value={advancedFilters.note}
                 onChange={(e) => setAdvancedFilters({...advancedFilters, note: e.target.value})}
-                placeholder="NOTE"
+                placeholder={t('search.note')}
               />
             </div>
           </div>
 
           <div className={styles.formActions}>
             <Button type="submit" variant="primary">
-              CERCA
+              {t('common.search')}
             </Button>
             <div className={styles.secondRow}>
               <Button type="button" onClick={handleReset} variant="secondary">
-                CANCELLA
+                {t('common.clear')}
               </Button>
-              <Button type="button" onClick={() => setShowAdvanced(false)} variant="outline">
-                RICERCA AVANZATA
+              <Button 
+                type="button" 
+                onClick={() => {
+                  handleReset();
+                  setShowAdvanced(false);
+                }} 
+                variant="outline"
+              >
+                {t('search.simpleSearch')}
               </Button>
             </div>
           </div>
