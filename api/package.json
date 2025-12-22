@@ -14,9 +14,12 @@
     "prisma:studio": "prisma studio",
     "migrate:data": "ts-node src/scripts/migrate-data.ts",
     "migrate:preone": "ts-node src/scripts/migrate-preone.ts",
+    "migrate:albaro": "ts-node src/scripts/migrate-albaro.ts",
     "migrate:users": "ts-node src/scripts/migrate-users.ts",
     "find:duplicates": "ts-node src/scripts/find-duplicates.ts",
     "fix:parent-links": "ts-node src/scripts/fix-parent-links.ts",
+    "fix:albaro-links": "ts-node src/scripts/fix-albaro-links.ts",
+    "fix:albaro-links-fast": "ts-node src/scripts/fix-albaro-links-fast.ts",
     "fix:marriages": "ts-node src/scripts/fix-marriages.ts"
   },
   "keywords": [

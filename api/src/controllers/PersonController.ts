@@ -37,8 +37,20 @@ export class PersonController {
     try {
       const { id } = req.params;
       
+      // Определяем сервер по домену запроса
+      const host = req.get('host') || '';
+      let sourceDb: string | undefined;
+      
+      if (host.includes('albardaiforness')) {
+        sourceDb = 'albaro';
+      } else if (host.includes('alberodipreone')) {
+        sourceDb = 'preone';
+      } else if (host.includes('alberodiraveo')) {
+        sourceDb = 'raveo';
+      }
+      
       // Пытаемся найти по originalId (для обратной совместимости со старыми URL)
-      let person = await personService.getByOriginalId(id);
+      let person = await personService.getByOriginalId(id, sourceDb);
       
       // Если не найдено, пробуем по внутреннему ID
       if (!person) {
@@ -248,9 +260,21 @@ export class PersonController {
 
       const data = req.body;
       
+      // Определяем сервер по домену запроса
+      const host = req.get('host') || '';
+      let sourceDb: string | undefined;
+      
+      if (host.includes('albardaiforness')) {
+        sourceDb = 'albaro';
+      } else if (host.includes('alberodipreone')) {
+        sourceDb = 'preone';
+      } else if (host.includes('alberodiraveo')) {
+        sourceDb = 'raveo';
+      }
+      
       // Find person by originalId or internal ID
       let personId: bigint;
-      const personByOriginalId = await personService.getByOriginalId(id);
+      const personByOriginalId = await personService.getByOriginalId(id, sourceDb);
       if (personByOriginalId) {
         personId = personByOriginalId.id;
       } else {
@@ -280,9 +304,21 @@ export class PersonController {
         return res.status(400).json({ error: 'relativeId and relationType are required' });
       }
 
+      // Определяем сервер по домену запроса
+      const host = req.get('host') || '';
+      let sourceDb: string | undefined;
+      
+      if (host.includes('albardaiforness')) {
+        sourceDb = 'albaro';
+      } else if (host.includes('alberodipreone')) {
+        sourceDb = 'preone';
+      } else if (host.includes('alberodiraveo')) {
+        sourceDb = 'raveo';
+      }
+
       // Find person by originalId or internal ID
       let personId: bigint;
-      const personByOriginalId = await personService.getByOriginalId(id);
+      const personByOriginalId = await personService.getByOriginalId(id, sourceDb);
       if (personByOriginalId) {
         personId = personByOriginalId.id;
       } else {
@@ -291,7 +327,7 @@ export class PersonController {
 
       // Find relative by originalId or internal ID
       let relativeIdBigInt: bigint;
-      const relativeByOriginalId = await personService.getByOriginalId(relativeId);
+      const relativeByOriginalId = await personService.getByOriginalId(relativeId, sourceDb);
       if (relativeByOriginalId) {
         relativeIdBigInt = relativeByOriginalId.id;
       } else {

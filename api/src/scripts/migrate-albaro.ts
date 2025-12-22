@@ -1,0 +1,484 @@
+/**
+ * Скрипт миграции данных из базы albardaiforness.org (Albaro)
+ * 
+ * Использование:
+ * npx ts-node src/scripts/migrate-albaro.ts
+ */
+
+import { prisma } from '../lib/prisma';
+import mysql from 'mysql2/promise';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
+
+dotenv.config();
+
+interface OldPerson {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birth: Date | null;
+  birthYear: string;
+  birthDate: string;
+  death: Date | null;
+  deathYear: string;
+  deathDate: string;
+  occupation: string | null;
+  birthPlace: string | null;
+  deathPlace: string | null;
+  note: string | null;
+  privateNote: string | null;
+  is_private: boolean;
+  avatar: string | null;
+  sex: number | null;
+  nickname: string | null;
+  status: number;
+  mirror: number;
+}
+
+interface OldMarriage {
+  person_1: number;
+  person_2: number;
+  marriage_date: string | null;
+  divorce_date: string | null;
+}
+
+interface FOSUser {
+  id: number;
+  username: string;
+  username_canonical: string;
+  email: string;
+  email_canonical: string;
+  enabled: boolean;
+  salt: string;
+  password: string;
+  last_login: Date | null;
+  confirmation_token: string | null;
+  password_requested_at: Date | null;
+  roles: string;
+  region: string;
+  access_token: string | null;
+}
+
+/**
+ * Определяет роль пользователя на основе roles из FOSUserBundle
+ */
+function mapRole(rolesPhp: string): 'admin' | 'editor' | 'viewer' {
+  try {
+    const roleMatches = rolesPhp.match(/s:\d+:"([^"]+)"/g);
+    
+    if (!roleMatches) {
+      return 'viewer';
+    }
+    
+    const roles = roleMatches.map(match => {
+      const roleMatch = match.match(/s:\d+:"([^"]+)"/);
+      return roleMatch ? roleMatch[1] : '';
+    });
+    
+    if (roles.includes('ROLE_SUPER_ADMIN') || roles.includes('ROLE_ADMIN')) {
+      return 'admin';
+    }
+    
+    if (roles.includes('ROLE_MANAGER')) {
+      return 'editor';
+    }
+    
+    return 'viewer';
+  } catch (error) {
+    console.error('Error parsing roles:', rolesPhp, error);
+    return 'viewer';
+  }
+}
+
+async function migrateAlbaroData() {
+  console.log('🚀 Начало миграции данных из Albaro...\n');
+
+  try {
+    // Проверяем, что сервер Albaro существует
+    const server = await prisma.server.findUnique({
+      where: { code: 'albaro' },
+    });
+
+    if (!server) {
+      console.error('❌ Сервер "albaro" не найден в таблице servers!');
+      console.log('Пожалуйста, создайте сервер:');
+      console.log(`
+        INSERT INTO servers (code, name, fullName, color, domain, isActive)
+        VALUES ('albaro', 'Albaro', 'Albaro di Fornezza', '#4A90E2', 'new.albardaiforness.org', true);
+      `);
+      return;
+    }
+
+    console.log(`✅ Сервер найден: ${server.name} (ID: ${server.id})\n`);
+
+    // Подключаемся к основной базе
+    const connection = await mysql.createConnection({
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: parseInt(process.env.DB_PORT || '3306'),
+      user: process.env.DB_USER || 'albard_new',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'albard_new',
+      multipleStatements: true,
+    });
+
+    console.log('📝 Подготовка к импорту дампа...');
+
+    // Отключаем проверки foreign keys
+    await connection.query('SET FOREIGN_KEY_CHECKS=0;');
+
+    // Загружаем дамп
+    console.log('📥 Загрузка дампа ad1.sql...');
+    const dumpPath = process.env.DUMP_PATH || path.join(process.cwd(), '../d/ad1.sql');
+    
+    if (!fs.existsSync(dumpPath)) {
+      console.error(`❌ Файл дампа не найден: ${dumpPath}`);
+      return;
+    }
+    
+    const dumpSql = fs.readFileSync(dumpPath, 'utf8');
+    
+    // Разбиваем на отдельные команды и выполняем
+    const statements = dumpSql
+      .split(';\n')
+      .filter(stmt => stmt.trim() && !stmt.trim().startsWith('--') && !stmt.trim().startsWith('/*'));
+    
+    console.log(`   Найдено ${statements.length} SQL команд...`);
+    
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i].trim();
+      if (stmt) {
+        try {
+          await connection.query(stmt);
+          if (i % 500 === 0) {
+            console.log(`   Выполнено ${i}/${statements.length} команд...`);
+          }
+        } catch (error: any) {
+          if (!error.message.includes('already exists') && 
+              !error.message.includes('Duplicate entry')) {
+            // Игнорируем ошибки, но не выводим их (слишком много)
+          }
+        }
+      }
+    }
+
+    // Включаем обратно проверки foreign keys
+    await connection.query('SET FOREIGN_KEY_CHECKS=1;');
+
+    console.log('✅ Дамп загружен\n');
+
+    // Получаем персоны
+    console.log('👥 Импорт персон...');
+    const [oldPersons] = await connection.query<any[]>(
+      'SELECT * FROM Person WHERE status = 1 ORDER BY id'
+    );
+
+    console.log(`   Найдено ${oldPersons.length} персон`);
+
+    const personIdMap = new Map<number, bigint>();
+    let imported = 0;
+    let skipped = 0;
+
+    for (const oldPerson of oldPersons as OldPerson[]) {
+      try {
+        // Проверяем, не импортирована ли уже эта персона
+        const existing = await prisma.person.findFirst({
+          where: {
+            sourceDb: 'albaro',
+            originalId: BigInt(oldPerson.id),
+          },
+        });
+
+        if (existing) {
+          personIdMap.set(oldPerson.id, existing.id);
+          skipped++;
+          continue;
+        }
+
+        // Парсим даты
+        let birthDate = null;
+        let birthYear = oldPerson.birthYear ? parseInt(oldPerson.birthYear) : null;
+        let birthMonth = null;
+        let birthDay = null;
+
+        if (oldPerson.birthDate) {
+          const parts = oldPerson.birthDate.split('/');
+          if (parts.length === 2) {
+            birthDay = parseInt(parts[0]);
+            birthMonth = parseInt(parts[1]);
+          }
+          if (birthYear && birthMonth && birthDay) {
+            try {
+              birthDate = new Date(birthYear, birthMonth - 1, birthDay);
+            } catch (e) {
+              // Игнорируем неправильные даты
+            }
+          }
+        }
+
+        let deathYear = oldPerson.deathYear ? parseInt(oldPerson.deathYear) : null;
+        let deathMonth = null;
+        let deathDay = null;
+
+        if (oldPerson.deathDate) {
+          const parts = oldPerson.deathDate.split('/');
+          if (parts.length === 2) {
+            deathDay = parseInt(parts[0]);
+            deathMonth = parseInt(parts[1]);
+          }
+        }
+
+        // Определяем пол
+        let gender: 'male' | 'female' | 'unknown' = 'unknown';
+        if (oldPerson.sex === 1) gender = 'male';
+        else if (oldPerson.sex === 0) gender = 'female';
+
+        // Создаем персону
+        const newPerson = await prisma.person.create({
+          data: {
+            firstName: oldPerson.firstName,
+            lastName: oldPerson.lastName,
+            nickName: oldPerson.nickname || null,
+            birthDate: birthDate,
+            birthYear: birthYear,
+            birthMonth: birthMonth,
+            birthDay: birthDay,
+            deathYear: deathYear,
+            deathMonth: deathMonth,
+            deathDay: deathDay,
+            gender: gender,
+            occupation: oldPerson.occupation || null,
+            birthPlace: oldPerson.birthPlace || null,
+            deathPlace: oldPerson.deathPlace || null,
+            note: oldPerson.note || null,
+            privateNote: oldPerson.privateNote || null,
+            primaryServerId: server.id,
+            sourceDb: 'albaro',
+            originalId: BigInt(oldPerson.id),
+            isPublic: !oldPerson.is_private,
+            isMerged: false,
+          },
+        });
+
+        personIdMap.set(oldPerson.id, newPerson.id);
+        imported++;
+
+        if (imported % 100 === 0) {
+          console.log(`   Импортировано ${imported}/${oldPersons.length} персон...`);
+        }
+      } catch (error) {
+        console.error(`   ⚠️  Ошибка импорта персоны ID ${oldPerson.id}:`, error);
+      }
+    }
+
+    console.log(`   ✅ Импортировано ${imported} персон (пропущено ${skipped} существующих)\n`);
+
+    // Получаем связи родителей из таблицы Children
+    console.log('🔗 Обновление связей родителей...');
+    
+    const [tables] = await connection.query<any[]>(
+      "SHOW TABLES LIKE 'Children'"
+    );
+    
+    if (tables.length === 0) {
+      console.log('   ⚠️  Таблица Children не найдена, пропускаем обновление родителей\n');
+    } else {
+      const [childrenLinks] = await connection.query<any[]>(
+        'SELECT * FROM Children'
+      );
+
+      let updatedParents = 0;
+      for (const link of childrenLinks as any[]) {
+        const childId = personIdMap.get(link.person_id);
+        const parentId = personIdMap.get(link.children_id);
+
+        if (childId && parentId) {
+          // Определяем, мать это или отец
+          const parent = await prisma.person.findUnique({
+            where: { id: parentId },
+            select: { gender: true },
+          });
+
+          if (parent) {
+            try {
+              if (parent.gender === 'female') {
+                await prisma.person.update({
+                  where: { id: childId },
+                  data: { motherId: parentId },
+                });
+              } else if (parent.gender === 'male') {
+                await prisma.person.update({
+                  where: { id: childId },
+                  data: { fatherId: parentId },
+                });
+              }
+              updatedParents++;
+            } catch (error) {
+              // Игнорируем ошибки (возможно, связь уже установлена)
+            }
+          }
+        }
+      }
+      console.log(`   ✅ Обновлено ${updatedParents} связей родителей\n`);
+    }
+
+    // Импортируем браки
+    console.log('💍 Импорт браков...');
+    
+    const [marriageTables] = await connection.query<any[]>(
+      "SHOW TABLES LIKE 'Marriages'"
+    );
+    
+    if (marriageTables.length === 0) {
+      console.log('   ⚠️  Таблица Marriages не найдена, пропускаем импорт браков\n');
+    } else {
+      const [oldMarriages] = await connection.query<any[]>(
+        'SELECT * FROM Marriages'
+      );
+
+      let importedMarriages = 0;
+      for (const oldMarriage of oldMarriages as OldMarriage[]) {
+        const person1Id = personIdMap.get(oldMarriage.person_1);
+        const person2Id = personIdMap.get(oldMarriage.person_2);
+
+        if (person1Id && person2Id) {
+          try {
+            // Парсим дату брака
+            let marriageYear = null;
+            let marriageMonth = null;
+            let marriageDay = null;
+
+            if (oldMarriage.marriage_date) {
+              const parts = oldMarriage.marriage_date.split('/');
+              if (parts.length === 3) {
+                marriageDay = parseInt(parts[0]);
+                marriageMonth = parseInt(parts[1]);
+                marriageYear = parseInt(parts[2]);
+              }
+            }
+
+            await prisma.marriage.create({
+              data: {
+                person1Id,
+                person2Id,
+                marriageYear: marriageYear,
+                isCurrent: !oldMarriage.divorce_date,
+              },
+            });
+            importedMarriages++;
+          } catch (error) {
+            // Игнорируем дубликаты браков
+          }
+        }
+      }
+      console.log(`   ✅ Импортировано ${importedMarriages} браков\n`);
+    }
+
+    // Импортируем пользователей
+    console.log('👤 Импорт пользователей...');
+    
+    const [userTables] = await connection.query<any[]>(
+      "SHOW TABLES LIKE 'fos_user'"
+    );
+    
+    if (userTables.length === 0) {
+      console.log('   ⚠️  Таблица fos_user не найдена, пропускаем импорт пользователей\n');
+    } else {
+      const [fosUsers] = await connection.query<any[]>(
+        'SELECT * FROM fos_user'
+      );
+
+      let migratedUsers = 0;
+      let skippedUsers = 0;
+
+      for (const fosUser of fosUsers as FOSUser[]) {
+        try {
+          // Проверяем, существует ли уже пользователь
+          const existingUser = await prisma.user.findUnique({
+            where: { username: fosUser.username },
+          });
+
+          if (existingUser) {
+            skippedUsers++;
+            continue;
+          }
+
+          // Определяем роль
+          const role = mapRole(fosUser.roles);
+
+          // Формируем пароль в формате FOSUserBundle: {hash}{salt}
+          const passwordHash = `{${fosUser.password}}{${fosUser.salt}}`;
+          
+          // Создаем пользователя
+          await prisma.user.create({
+            data: {
+              username: fosUser.username,
+              email: fosUser.email || null,
+              passwordHash: passwordHash,
+              role: role,
+              isActive: Boolean(fosUser.enabled),
+              emailVerified: Boolean(fosUser.enabled),
+              accessToken: fosUser.access_token || null,
+              lastLoginAt: fosUser.last_login || null,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          });
+
+          migratedUsers++;
+        } catch (error: any) {
+          console.error(`   ⚠️  Ошибка импорта пользователя ${fosUser.username}:`, error.message);
+        }
+      }
+      
+      console.log(`   ✅ Импортировано ${migratedUsers} пользователей (пропущено ${skippedUsers} существующих)\n`);
+    }
+
+    // Удаляем временные таблицы из старого дампа
+    console.log('🗑️  Очистка временных таблиц...');
+    await connection.query(`
+      SET FOREIGN_KEY_CHECKS=0;
+      DROP TABLE IF EXISTS Person, Photo, Invitation, Message, Point, Video, Visitors, fos_user, 
+                           Brotherhood, Changes, Children, FieldChange, File, Log, Marriages;
+      SET FOREIGN_KEY_CHECKS=1;
+    `);
+    console.log('   ✅ Временные таблицы удалены\n');
+
+    // Закрываем соединение
+    await connection.end();
+
+    console.log('\n🎉 Миграция Albaro завершена успешно!');
+    console.log('\n📊 Статистика:');
+    
+    const stats = await prisma.person.count({
+      where: { sourceDb: 'albaro' },
+    });
+
+    const userStats = await prisma.user.count();
+
+    console.log(`   Персон из Albaro: ${stats}`);
+    console.log(`   Всего пользователей: ${userStats}`);
+
+  } catch (error) {
+    console.error('\n❌ Ошибка миграции:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Запуск миграции
+if (require.main === module) {
+  migrateAlbaroData()
+    .then(() => {
+      console.log('\n✅ Скрипт завершен');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('\n❌ Скрипт завершен с ошибкой:', error);
+      process.exit(1);
+    });
+}
+
+export { migrateAlbaroData };
+

@@ -210,20 +210,32 @@ albero/
 См. подробности в `api/DATABASE_DESIGN.md`
 
 ### Миграции
+
+**Быстрая шпаргалка:** См. `MIGRATION_QUICK_GUIDE.md`
+
 ```bash
 # Применить схему
 npm run prisma:push
 
-# Миграция данных Preone
-npm run migrate:preone
+# Миграция данных Albaro (new.albardaiforness.org)
+npm run migrate:albaro           # Персоны, браки, пользователи
+npm run fix:albaro-links-fast    # Связи родителей (быстро)
+
+# Миграция данных Preone (new.alberodipreone.org)
+npm run migrate:preone           # Персоны, браки, связи
 
 # Миграция пользователей из FOSUserBundle
 npm run migrate:users
 
-# Исправление связей
+# Исправление связей (общие скрипты)
 npm run fix:parent-links
 npm run fix:marriages
 ```
+
+**Важно для Albaro:**
+- В старой базе связи родителей записаны наоборот (используйте `fix-albaro-links-fast.ts`)
+- Браки дублируются при импорте (требуется удаление дубликатов)
+- Подробности: `api/ALBARO_MIGRATION.md`
 
 ### Миграция пользователей
 Старая система использовала FOSUserBundle (Symfony 2) с SHA-512 хешированием паролей.
