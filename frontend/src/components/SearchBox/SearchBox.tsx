@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer } from '@/store/slices/serverSlice';
 import { Input, Button, Card, GenderSelect, GenderValue } from '@/components/ui';
+import InputWithHint from '@/components/ui/InputWithHint/InputWithHint';
 import { useTranslations } from '@/i18n/useTranslations';
 import styles from './SearchBox.module.scss';
 
@@ -139,18 +140,20 @@ export default function SearchBox({ initialValues }: SearchBoxProps = {}) {
               />
             </div>
 
-            <Input
+            <InputWithHint
               type="text"
               value={advancedFilters.birthYear}
               onChange={(e) => setAdvancedFilters({...advancedFilters, birthYear: e.target.value})}
               placeholder="DATA DI NASCITA"
+              hint="Esempi:\n1950 - anno esatto\n>1950 - dopo il 1950\n<1950 - prima del 1950\n1930-1950 - tra il 1930 e il 1950"
             />
 
-            <Input
+            <InputWithHint
               type="text"
               value={advancedFilters.deathYear}
               onChange={(e) => setAdvancedFilters({...advancedFilters, deathYear: e.target.value})}
               placeholder="DATA DI MORTE"
+              hint="Esempi:\n1950 - anno esatto\n>1950 - dopo il 1950\n<1950 - prima del 1950\n1930-1950 - tra il 1930 e il 1950"
             />
 
             <Input

@@ -1,6 +1,48 @@
 import { prisma } from '../lib/prisma';
 import { Person, Prisma } from '@prisma/client';
 
+/**
+ * Parse year range string and return Prisma filter
+ * Supports: 1950, >1950, <1950, 1930-1950
+ */
+function parseYearRange(yearStr: string): any {
+  if (!yearStr || yearStr.trim() === '') return undefined;
+
+  const trimmed = yearStr.trim();
+
+  // Range: 1930-1950
+  if (trimmed.includes('-')) {
+    const [start, end] = trimmed.split('-').map(s => parseInt(s.trim()));
+    if (!isNaN(start) && !isNaN(end)) {
+      return { gte: start, lte: end };
+    }
+  }
+
+  // Greater than: >1950
+  if (trimmed.startsWith('>')) {
+    const year = parseInt(trimmed.substring(1).trim());
+    if (!isNaN(year)) {
+      return { gt: year };
+    }
+  }
+
+  // Less than: <1950
+  if (trimmed.startsWith('<')) {
+    const year = parseInt(trimmed.substring(1).trim());
+    if (!isNaN(year)) {
+      return { lt: year };
+    }
+  }
+
+  // Exact year: 1950
+  const year = parseInt(trimmed);
+  if (!isNaN(year)) {
+    return year;
+  }
+
+  return undefined;
+}
+
 export class PersonService {
   /**
    * Get person by original ID (from old database) with relations
@@ -268,8 +310,8 @@ export class PersonService {
       firstName?: string;
       lastName?: string;
       nickName?: string;
-      birthYear?: number;
-      deathYear?: number;
+      birthYear?: number | string;
+      deathYear?: number | string;
       gender?: string;
       birthPlace?: string;
       occupation?: string;
@@ -302,10 +344,20 @@ export class PersonService {
         where.nickName = { contains: filters.nickName };
       }
       if (filters.birthYear) {
-        where.birthYear = filters.birthYear;
+        const birthYearFilter = typeof filters.birthYear === 'string' 
+          ? parseYearRange(filters.birthYear)
+          : filters.birthYear;
+        if (birthYearFilter !== undefined) {
+          where.birthYear = birthYearFilter;
+        }
       }
       if (filters.deathYear) {
-        where.deathYear = filters.deathYear;
+        const deathYearFilter = typeof filters.deathYear === 'string'
+          ? parseYearRange(filters.deathYear)
+          : filters.deathYear;
+        if (deathYearFilter !== undefined) {
+          where.deathYear = deathYearFilter;
+        }
       }
       if (filters.gender) {
         where.gender = filters.gender as any;

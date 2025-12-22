@@ -163,8 +163,8 @@ export class PersonController {
       if (firstName) filters.firstName = firstName as string;
       if (lastName) filters.lastName = lastName as string;
       if (nickName) filters.nickName = nickName as string;
-      if (birthYear) filters.birthYear = parseInt(birthYear as string);
-      if (deathYear) filters.deathYear = parseInt(deathYear as string);
+      if (birthYear) filters.birthYear = birthYear as string; // Keep as string for range parsing
+      if (deathYear) filters.deathYear = deathYear as string; // Keep as string for range parsing
       if (gender) filters.gender = gender as string;
       if (birthPlace) filters.birthPlace = birthPlace as string;
       if (occupation) filters.occupation = occupation as string;

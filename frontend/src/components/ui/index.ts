@@ -5,6 +5,8 @@ export type { ButtonProps, ButtonVariant, ButtonSize } from './Button/Button';
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/Input';
 
+export { default as InputWithHint } from './InputWithHint/InputWithHint';
+
 export { Card, CardHeader, CardBody, CardFooter } from './Card/Card';
 export type { CardProps } from './Card/Card';
 
