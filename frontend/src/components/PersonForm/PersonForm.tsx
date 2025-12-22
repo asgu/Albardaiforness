@@ -82,16 +82,25 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
         return;
       }
 
-      // Convert year/month/day to numbers or null
-      const data = {
-        ...formData,
+      // Convert year/month/day to numbers or null, and clean empty strings
+      const data: any = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        maidenName: formData.maidenName || null,
+        nickName: formData.nickName || null,
         birthYear: formData.birthYear ? parseInt(formData.birthYear) : null,
         birthMonth: formData.birthMonth ? parseInt(formData.birthMonth) : null,
         birthDay: formData.birthDay ? parseInt(formData.birthDay) : null,
         deathYear: formData.deathYear ? parseInt(formData.deathYear) : null,
         deathMonth: formData.deathMonth ? parseInt(formData.deathMonth) : null,
         deathDay: formData.deathDay ? parseInt(formData.deathDay) : null,
-        gender: formData.gender || null,
+        gender: formData.gender || 'unknown',
+        occupation: formData.occupation || null,
+        note: formData.note || null,
+        privateNote: formData.privateNote || null,
+        birthPlace: formData.birthPlace || null,
+        deathPlace: formData.deathPlace || null,
+        burialPlace: formData.burialPlace || null,
       };
 
       if (mode === 'edit' && person) {

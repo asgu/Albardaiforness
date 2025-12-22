@@ -460,10 +460,37 @@ export class PersonService {
   /**
    * Create a new person
    */
-  async create(data: Prisma.PersonCreateInput, userId: number) {
+  async create(data: any, userId: number) {
+    // Clean up data - convert empty strings to null
+    const cleanData: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value === '' || value === undefined) {
+        cleanData[key] = null;
+      } else {
+        cleanData[key] = value;
+      }
+    }
+
     return prisma.person.create({
       data: {
-        ...data,
+        firstName: cleanData.firstName,
+        lastName: cleanData.lastName,
+        maidenName: cleanData.maidenName,
+        nickName: cleanData.nickName,
+        birthYear: cleanData.birthYear,
+        birthMonth: cleanData.birthMonth,
+        birthDay: cleanData.birthDay,
+        deathYear: cleanData.deathYear,
+        deathMonth: cleanData.deathMonth,
+        deathDay: cleanData.deathDay,
+        gender: cleanData.gender || 'unknown',
+        occupation: cleanData.occupation,
+        note: cleanData.note,
+        privateNote: cleanData.privateNote,
+        birthPlace: cleanData.birthPlace,
+        deathPlace: cleanData.deathPlace,
+        burialPlace: cleanData.burialPlace,
+        primaryServerId: cleanData.primaryServerId,
         createdBy: userId,
         updatedBy: userId,
       },
