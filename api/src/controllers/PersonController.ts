@@ -219,24 +219,6 @@ export class PersonController {
     }
   }
 
-  async update(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const userId = (req as any).user?.id;
-      
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const person = await personService.update(BigInt(id), req.body, userId);
-      
-      res.json(convertBigIntToString(person));
-    } catch (error) {
-      console.error('Update person error:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  }
-
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;

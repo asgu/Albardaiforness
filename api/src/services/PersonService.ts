@@ -332,12 +332,12 @@ export class PersonService {
         { firstName: { contains: query } },
         { lastName: { contains: query } },
         { nickName: { contains: query } },
-        { originalId: { contains: query } },
       ];
       
-      // If numeric, also search by ID
+      // If numeric, also search by ID and originalId
       if (isNumeric) {
         where.OR.push({ id: BigInt(query) });
+        where.OR.push({ originalId: BigInt(query) });
       }
     }
 
@@ -465,19 +465,6 @@ export class PersonService {
       data: {
         ...data,
         createdBy: userId,
-        updatedBy: userId,
-      },
-    });
-  }
-
-  /**
-   * Update a person
-   */
-  async update(id: bigint, data: Prisma.PersonUpdateInput, userId: number) {
-    return prisma.person.update({
-      where: { id },
-      data: {
-        ...data,
         updatedBy: userId,
       },
     });
