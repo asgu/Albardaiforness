@@ -34,5 +34,5 @@ export type {
   CardProps,
   AvatarProps,
   AvatarSize,
-} from '@/components/ui';
+} from '@/ui';
 
