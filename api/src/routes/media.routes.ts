@@ -35,22 +35,20 @@ const upload = multer({
   }
 });
 
-// Получить медиафайл по ID (редирект на старый домен)
+// Public routes
+router.get('/search', (req, res) => mediaController.search(req, res));
 router.get('/:id', (req, res) => mediaController.getById(req, res));
-
-// Получить все медиафайлы персоны
 router.get('/person/:personId', (req, res) => mediaController.getByPersonId(req, res));
-
-// Получить аватар персоны
 router.get('/avatar/:personId', (req, res) => mediaController.getAvatarUrl(req, res));
 
-// Загрузить медиафайлы (требует авторизации)
+// Admin routes
 router.post('/upload', authMiddleware, upload.array('files', 10), (req, res) => 
   mediaController.upload(req, res)
 );
-
-// Удалить медиафайл (требует авторизации)
+router.put('/:id', authMiddleware, (req, res) => mediaController.update(req, res));
 router.delete('/:id', authMiddleware, (req, res) => mediaController.delete(req, res));
+router.post('/delete-multiple', authMiddleware, (req, res) => mediaController.deleteMultiple(req, res));
+router.post('/find-duplicates', authMiddleware, (req, res) => mediaController.findDuplicates(req, res));
 
 export default router;
 

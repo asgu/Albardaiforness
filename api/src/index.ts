@@ -8,6 +8,8 @@ import personRoutes from './routes/person.routes';
 import serverRoutes from './routes/server.routes';
 import duplicateRoutes from './routes/duplicate.routes';
 import mediaRoutes from './routes/media.routes';
+import categoryRoutes from './routes/category.routes';
+import tagRoutes from './routes/tag.routes';
 
 dotenv.config();
 
@@ -68,6 +70,8 @@ app.use('/api', serverRoutes);
 app.use('/api', duplicateRoutes);
 app.use('/api', personRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/tags', tagRoutes);
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

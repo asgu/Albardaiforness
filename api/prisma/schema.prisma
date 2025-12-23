@@ -24,7 +24,8 @@ model Server {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  persons Person[]
+  persons    Person[]
+  categories Category[]
 
   @@map("servers")
 }
@@ -168,9 +169,10 @@ model Marriage {
 
 // 4. Медиафайлы
 model Media {
-  id       BigInt    @id @default(autoincrement())
-  personId BigInt?   @db.BigInt
-  mediaType MediaType
+  id         BigInt    @id @default(autoincrement())
+  personId   BigInt?   @db.BigInt
+  categoryId BigInt?   @db.BigInt
+  mediaType  MediaType
 
   // Файл
   filePath      String  @db.VarChar(500)
@@ -184,6 +186,9 @@ model Media {
   description String?   @db.Text
   dateTaken   DateTime? @db.Date
   location    String?   @db.VarChar(255)
+
+  // Хеш для поиска дубликатов
+  hash String? @db.VarChar(64)
 
   // Порядок
   sortOrder Int @default(0)
@@ -200,13 +205,17 @@ model Media {
 
   // Relations
   person        Person?       @relation(fields: [personId], references: [id])
+  category      Category?     @relation(fields: [categoryId], references: [id])
   taggedPersons MediaPerson[]
   personAvatars Person[]      @relation("PersonAvatar")
+  tags          MediaTag[]
 
   @@index([personId])
+  @@index([categoryId])
   @@index([mediaType])
   @@index([deletedAt])
   @@index([isPrimary])
+  @@index([hash])
   @@map("media")
 }
 
@@ -215,6 +224,7 @@ enum MediaType {
   video
   document
   audio
+  other
 }
 
 // 5. Люди на фото/видео
@@ -347,4 +357,61 @@ enum UserRole {
   admin
   editor
   viewer
+}
+
+// 9. Категории для галереи
+model Category {
+  id       BigInt  @id @default(autoincrement())
+  title    String  @db.VarChar(255)
+  parentId BigInt? @db.BigInt
+  serverId Int
+
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  server   Server     @relation(fields: [serverId], references: [id])
+  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Category[] @relation("CategoryParent")
+  media    Media[]
+
+  @@index([serverId])
+  @@index([parentId])
+  @@index([isDeleted])
+  @@map("categories")
+}
+
+// 10. Теги для галереи
+model Tag {
+  id    BigInt @id @default(autoincrement())
+  title String @unique @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  media MediaTag[]
+
+  @@map("tags")
+}
+
+// 11. Связь медиа и тегов
+model MediaTag {
+  id      BigInt @id @default(autoincrement())
+  mediaId BigInt @db.BigInt
+  tagId   BigInt @db.BigInt
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, tagId])
+  @@index([mediaId])
+  @@index([tagId])
+  @@map("media_tags")
 }

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Person, PersonSummary, PersonSearchResult, Server, Media } from '@/types';
+import { Person, PersonSummary, PersonSearchResult, Server, Media, Category, Tag, GalleryMedia } from '@/types';
 
 interface Duplicate {
   id: number;
@@ -141,7 +141,50 @@ export const mediaApi = {
     api.get<{ url: string }>(`/api/media/avatar/${personId}`),
 };
 
+export const categoryApi = {
+  getAll: (): Promise<AxiosResponse<Category[]>> =>
+    api.get<Category[]>('/api/categories'),
+  
+  getById: (id: string): Promise<AxiosResponse<Category>> =>
+    api.get<Category>(`/api/categories/${id}`),
+  
+  getMedia: (id: string): Promise<AxiosResponse<GalleryMedia[]>> =>
+    api.get<GalleryMedia[]>(`/api/categories/${id}/media`),
+  
+  create: (data: { title: string; parentId?: string }): Promise<AxiosResponse<Category>> =>
+    api.post<Category>('/api/categories', data),
+  
+  update: (id: string, data: { title: string; parentId?: string }): Promise<AxiosResponse<Category>> =>
+    api.put<Category>(`/api/categories/${id}`, data),
+  
+  delete: (id: string): Promise<AxiosResponse<void>> =>
+    api.delete<void>(`/api/categories/${id}`),
+};
+
+export const tagApi = {
+  getAll: (): Promise<AxiosResponse<Tag[]>> =>
+    api.get<Tag[]>('/api/tags'),
+  
+  getById: (id: string): Promise<AxiosResponse<Tag>> =>
+    api.get<Tag>(`/api/tags/${id}`),
+  
+  getMedia: (id: string): Promise<AxiosResponse<GalleryMedia[]>> =>
+    api.get<GalleryMedia[]>(`/api/tags/${id}/media`),
+  
+  create: (data: { title: string }): Promise<AxiosResponse<Tag>> =>
+    api.post<Tag>('/api/tags', data),
+};
+
 export const galleryApi = {
-  getAll: (): Promise<AxiosResponse<any[]>> =>
-    api.get('/gallery'),
+  search: (query: string): Promise<AxiosResponse<GalleryMedia[]>> =>
+    api.get<GalleryMedia[]>(`/api/media/search?query=${query}`),
+  
+  updateMedia: (id: string, data: { title?: string; description?: string; categoryId?: string; tags?: Tag[] }): Promise<AxiosResponse<GalleryMedia>> =>
+    api.put<GalleryMedia>(`/api/media/${id}`, data),
+  
+  deleteMultiple: (ids: string[]): Promise<AxiosResponse<void>> =>
+    api.post<void>('/api/media/delete-multiple', { ids }),
+  
+  findDuplicates: (ids: string[]): Promise<AxiosResponse<Array<{ id: string; duplicates: GalleryMedia[] }>>> =>
+    api.post('/api/media/find-duplicates', { ids }),
 };

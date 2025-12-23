@@ -25,6 +25,14 @@ export type {
   OperationResult,
 } from './api';
 
+// Gallery types
+export type {
+  Category,
+  Tag,
+  GalleryMedia,
+  GalleryFilters,
+} from './gallery';
+
 // UI types
 export type {
   ButtonVariant,

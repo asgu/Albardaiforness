@@ -1,0 +1,66 @@
+@use '@/styles/variables' as *;
+
+.tagManager {
+  padding: $spacing-xl;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+  
+  h2 {
+    margin: 0;
+    font-size: $font-size-2xl;
+    font-weight: $font-semibold;
+    color: $text-color;
+  }
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: $bg-light;
+  border-radius: $radius-full;
+  border: 1px solid $border-color;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: $bg-secondary;
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+.itemTitle {
+  font-size: $font-size-base;
+  font-weight: $font-medium;
+  color: $text-color;
+}
+
+.itemActions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.formActions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+}
+

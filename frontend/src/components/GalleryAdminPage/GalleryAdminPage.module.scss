@@ -1,0 +1,62 @@
+@use '@/styles/variables' as *;
+
+.adminPage {
+  min-height: 100vh;
+  background: $bg-color;
+  padding: $spacing-xl 0;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-xl;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+  
+  h1 {
+    font-size: $font-size-3xl;
+    font-weight: $font-bold;
+    color: $text-color;
+    margin: 0;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  border-bottom: 2px solid $border-color;
+}
+
+.tab {
+  padding: $spacing-md $spacing-xl;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: $font-size-base;
+  font-weight: $font-medium;
+  color: $text-light;
+  cursor: pointer;
+  transition: all $transition-base;
+  margin-bottom: -2px;
+  
+  &:hover {
+    color: $text-color;
+    background: $bg-light;
+  }
+  
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+  }
+}
+
+.content {
+  margin-top: $spacing-xl;
+}
+
