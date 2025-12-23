@@ -103,13 +103,19 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
 
     // Смерть
     if (person.deathYear) {
-      const diedKey = person.gender === 'male' ? 'timeline.diedMale' : 
-                      person.gender === 'female' ? 'timeline.diedFemale' : 
-                      'timeline.died';
+      // Если есть место смерти, используем ключ "diedIn", иначе просто "died"
+      const diedKey = person.deathPlace 
+        ? (person.gender === 'male' ? 'timeline.diedInMale' : 
+           person.gender === 'female' ? 'timeline.diedInFemale' : 
+           'timeline.diedIn')
+        : (person.gender === 'male' ? 'timeline.diedMale' : 
+           person.gender === 'female' ? 'timeline.diedFemale' : 
+           'timeline.died');
       timelineEvents.push({
         year: person.deathYear,
         type: 'death',
         description: t(diedKey),
+        place: person.deathPlace,
       });
     }
 
@@ -132,6 +138,12 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
             <div className={styles.content}>
               <div className={styles.description}>
                 {event.description}
+                {event.place && (
+                  <>
+                    {' '}
+                    <span className={styles.place}>{capitalizeWords(event.place)}</span>
+                  </>
+                )}
                 {event.relatedPerson && (
                   <Link 
                     href={`/person/${event.relatedPerson.id}`}
@@ -141,11 +153,6 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
                   </Link>
                 )}
               </div>
-              {event.place && (
-                <div className={styles.placeContainer}>
-                  <span className={styles.place}>{capitalizeWords(event.place)}</span>
-                </div>
-              )}
             </div>
           </div>
         ))}

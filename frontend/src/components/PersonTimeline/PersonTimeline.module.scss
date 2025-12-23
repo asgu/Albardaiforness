@@ -21,9 +21,9 @@
   &::before {
     content: '';
     position: absolute;
-    left: 20px;
-    top: 8px;
-    bottom: 8px;
+    left: calc(70px + #{$spacing-md} + 12px); // year width + gap + half marker width (16px + 4px border = 20px / 2 = 10px, но учитываем border)
+    top: 0;
+    bottom: 0;
     width: 3px;
     background: linear-gradient(to bottom, 
       rgba(16, 185, 129, 0.3),
@@ -132,25 +132,10 @@
   }
 }
 
-.placeContainer {
-  margin-top: $spacing-xs;
-}
-
 .place {
   color: $text-light;
-  font-weight: $font-normal;
-  font-size: $font-size-sm;
-  display: inline-block;
-  padding: 4px 10px;
-  background: rgba(0, 0, 0, 0.04);
-  border-radius: 6px;
-  border-left: 3px solid $primary-color;
-  
-  &::before {
-    content: '📍';
-    margin-right: 6px;
-    font-size: $font-size-xs;
-  }
+  font-style: italic;
+  margin-left: $spacing-xs;
 }
 
 // Event type colors
