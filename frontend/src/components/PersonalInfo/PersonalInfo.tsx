@@ -108,11 +108,13 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                   onSave={(value) => handleSaveField('nickName', value)}
                   placeholder={t('person.nickName')}
                 />
-                <EditableField
-                  value={person.maidenName || ''}
-                  onSave={(value) => handleSaveField('maidenName', value)}
-                  placeholder={t('person.maidenName')}
-                />
+                {person.gender === 'female' && (
+                  <EditableField
+                    value={person.maidenName || ''}
+                    onSave={(value) => handleSaveField('maidenName', value)}
+                    placeholder={t('person.maidenName')}
+                  />
+                )}
               </>
             ) : (
               <>
@@ -123,7 +125,7 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                     <span className={styles.secondary}>"{capitalizeWords(person.nickName)}"</span>
                   </div>
                 )}
-                {person.maidenName && (
+                {person.maidenName && person.gender === 'female' && (
                   <div className={styles.maidenName}>
                     <span className={styles.secondary}>({capitalizeWords(person.maidenName)})</span>
                   </div>

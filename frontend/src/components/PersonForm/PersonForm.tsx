@@ -172,21 +172,23 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
             </div>
 
             <div className={styles.row}>
-              <Input
-                label={t('person.maidenName')}
-                value={formData.maidenName}
-                onChange={(e) => handleChange('maidenName', e.target.value)}
-                fullWidth
-              />
-            </div>
-
-            <div className={styles.row}>
               <div className={styles.fieldLabel}>{t('person.gender')}</div>
               <GenderSelect
                 value={formData.gender}
                 onChange={(value) => handleChange('gender', value)}
               />
             </div>
+
+            {formData.gender === 'female' && (
+              <div className={styles.row}>
+                <Input
+                  label={t('person.maidenName')}
+                  value={formData.maidenName}
+                  onChange={(e) => handleChange('maidenName', e.target.value)}
+                  fullWidth
+                />
+              </div>
+            )}
           </div>
 
           {/* Birth Section */}

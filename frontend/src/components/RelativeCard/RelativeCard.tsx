@@ -99,7 +99,7 @@ export default function RelativeCard({
           <div className={styles.nickName}>"{capitalizeWords(person.nickName)}"</div>
         )}
 
-        {person.maidenName && (
+        {person.maidenName && person.gender === 'female' && (
           <div className={styles.maidenName}>({capitalizeWords(person.maidenName)})</div>
         )}
 
