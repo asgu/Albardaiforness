@@ -226,6 +226,7 @@ npm run migrate:preone           # Персоны, браки, связи
 
 # Миграция медиафайлов (фото и файлы)
 npm run migrate:media            # Photo и File из ad1.sql и d2.sql
+npm run migrate:photo-tags       # Метки персон на фото (координаты)
 
 # Миграция пользователей из FOSUserBundle
 npm run migrate:users
