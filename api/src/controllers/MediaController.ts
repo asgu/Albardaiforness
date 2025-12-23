@@ -242,6 +242,34 @@ export class MediaController {
   /**
    * Загрузить медиафайлы
    */
+  /**
+   * Получить или создать категорию "Фото персон" для текущего сервера
+   */
+  private async getOrCreatePersonPhotosCategory(serverId: number) {
+    const categoryTitle = 'Фото персон';
+    
+    let category = await prisma.category.findFirst({
+      where: {
+        serverId,
+        title: categoryTitle,
+        isDeleted: false,
+      },
+    });
+
+    if (!category) {
+      category = await prisma.category.create({
+        data: {
+          serverId,
+          title: categoryTitle,
+          isDeleted: false,
+        },
+      });
+      console.log(`✅ Создана категория "${categoryTitle}" для сервера ${serverId}`);
+    }
+
+    return category;
+  }
+
   async upload(req: Request, res: Response) {
     try {
       const files = req.files as Express.Multer.File[];
@@ -256,6 +284,21 @@ export class MediaController {
         return res.status(400).json({ error: 'personId is required' });
       }
 
+      // Определить сервер по хосту
+      const host = req.get('x-server-host') || req.get('host') || '';
+      let serverId: number = 1; // По умолчанию Albaro
+      
+      if (host.includes('albardaiforness')) {
+        serverId = 1; // Albaro
+      } else if (host.includes('alberodipreone')) {
+        serverId = 2; // Preone
+      } else if (host.includes('alberodiraveo')) {
+        serverId = 3; // Raveo
+      }
+
+      // Получить или создать категорию "Фото персон"
+      const personPhotosCategory = await this.getOrCreatePersonPhotosCategory(serverId);
+
       const uploadedMedia = [];
 
       for (const file of files) {
@@ -269,10 +312,11 @@ export class MediaController {
           mediaType = 'audio';
         }
 
-        // Создать запись в БД
+        // Создать запись в БД с категорией
         const media = await prisma.media.create({
           data: {
             personId: BigInt(personId),
+            categoryId: personPhotosCategory.id,
             mediaType,
             filePath: `/uploads/media/${file.filename}`,
             fileName: file.originalname,
@@ -287,6 +331,7 @@ export class MediaController {
           ...media,
           id: media.id.toString(),
           personId: media.personId?.toString() || '',
+          categoryId: media.categoryId?.toString() || '',
           fileSize: media.fileSize?.toString() || '0',
         });
       }
