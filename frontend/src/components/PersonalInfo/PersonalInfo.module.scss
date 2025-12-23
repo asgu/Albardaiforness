@@ -10,10 +10,11 @@
 .profile {
   background: $bg-color;
   border-radius: $radius-xl;
-  padding: $spacing-2xl;
+  padding: 0; // Убран паддинг
   box-shadow: $shadow-md;
   border: 1px solid $border-light;
   transition: all $transition-base;
+  overflow: hidden; // Для border-radius
 }
 
 // Profile Card - like RelativeCard
@@ -158,7 +159,7 @@
   }
   
   td {
-    padding: $spacing-md $spacing-sm;
+    padding: $spacing-md $spacing-xl; // Увеличен горизонтальный паддинг
     
     &:first-child {
       font-weight: $font-semibold;

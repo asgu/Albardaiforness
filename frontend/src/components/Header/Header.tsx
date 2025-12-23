@@ -20,6 +20,7 @@ export default function Header() {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchExpanded, setShowSearchExpanded] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -58,6 +59,7 @@ export default function Header() {
           </Link>
         </div>
 
+        {/* Desktop Navigation */}
         <nav className={styles.nav}>
           <Link href="/">{t('common.home')}</Link>
           <Link href="/gallery">{t('common.gallery')}</Link>
@@ -74,6 +76,7 @@ export default function Header() {
         </nav>
 
         <div className={styles.rightSection}>
+          {/* Desktop Search */}
           <div className={`${styles.searchWrapper} ${showSearchExpanded ? styles.expanded : ''}`}>
             <form className={styles.searchForm} onSubmit={handleSearch}>
               <Input
@@ -96,6 +99,7 @@ export default function Header() {
             )}
           </div>
 
+          {/* Desktop Actions */}
           <div className={styles.actions}>
             <LanguageSwitcher />
 
@@ -111,8 +115,55 @@ export default function Header() {
               </Link>
             )}
           </div>
+
+          {/* Mobile Burger Menu */}
+          <button 
+            className={styles.burgerButton}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileMenu}>
+          <nav className={styles.mobileNav}>
+            <Link href="/" onClick={() => setMobileMenuOpen(false)}>{t('common.home')}</Link>
+            <Link href="/gallery" onClick={() => setMobileMenuOpen(false)}>{t('common.gallery')}</Link>
+            {!isAuthenticated && (
+              <Link href="/contacts" onClick={() => setMobileMenuOpen(false)}>{t('common.contacts')}</Link>
+            )}
+            {isAuthenticated && (
+              <>
+                <Link href="/person/new" onClick={() => setMobileMenuOpen(false)}>{t('common.addPerson')}</Link>
+                <Link href="/users" onClick={() => setMobileMenuOpen(false)}>{t('common.users')}</Link>
+                <Link href="/messages" onClick={() => setMobileMenuOpen(false)}>{t('common.messages')}</Link>
+              </>
+            )}
+          </nav>
+
+          <div className={styles.mobileActions}>
+            <LanguageSwitcher />
+
+            {isAuthenticated ? (
+              <Button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} variant="secondary">
+                {t('common.logout')}
+              </Button>
+            ) : (
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="primary">
+                  {t('common.login')}
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

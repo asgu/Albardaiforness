@@ -167,8 +167,93 @@
 }
 
 .actions {
-  display: flex;
+  display: none;
   align-items: center;
   gap: $spacing-md;
+
+  @include md {
+    display: flex;
+  }
+}
+
+// Burger Button
+.burgerButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+
+  @include md {
+    display: none;
+  }
+
+  span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: $text-color;
+    border-radius: 2px;
+    transition: all $transition-base;
+  }
+
+  &:hover span {
+    background: $primary-color;
+  }
+}
+
+// Mobile Menu
+.mobileMenu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: $bg-color;
+  border-top: 1px solid $border-color;
+  box-shadow: $shadow-lg;
+  animation: slideDown $transition-fast;
+  z-index: 100;
+
+  @include md {
+    display: none;
+  }
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-color;
+
+  a {
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    font-weight: 500;
+    color: $text-color;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $bg-light;
+      color: $primary-color;
+    }
+  }
+}
+
+.mobileActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+
+  button, a {
+    width: 100%;
+  }
 }
 
