@@ -1,0 +1,38 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $spacing-2xl $spacing-xl;
+  background: rgba($error-color, 0.05);
+  border: 1px solid rgba($error-color, 0.2);
+  border-radius: $radius-lg;
+}
+
+.icon {
+  font-size: 48px;
+  margin-bottom: $spacing-md;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-bold;
+  color: $error-color;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.message {
+  font-size: $font-size-base;
+  color: $text-color;
+  margin: 0 0 $spacing-lg 0;
+  max-width: 400px;
+}
+
+.action {
+  margin-top: $spacing-md;
+}
+

@@ -10,7 +10,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectCurrentServer, selectServers } from '@/store/slices/serverSlice';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import { useTranslations } from '@/i18n/useTranslations';
-import { Button, Loader } from '@/ui';
+import { Button, LoadingState, ErrorState, EmptyState, ResultsList } from '@/ui';
 import { PersonSearchResult } from '@/types';
 import styles from './page.module.scss';
 
@@ -133,33 +133,46 @@ function SearchContent() {
           )}
 
           {loading && (
-            <Loader text={t('search.searching')} />
+            <LoadingState text={t('search.searching')} size="lg" />
           )}
 
           {error && (
-            <div className={styles.error}>
-              <p>{error}</p>
-            </div>
+            <ErrorState 
+              title={t('common.error')}
+              message={error}
+              onRetry={performSearch}
+              retryText={t('common.retry')}
+            />
           )}
 
           {!loading && !error && results.length === 0 && (query || id || firstName || lastName || nickName || birthYear || deathYear || gender || birthPlace || occupation || note) && (
-            <div className={styles.noResults}>
-              <p>{t('search.noResults')}</p>
-            </div>
+            <EmptyState
+              icon="🔍"
+              message={t('search.noResults')}
+              action={
+                <Button onClick={() => setShowSearchForm(true)} variant="primary">
+                  {t('search.editSearch')}
+                </Button>
+              }
+            />
           )}
 
           {!loading && !error && results.length > 0 && (
             <div className={styles.results}>
               <p className={styles.count}>{t('search.found')} {results.length} {t('search.results')}</p>
-              <div className={styles.resultsList}>
-                {results.map((person) => (
+              <ResultsList
+                items={results}
+                keyExtractor={(person) => person.id}
+                renderItem={(person) => (
                   <RelativeCard 
-                    key={person.id} 
                     person={person}
                     isAuthenticated={isAuthenticated}
                   />
-                ))}
-              </div>
+                )}
+                columns={1}
+                gap="md"
+                className={styles.resultsList}
+              />
             </div>
           )}
         </div>

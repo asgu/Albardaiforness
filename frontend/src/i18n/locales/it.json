@@ -23,7 +23,8 @@
     "done": "Fine",
     "clear": "Pulisci",
     "remove": "Rimuovi",
-    "clickToEdit": "Clicca per modificare"
+    "clickToEdit": "Clicca per modificare",
+    "retry": "Riprova"
   },
   "header": {
     "searchPlaceholder": "Cerca per nome...",

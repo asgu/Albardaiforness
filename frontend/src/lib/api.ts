@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { Person, PersonSummary, PersonSearchResult, Server, Duplicate } from '@/types';
 
 // Determine if we're in browser and on production domain
 const isProduction = typeof window !== 'undefined' && 
@@ -45,76 +46,83 @@ api.interceptors.response.use(
   }
 );
 
-// API methods
+// API methods with proper typing
 export const authApi = {
-  login: (username: string, password: string) =>
+  login: (username: string, password: string): Promise<AxiosResponse<{ token: string; user: any }>> =>
     api.post('/api/auth', { username, password }),
 };
 
+export interface PersonSearchParams {
+  q?: string;
+  id?: string;
+  server?: string;
+  firstName?: string;
+  lastName?: string;
+  nickName?: string;
+  birthYear?: number;
+  deathYear?: number;
+  gender?: string;
+  birthPlace?: string;
+  occupation?: string;
+  note?: string;
+}
+
 export const personApi = {
-  search: (params: {
-    q?: string;
-    server?: string;
-    firstName?: string;
-    lastName?: string;
-    nickName?: string;
-    birthYear?: number;
-    deathYear?: number;
-    gender?: string;
-    birthPlace?: string;
-    occupation?: string;
-    note?: string;
-  }) =>
-    api.get('/api/search', { params }),
+  search: (params: PersonSearchParams): Promise<AxiosResponse<PersonSearchResult[]>> =>
+    api.get<PersonSearchResult[]>('/api/search', { params }),
   
-  getById: (id: number) =>
-    api.get(`/api/person/${id}`),
+  getById: (id: number | string): Promise<AxiosResponse<Person>> =>
+    api.get<Person>(`/api/person/${id}`),
   
-  getTodayBirthdays: (server?: string) =>
-    api.get('/api/today', { params: { server } }),
+  getTodayBirthdays: (server?: string): Promise<AxiosResponse<Person[]>> =>
+    api.get<Person[]>('/api/today', { params: { server } }),
   
-  loadByIds: (ids: number[]) =>
-    api.get('/api/persons/load', { params: { ids: ids.join(',') } }),
+  loadByIds: (ids: number[]): Promise<AxiosResponse<PersonSummary[]>> =>
+    api.get<PersonSummary[]>('/api/persons/load', { params: { ids: ids.join(',') } }),
   
-  update: (id: string, data: Record<string, any>) =>
-    api.patch(`/api/person/${id}`, data),
+  update: (id: string, data: Partial<Person>): Promise<AxiosResponse<Person>> =>
+    api.patch<Person>(`/api/person/${id}`, data),
   
-  create: (data: Record<string, any>) =>
-    api.post('/api/admin/person', data),
+  create: (data: Partial<Person>): Promise<AxiosResponse<Person>> =>
+    api.post<Person>('/api/admin/person', data),
   
-  addRelative: (personId: string, relativeId: string, relationType: 'father' | 'mother' | 'spouse' | 'child') =>
+  addRelative: (
+    personId: string, 
+    relativeId: string, 
+    relationType: 'father' | 'mother' | 'spouse' | 'child'
+  ): Promise<AxiosResponse<{ message: string }>> =>
     api.post(`/api/person/${personId}/relative`, { relativeId, relationType }),
   
-  removeRelative: (personId: string, relativeId: string) =>
+  removeRelative: (personId: string, relativeId: string): Promise<AxiosResponse<{ message: string }>> =>
     api.delete(`/api/person/${personId}/relative/${relativeId}`),
 };
 
 export const serverApi = {
-  getAll: () =>
-    api.get('/api/servers'),
+  getAll: (): Promise<AxiosResponse<Server[]>> =>
+    api.get<Server[]>('/api/servers'),
   
-  getByCode: (code: string) =>
-    api.get(`/api/servers/${code}`),
+  getByCode: (code: string): Promise<AxiosResponse<Server>> =>
+    api.get<Server>(`/api/servers/${code}`),
   
-  getPersons: (code: string, page = 1, limit = 50) =>
+  getPersons: (code: string, page = 1, limit = 50): Promise<AxiosResponse<{ data: Person[]; pagination: any }>> =>
     api.get(`/api/servers/${code}/persons`, { params: { page, limit } }),
 };
 
 export const duplicateApi = {
-  getAll: () =>
-    api.get('/api/duplicates'),
+  getAll: (): Promise<AxiosResponse<Duplicate[]>> =>
+    api.get<Duplicate[]>('/api/duplicates'),
   
-  findForPerson: (id: number) =>
-    api.get(`/api/persons/${id}/duplicates`),
+  findForPerson: (id: number): Promise<AxiosResponse<Duplicate[]>> =>
+    api.get<Duplicate[]>(`/api/persons/${id}/duplicates`),
   
-  merge: (id: number) =>
+  merge: (id: number): Promise<AxiosResponse<{ message: string }>> =>
     api.post(`/api/duplicates/${id}/merge`),
   
-  reject: (id: number) =>
+  reject: (id: number): Promise<AxiosResponse<{ message: string }>> =>
     api.post(`/api/duplicates/${id}/reject`),
 };
 
 export const galleryApi = {
-  getAll: () =>
+  getAll: (): Promise<AxiosResponse<any[]>> =>
     api.get('/gallery'),
 };

@@ -27,7 +27,8 @@ export function getGenderIcon(gender: Gender): string {
 }
 
 /**
- * Получить лейбл пола
+ * Получить лейбл пола (используйте с переводами)
+ * @deprecated Use translation keys instead: 'person.male', 'person.female', 'person.unknown'
  */
 export function getGenderLabel(gender: Gender): string {
   switch (gender) {
@@ -37,6 +38,20 @@ export function getGenderLabel(gender: Gender): string {
       return 'Femmina';
     default:
       return 'Sconosciuto';
+  }
+}
+
+/**
+ * Получить ключ перевода для пола
+ */
+export function getGenderTranslationKey(gender: Gender): string {
+  switch (gender) {
+    case 'male':
+      return 'person.male';
+    case 'female':
+      return 'person.female';
+    default:
+      return 'person.unknown';
   }
 }
 
@@ -75,7 +90,7 @@ export function formatDate(
     return `${m}/${year}`;
   }
   if (year) return `${year}`;
-  return 'Sconosciuto';
+  return '?';
 }
 
 /**

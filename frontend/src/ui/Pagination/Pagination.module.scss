@@ -1,0 +1,26 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-lg 0;
+  flex-wrap: wrap;
+}
+
+.navButton,
+.pageButton {
+  min-width: 36px;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $spacing-xs;
+  color: $text-light;
+  user-select: none;
+}
+

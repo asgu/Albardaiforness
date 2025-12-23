@@ -1,0 +1,33 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2xl;
+  
+  &.sm {
+    padding: $spacing-md;
+  }
+  
+  &.md {
+    padding: $spacing-2xl;
+  }
+  
+  &.lg {
+    padding: $spacing-2xl $spacing-xl;
+    min-height: 300px;
+  }
+  
+  &.fullScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($bg-color, 0.9);
+    z-index: 9999;
+  }
+}
+
