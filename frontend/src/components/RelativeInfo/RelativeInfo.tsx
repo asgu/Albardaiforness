@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
 import { Person, Marriage } from '@/types';
 import { personApi } from '@/lib/api';
+import { capitalizeWords } from '@/utils/string';
 import RelativesSection from '@/components/RelativesSection/RelativesSection';
 import AddRelativeModal from '@/components/AddRelativeModal/AddRelativeModal';
+import { ConfirmModal } from '@/ui';
 import styles from './RelativeInfo.module.scss';
 
 interface RelativeInfoProps {
@@ -21,6 +23,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
   const [modalOpen, setModalOpen] = useState(false);
   const [modalRelationType, setModalRelationType] = useState<'father' | 'mother' | 'spouse' | 'child'>('father');
   const [hoveredSpouseId, setHoveredSpouseId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ relativeId: string; relativeName: string } | null>(null);
 
   const handleAddRelative = (relationType: 'father' | 'mother' | 'spouse' | 'child') => {
     setModalRelationType(relationType);
@@ -38,14 +41,25 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
     }
   };
 
-  const handleRemoveRelative = async (relativeId: string) => {
+  const handleRemoveRelativeClick = (relativeId: string, relativeName: string) => {
+    setConfirmDelete({ relativeId, relativeName });
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!confirmDelete) return;
+    
     try {
-      await personApi.removeRelative(person.id, relativeId);
+      await personApi.removeRelative(person.id, confirmDelete.relativeId);
+      setConfirmDelete(null);
       router.refresh();
     } catch (error) {
       console.error('Error removing relative:', error);
       alert(t('common.error'));
     }
+  };
+
+  const handleCancelRemove = () => {
+    setConfirmDelete(null);
   };
 
   // Определяем детей от каждого супруга на основе motherId/fatherId
@@ -91,7 +105,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('father')}
-        onRemoveRelative={handleRemoveRelative}
+        onRemoveRelative={handleRemoveRelativeClick}
       />
 
       {/* Spouses */}
@@ -102,7 +116,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('spouse')}
-        onRemoveRelative={handleRemoveRelative}
+        onRemoveRelative={handleRemoveRelativeClick}
         onSpouseHover={setHoveredSpouseId}
       />
 
@@ -113,7 +127,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('child')}
-        onRemoveRelative={handleRemoveRelative}
+        onRemoveRelative={handleRemoveRelativeClick}
         highlightedIds={highlightedChildrenIds}
       />
 
@@ -133,6 +147,20 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         onClose={() => setModalOpen(false)}
         onSelect={handleSelectRelative}
         relationType={modalRelationType}
+      />
+
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title={t('person.removeRelativeTitle')}
+        message={t('person.removeRelativeMessage', { 
+          name: confirmDelete?.relativeName || '' 
+        })}
+        confirmText={t('common.remove')}
+        cancelText={t('common.cancel')}
+        variant="danger"
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
       />
     </div>
   );

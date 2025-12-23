@@ -13,7 +13,7 @@ interface RelativesSectionProps {
   isEditing?: boolean;
   isAuthenticated?: boolean;
   onAddRelative?: () => void;
-  onRemoveRelative?: (personId: string) => void;
+  onRemoveRelative?: (personId: string, personName: string) => void;
   onSpouseHover?: (spouseId: string | null) => void;
   highlightedIds?: string[];
 }

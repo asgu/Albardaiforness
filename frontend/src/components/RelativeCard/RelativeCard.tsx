@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { PersonSummary } from '@/types';
-import { Avatar, ConfirmModal } from '@/ui';
 import { capitalizeWords } from '@/utils/string';
 import { getPersonUrlId, getGenderIcon, getLifeYears } from '@/utils/person';
 import { useTranslations } from '@/i18n/useTranslations';
@@ -19,7 +17,7 @@ export interface RelativeCardProps {
   isAuthenticated?: boolean;
   isHighlighted?: boolean;
   isEditing?: boolean;
-  onRemove?: (personId: string) => void;
+  onRemove?: (personId: string, personName: string) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -37,23 +35,15 @@ export default function RelativeCard({
   onMouseLeave
 }: RelativeCardProps) {
   const { t } = useTranslations();
-  const [showConfirm, setShowConfirm] = useState(false);
   
   const handleRemoveClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowConfirm(true);
-  };
-
-  const handleConfirmRemove = () => {
+    
     if (onRemove) {
-      onRemove(person.id);
+      const fullName = `${capitalizeWords(person.firstName)} ${capitalizeWords(person.lastName)}`;
+      onRemove(person.id, fullName);
     }
-    setShowConfirm(false);
-  };
-
-  const handleCancelRemove = () => {
-    setShowConfirm(false);
   };
 
   const formatMarriageDate = () => {
@@ -127,21 +117,6 @@ export default function RelativeCard({
           </button>
         )}
       </Link>
-
-      {isEditing && onRemove && (
-        <ConfirmModal
-          isOpen={showConfirm}
-          title={t('person.removeRelativeTitle')}
-          message={t('person.removeRelativeMessage', { 
-            name: `${capitalizeWords(person.firstName)} ${capitalizeWords(person.lastName)}` 
-          })}
-          confirmText={t('common.remove')}
-          cancelText={t('common.cancel')}
-          variant="danger"
-          onConfirm={handleConfirmRemove}
-          onCancel={handleCancelRemove}
-        />
-      )}
     </>
   );
 }
