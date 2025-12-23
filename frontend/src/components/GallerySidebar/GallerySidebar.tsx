@@ -85,9 +85,6 @@ export default function GallerySidebar({
         >
           {hasChildren && <span className={styles.arrow}>▸</span>}
           <span className={styles.categoryName}>{category.title}</span>
-          {category.mediaCount !== undefined && (
-            <span className={styles.count}>({category.mediaCount})</span>
-          )}
         </div>
         {hasChildren && (
           <div className={styles.categoryChildren}>
@@ -146,9 +143,6 @@ export default function GallerySidebar({
                   onClick={() => onTagSelect(selectedTag === tag.id ? undefined : tag.id)}
                 >
                   <span className={styles.tagName}>{tag.title}</span>
-                  {tag.mediaCount !== undefined && (
-                    <span className={styles.count}>({tag.mediaCount})</span>
-                  )}
                 </div>
               ))}
             </div>
