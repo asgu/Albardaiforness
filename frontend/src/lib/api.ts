@@ -139,6 +139,31 @@ export const mediaApi = {
   
   getAvatarUrl: (personId: string): Promise<AxiosResponse<{ url: string }>> =>
     api.get<{ url: string }>(`/api/media/avatar/${personId}`),
+  
+  getAll: (params?: { categoryId?: string; tagId?: string; search?: string; page?: number; limit?: number }): Promise<AxiosResponse<{ data: GalleryMedia[]; pagination: any }>> =>
+    api.get<{ data: GalleryMedia[]; pagination: any }>('/api/media', { params }),
+  
+  upload: (formData: FormData): Promise<AxiosResponse<Media[]>> =>
+    api.post<Media[]>('/api/media/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
+  
+  update: (id: string, data: Partial<GalleryMedia>): Promise<AxiosResponse<GalleryMedia>> =>
+    api.put<GalleryMedia>(`/api/media/${id}`, data),
+  
+  delete: (id: string): Promise<AxiosResponse<void>> =>
+    api.delete<void>(`/api/media/${id}`),
+  
+  rotate: (id: string): Promise<AxiosResponse<void>> =>
+    api.get<void>(`/api/media/${id}/rotate`),
+  
+  findDuplicates: (mediaIds: string[]): Promise<AxiosResponse<GalleryMedia[]>> =>
+    api.post<GalleryMedia[]>('/api/media/duplicates', { mediaIds }),
+  
+  deleteMultiple: (mediaIds: string[]): Promise<AxiosResponse<void>> =>
+    api.patch<void>('/api/media', { mediaIds }),
 };
 
 export const categoryApi = {
