@@ -89,17 +89,22 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       
       // Determine spouse position (FSM logic)
       const spouseRight = p.gender === 'female';
-      const spouseX = spouseRight ? 1 : -1;
+      let currentSpouseX = spouseRight ? 1.2 : -1.2;
       
-      // Add spouse
-      if (p.spouses && p.spouses.length > 0 && p.spouses[0].person) {
-        const spouse = p.spouses[0].person;
-        if (!addedPersons.has(spouse.id)) {
-          addNodeToTree(spouse, spouseX, 0);
-          d.nodes.set(spouse.id, { x: spouseX, y: 0 });
-          d.l = Math.min(d.l, spouseX);
-          d.r = Math.max(d.r, spouseX + 1);
-        }
+      // Add ALL spouses
+      if (p.spouses && p.spouses.length > 0) {
+        p.spouses.forEach((marriage, index) => {
+          if (marriage.person && !addedPersons.has(marriage.person.id)) {
+            const spouseX = spouseRight ? currentSpouseX : -currentSpouseX;
+            addNodeToTree(marriage.person, spouseX, 0);
+            d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
+            d.l = Math.min(d.l, spouseX);
+            d.r = Math.max(d.r, spouseX + 1);
+            
+            // Next spouse further away
+            currentSpouseX += 1.2;
+          }
+        });
       }
       
       // Add children
@@ -119,7 +124,76 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
         });
       }
       
-      // Add parents
+      // Add siblings
+      if (p.siblings && p.siblings.length > 0) {
+        // Split siblings by birth year
+        const olderSiblings: typeof p.siblings = [];
+        const youngerSiblings: typeof p.siblings = [];
+        
+        p.siblings.forEach((sibling) => {
+          const personBirthYear = p.birthYear || 9999;
+          const siblingBirthYear = sibling.birthYear || 9999;
+          
+          if (siblingBirthYear < personBirthYear) {
+            olderSiblings.push(sibling);
+          } else {
+            youngerSiblings.push(sibling);
+          }
+        });
+        
+        // Add older siblings to the left
+        let leftX = d.l - 1.5;
+        olderSiblings.reverse().forEach((sibling) => {
+          if (!addedPersons.has(sibling.id)) {
+            addNodeToTree(sibling, leftX, 0);
+            d.nodes.set(sibling.id, { x: leftX, y: 0 });
+            
+            // Add sibling's spouses
+            if (sibling.spouses && sibling.spouses.length > 0) {
+              const sibSpouseRight = sibling.gender === 'female';
+              sibling.spouses.forEach((marriage) => {
+                if (marriage.person && !addedPersons.has(marriage.person.id)) {
+                  const spouseX = sibSpouseRight ? leftX + 1.2 : leftX - 1.2;
+                  addNodeToTree(marriage.person, spouseX, 0);
+                  d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
+                  d.l = Math.min(d.l, spouseX);
+                  d.r = Math.max(d.r, spouseX + 1);
+                }
+              });
+            }
+            
+            d.l = Math.min(d.l, leftX);
+            leftX -= 2.5;
+          }
+        });
+        
+        // Add younger siblings to the right
+        let rightX = d.r + 0.5;
+        youngerSiblings.forEach((sibling) => {
+          if (!addedPersons.has(sibling.id)) {
+            addNodeToTree(sibling, rightX, 0);
+            d.nodes.set(sibling.id, { x: rightX, y: 0 });
+            
+            // Add sibling's spouses
+            if (sibling.spouses && sibling.spouses.length > 0) {
+              const sibSpouseRight = sibling.gender === 'female';
+              sibling.spouses.forEach((marriage) => {
+                if (marriage.person && !addedPersons.has(marriage.person.id)) {
+                  const spouseX = sibSpouseRight ? rightX + 1.2 : rightX - 1.2;
+                  addNodeToTree(marriage.person, spouseX, 0);
+                  d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
+                  d.r = Math.max(d.r, spouseX + 1);
+                }
+              });
+            }
+            
+            d.r = Math.max(d.r, rightX + 1);
+            rightX += 2.5;
+          }
+        });
+      }
+      
+      // Add parents recursively
       if ((p.father || p.mother) && depth > 1) {
         const parentY = -1;
         
@@ -132,6 +206,11 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             d.nodes.set(p.father.id, { x: fatherX, y: parentY });
             d.l = Math.min(d.l, fatherX);
             d.r = Math.max(d.r, fatherX + 1);
+            
+            // Recursively add father's ancestors
+            if (depth > 2 && (p.father.father || p.father.mother)) {
+              buildPersonTree(p.father, depth - 1);
+            }
           }
           
           if (!addedPersons.has(p.mother.id)) {
@@ -139,6 +218,11 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             d.nodes.set(p.mother.id, { x: motherX, y: parentY });
             d.l = Math.min(d.l, motherX);
             d.r = Math.max(d.r, motherX + 1);
+            
+            // Recursively add mother's ancestors
+            if (depth > 2 && (p.mother.father || p.mother.mother)) {
+              buildPersonTree(p.mother, depth - 1);
+            }
           }
           
           d.t = Math.min(d.t, parentY);
@@ -148,6 +232,11 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             addNodeToTree(parent, 0, parentY);
             d.nodes.set(parent.id, { x: 0, y: parentY });
             d.t = Math.min(d.t, parentY);
+            
+            // Recursively add parent's ancestors
+            if (depth > 2) {
+              buildPersonTree(parent, depth - 1);
+            }
           }
         }
       }
