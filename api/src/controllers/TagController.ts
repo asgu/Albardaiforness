@@ -113,32 +113,31 @@ export class TagController {
     try {
       const { id } = req.params;
 
-      const mediaWithTag = await prisma.mediaTag.findMany({
-        where: {
-          tagId: BigInt(id),
-        },
-        include: {
-          media: {
-            where: {
-              deletedAt: null,
-            },
-            include: {
-              tags: {
-                include: {
-                  tag: true,
-                },
+    const mediaWithTag = await prisma.mediaTag.findMany({
+      where: {
+        tagId: BigInt(id),
+      },
+      include: {
+        media: {
+          include: {
+            tags: {
+              include: {
+                tag: true,
               },
             },
           },
         },
-      });
+      },
+    });
 
-      const media = mediaWithTag.map(mt => ({
-        ...mt.media,
-        id: mt.media.id.toString(),
-        personId: mt.media.personId?.toString(),
-        categoryId: mt.media.categoryId?.toString(),
-        tags: mt.media.tags.map(t => ({
+    const media = mediaWithTag
+      .filter(mt => mt.media && mt.media.deletedAt === null)
+      .map(mt => ({
+        ...mt.media!,
+        id: mt.media!.id.toString(),
+        personId: mt.media!.personId?.toString(),
+        categoryId: mt.media!.categoryId?.toString(),
+        tags: mt.media!.tags.map((t: any) => ({
           id: t.tag.id.toString(),
           title: t.tag.title,
         })),
