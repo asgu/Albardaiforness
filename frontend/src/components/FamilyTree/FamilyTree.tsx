@@ -52,8 +52,8 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       return { x, y };
     };
 
-    // Add person with parents above
-    const addPersonWithAncestors = (p: Person, x: number, y: number, maxGenerations: number): { minX: number; maxX: number } => {
+    // Add person with all ancestors recursively
+    const addPersonWithAncestors = (p: Person, x: number, y: number): { minX: number; maxX: number } => {
       if (addedPersons.has(p.id)) return { minX: x, maxX: x };
       
       addNode(p, x, y);
@@ -61,8 +61,8 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       let minX = x;
       let maxX = x;
 
-      // Add parents above if we haven't reached max generations
-      if (maxGenerations > 0 && (p.father || p.mother)) {
+      // Add parents above recursively
+      if (p.father || p.mother) {
         const parentY = y - 1;
         
         if (p.father && p.mother) {
@@ -70,38 +70,27 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
           const fatherX = x - 0.6;
           const motherX = x + 0.6;
           
+          // Recursively add father and his ancestors
           if (!addedPersons.has(p.father.id)) {
-            addNode(p.father, fatherX, parentY);
-            minX = Math.min(minX, fatherX);
+            const fatherBounds = addPersonWithAncestors(p.father, fatherX, parentY);
+            minX = Math.min(minX, fatherBounds.minX);
+            maxX = Math.max(maxX, fatherBounds.maxX);
           }
           
+          // Recursively add mother and her ancestors
           if (!addedPersons.has(p.mother.id)) {
-            addNode(p.mother, motherX, parentY);
-            maxX = Math.max(maxX, motherX);
-          }
-          
-          // Add grandparents
-          if (maxGenerations > 1) {
-            if (p.father.father && !addedPersons.has(p.father.father.id)) {
-              addNode(p.father.father, fatherX - 0.6, parentY - 1);
-              minX = Math.min(minX, fatherX - 0.6);
-            }
-            if (p.father.mother && !addedPersons.has(p.father.mother.id)) {
-              addNode(p.father.mother, fatherX + 0.6, parentY - 1);
-            }
-            if (p.mother.father && !addedPersons.has(p.mother.father.id)) {
-              addNode(p.mother.father, motherX - 0.6, parentY - 1);
-            }
-            if (p.mother.mother && !addedPersons.has(p.mother.mother.id)) {
-              addNode(p.mother.mother, motherX + 0.6, parentY - 1);
-              maxX = Math.max(maxX, motherX + 0.6);
-            }
+            const motherBounds = addPersonWithAncestors(p.mother, motherX, parentY);
+            minX = Math.min(minX, motherBounds.minX);
+            maxX = Math.max(maxX, motherBounds.maxX);
           }
         } else {
           // Single parent
           const parent = p.father || p.mother;
           if (parent && !addedPersons.has(parent.id)) {
-            addNode(parent, x, parentY);
+            // Recursively add single parent and their ancestors
+            const parentBounds = addPersonWithAncestors(parent, x, parentY);
+            minX = Math.min(minX, parentBounds.minX);
+            maxX = Math.max(maxX, parentBounds.maxX);
           }
         }
       }
@@ -218,8 +207,8 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     const centerX = 0;
     const centerY = 0;
     
-    // Add main person with ancestors
-    addPersonWithAncestors(person, centerX, centerY, 2);
+    // Add main person with ALL ancestors recursively
+    addPersonWithAncestors(person, centerX, centerY);
     
     // Add spouse(s) and get their position
     const spouseX = addSpouse(person, centerX, centerY);
