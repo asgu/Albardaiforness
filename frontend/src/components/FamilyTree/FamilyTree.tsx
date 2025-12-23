@@ -37,10 +37,27 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     const nodeHeight = 220;
     const horizontalGap = 40;
     const verticalGap = 80;
-
-    // Build tree structure like Family Echo algorithm
-    const addNode = (p: Person, x: number, y: number) => {
-      if (addedPersons.has(p.id)) return { x, y };
+    
+    // Tree data structure like original
+    interface TreeData {
+      l: number;  // left boundary
+      r: number;  // right boundary
+      t: number;  // top boundary
+      b: number;  // bottom boundary
+      nodes: Map<string, { x: number; y: number }>;
+    }
+    
+    const treeData: TreeData = {
+      l: 0,
+      r: 0,
+      t: 0,
+      b: 0,
+      nodes: new Map()
+    };
+    
+    // Add node to tree
+    const addNodeToTree = (p: Person, x: number, y: number) => {
+      if (addedPersons.has(p.id)) return;
       
       treeNodes.push({
         person: p,
@@ -48,177 +65,99 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
         y: y * (nodeHeight + verticalGap),
         generation: y,
       });
+      
+      treeData.nodes.set(p.id, { x, y });
+      treeData.l = Math.min(treeData.l, x);
+      treeData.r = Math.max(treeData.r, x + 1);
+      treeData.t = Math.min(treeData.t, y);
+      treeData.b = Math.max(treeData.b, y + 1);
+      
       addedPersons.add(p.id);
-      return { x, y };
     };
-
-    // Add person with all ancestors recursively
-    const addPersonWithAncestors = (p: Person, x: number, y: number): { minX: number; maxX: number } => {
-      if (addedPersons.has(p.id)) return { minX: x, maxX: x };
+    
+    // Build person subtree (BDD from original)
+    const buildPersonTree = (p: Person, depth: number): TreeData => {
+      const d: TreeData = { l: 0, r: 0, t: 0, b: 0, nodes: new Map() };
       
-      addNode(p, x, y);
+      if (depth <= 0 || addedPersons.has(p.id)) {
+        return d;
+      }
       
-      let minX = x;
-      let maxX = x;
-
-      // Add parents above recursively
-      if (p.father || p.mother) {
-        const parentY = y - 1;
+      // Add person at origin
+      addNodeToTree(p, 0, 0);
+      d.nodes.set(p.id, { x: 0, y: 0 });
+      
+      // Determine spouse position (FSM logic)
+      const spouseRight = p.gender === 'female';
+      const spouseX = spouseRight ? 1 : -1;
+      
+      // Add spouse
+      if (p.spouses && p.spouses.length > 0 && p.spouses[0].person) {
+        const spouse = p.spouses[0].person;
+        if (!addedPersons.has(spouse.id)) {
+          addNodeToTree(spouse, spouseX, 0);
+          d.nodes.set(spouse.id, { x: spouseX, y: 0 });
+          d.l = Math.min(d.l, spouseX);
+          d.r = Math.max(d.r, spouseX + 1);
+        }
+      }
+      
+      // Add children
+      if (p.children && p.children.length > 0 && depth > 1) {
+        const childCount = p.children.length;
+        const startX = -(childCount - 1) * 0.5;
+        
+        p.children.forEach((child, index) => {
+          if (!addedPersons.has(child.id)) {
+            const childX = startX + index;
+            addNodeToTree(child, childX, 1);
+            d.nodes.set(child.id, { x: childX, y: 1 });
+            d.l = Math.min(d.l, childX);
+            d.r = Math.max(d.r, childX + 1);
+            d.b = Math.max(d.b, 2);
+          }
+        });
+      }
+      
+      // Add parents
+      if ((p.father || p.mother) && depth > 1) {
+        const parentY = -1;
         
         if (p.father && p.mother) {
-          // Both parents - place them side by side
-          const fatherX = x - 0.6;
-          const motherX = x + 0.6;
+          const fatherX = -0.5;
+          const motherX = 0.5;
           
-          // Recursively add father and his ancestors
           if (!addedPersons.has(p.father.id)) {
-            const fatherBounds = addPersonWithAncestors(p.father, fatherX, parentY);
-            minX = Math.min(minX, fatherBounds.minX);
-            maxX = Math.max(maxX, fatherBounds.maxX);
+            addNodeToTree(p.father, fatherX, parentY);
+            d.nodes.set(p.father.id, { x: fatherX, y: parentY });
+            d.l = Math.min(d.l, fatherX);
+            d.r = Math.max(d.r, fatherX + 1);
           }
           
-          // Recursively add mother and her ancestors
           if (!addedPersons.has(p.mother.id)) {
-            const motherBounds = addPersonWithAncestors(p.mother, motherX, parentY);
-            minX = Math.min(minX, motherBounds.minX);
-            maxX = Math.max(maxX, motherBounds.maxX);
+            addNodeToTree(p.mother, motherX, parentY);
+            d.nodes.set(p.mother.id, { x: motherX, y: parentY });
+            d.l = Math.min(d.l, motherX);
+            d.r = Math.max(d.r, motherX + 1);
           }
+          
+          d.t = Math.min(d.t, parentY);
         } else {
-          // Single parent
           const parent = p.father || p.mother;
           if (parent && !addedPersons.has(parent.id)) {
-            // Recursively add single parent and their ancestors
-            const parentBounds = addPersonWithAncestors(parent, x, parentY);
-            minX = Math.min(minX, parentBounds.minX);
-            maxX = Math.max(maxX, parentBounds.maxX);
+            addNodeToTree(parent, 0, parentY);
+            d.nodes.set(parent.id, { x: 0, y: parentY });
+            d.t = Math.min(d.t, parentY);
           }
         }
       }
-
-      return { minX, maxX };
+      
+      return d;
     };
-
-    // Add children below person (centered between parents if both exist)
-    const addChildren = (p: Person, x: number, y: number, spouseX?: number) => {
-      if (!p.children || p.children.length === 0) return;
-      
-      const childY = y + 1;
-      const childCount = p.children.length;
-      
-      // If spouse exists, center children between parents
-      const centerX = spouseX !== undefined ? (x + spouseX) / 2 : x;
-      const startX = centerX - (childCount - 1) * 0.5;
-      
-      p.children.forEach((child, index) => {
-        if (!addedPersons.has(child.id)) {
-          const childX = startX + index;
-          addNode(child, childX, childY);
-          
-          // Recursively add their children
-          addChildren(child, childX, childY);
-        }
-      });
-    };
-
-    // Add siblings horizontally (split left and right like in original algorithm)
-    const addSiblings = (p: Person, x: number, y: number) => {
-      if (!p.siblings || p.siblings.length === 0) return;
-      
-      // Split siblings into older (left) and younger (right)
-      const olderSiblings: typeof p.siblings = [];
-      const youngerSiblings: typeof p.siblings = [];
-      
-      p.siblings.forEach((sibling) => {
-        // Compare birth years to determine position
-        const personBirthYear = p.birthYear || 9999;
-        const siblingBirthYear = sibling.birthYear || 9999;
-        
-        if (siblingBirthYear < personBirthYear) {
-          olderSiblings.push(sibling);
-        } else {
-          youngerSiblings.push(sibling);
-        }
-      });
-      
-      // Add older siblings to the left
-      let leftX = x - 2.5;
-      olderSiblings.reverse().forEach((sibling) => {
-        if (!addedPersons.has(sibling.id)) {
-          addNode(sibling, leftX, y);
-          
-          // Add sibling's spouse to the left of them
-          if (sibling.spouses && sibling.spouses.length > 0) {
-            sibling.spouses.forEach((marriage) => {
-              if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                leftX -= 1.2;
-                addNode(marriage.person, leftX, y);
-              }
-            });
-          }
-          
-          leftX -= 2.5; // Gap before next sibling
-        }
-      });
-      
-      // Add younger siblings to the right
-      let rightX = x + 2.5;
-      youngerSiblings.forEach((sibling) => {
-        if (!addedPersons.has(sibling.id)) {
-          addNode(sibling, rightX, y);
-          
-          // Add sibling's spouse to the right of them
-          if (sibling.spouses && sibling.spouses.length > 0) {
-            sibling.spouses.forEach((marriage) => {
-              if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                rightX += 1.2;
-                addNode(marriage.person, rightX, y);
-              }
-            });
-          }
-          
-          rightX += 2.5; // Gap before next sibling
-        }
-      });
-    };
-
-    // Add spouse next to person (like in original algorithm)
-    const addSpouse = (p: Person, x: number, y: number): number | undefined => {
-      if (!p.spouses || p.spouses.length === 0) return undefined;
-      
-      // Determine spouse position based on gender (like FSM function in original)
-      // Female (-1) + Male (1) = 0, but if person is female, spouse (male) goes right
-      // If person is male, spouse (female) goes left
-      const spouseRight = p.gender === 'female'; // Female's spouse (male) on right
-      let lastSpouseX: number | undefined;
-      
-      p.spouses.forEach((marriage, index) => {
-        if (marriage.person && !addedPersons.has(marriage.person.id)) {
-          const offset = index === 0 ? 1.2 : (index + 1) * 1.2;
-          const spouseX = spouseRight ? x + offset : x - offset;
-          addNode(marriage.person, spouseX, y);
-          lastSpouseX = spouseX;
-        }
-      });
-      
-      return lastSpouseX;
-    };
-
-    // Start building from center person
-    const centerX = 0;
-    const centerY = 0;
     
-    // Add main person with ALL ancestors recursively
-    addPersonWithAncestors(person, centerX, centerY);
+    // Build main tree
+    buildPersonTree(person, 10); // depth 10 for all ancestors
     
-    // Add spouse(s) and get their position
-    const spouseX = addSpouse(person, centerX, centerY);
-    
-    // Add siblings
-    addSiblings(person, centerX, centerY);
-    
-    // Add children (centered between person and spouse if spouse exists)
-    addChildren(person, centerX, centerY, spouseX);
-
     setNodes(treeNodes);
   };
 
