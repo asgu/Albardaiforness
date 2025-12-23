@@ -91,7 +91,7 @@ export default function MediaEditor({ media, isOpen, onClose, onSave }: MediaEdi
             onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
           >
             <option value="">{t('gallery.noCategory')}</option>
-            {categories.map((cat) => (
+            {categories?.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.title}
               </option>
@@ -102,7 +102,7 @@ export default function MediaEditor({ media, isOpen, onClose, onSave }: MediaEdi
         <div className={styles.formGroup}>
           <label>{t('gallery.mediaTags')}</label>
           <div className={styles.tagList}>
-            {tags.map((tag) => (
+            {tags?.map((tag) => (
               <label key={tag.id} className={styles.tagItem}>
                 <input
                   type="checkbox"

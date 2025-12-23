@@ -89,7 +89,7 @@ export default function TagManager() {
         />
       ) : (
         <div className={styles.list}>
-          {tags.map((tag) => (
+          {tags?.map((tag) => (
             <div key={tag.id} className={styles.item}>
               <span className={styles.itemTitle}>{tag.title}</span>
               <div className={styles.itemActions}>

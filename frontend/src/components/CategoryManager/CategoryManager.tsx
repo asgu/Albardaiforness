@@ -152,7 +152,7 @@ export default function CategoryManager() {
               onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
             >
               <option value="">{t('gallery.noParent')}</option>
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.title}
                 </option>
@@ -199,10 +199,10 @@ export default function CategoryManager() {
               value={formData.parentId}
               onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
             >
-              <option value="">{t('gallery.noParent')}</option>
-              {categories
-                .filter((cat) => cat.id !== selectedCategory?.id)
-                .map((cat) => (
+            <option value="">{t('gallery.noParent')}</option>
+            {categories
+              ?.filter((cat) => cat.id !== selectedCategory?.id)
+              .map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.title}
                   </option>
