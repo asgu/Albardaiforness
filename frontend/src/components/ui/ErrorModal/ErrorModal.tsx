@@ -1,7 +1,7 @@
 'use client';
 
-import { Modal } from '@/ui/Modal/Modal';
-import { Button } from '@/ui/Button/Button';
+import { Modal } from '../Modal/Modal';
+import { Button } from '../Button/Button';
 import styles from './ErrorModal.module.scss';
 
 export interface ErrorModalProps {

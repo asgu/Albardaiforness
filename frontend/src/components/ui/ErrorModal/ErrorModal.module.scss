@@ -1,0 +1,44 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.errorModal {
+  padding: $spacing-2xl;
+  text-align: center;
+  max-width: 450px;
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-xl;
+  }
+}
+
+.icon {
+  font-size: 64px;
+  margin-bottom: $spacing-lg;
+  animation: shake 0.5s ease-out;
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-bold;
+  color: $error-color;
+  margin: 0 0 $spacing-md 0;
+}
+
+.message {
+  font-size: $font-size-base;
+  color: $text-color;
+  line-height: 1.6;
+  margin: 0 0 $spacing-2xl 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+

@@ -135,8 +135,17 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
     formData.append('personId', personId);
 
     try {
+      // Получить токен из localStorage
+      const token = localStorage.getItem('authToken');
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch('/api/media/upload', {
         method: 'POST',
+        headers,
         body: formData,
       });
 
@@ -196,8 +205,19 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
 
     setDeletingId(mediaId);
     try {
+      // Получить токен из localStorage
+      const token = localStorage.getItem('authToken');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`/api/media/${mediaId}`, {
         method: 'DELETE',
+        headers,
       });
 
       if (response.ok) {
