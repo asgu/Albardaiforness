@@ -80,20 +80,52 @@ export default function GallerySidebar({
 
   const categoryTree = buildCategoryTree(categories || []);
 
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  const toggleCategory = (categoryId: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
   const renderCategory = (category: Category, level = 0) => {
     const hasChildren = category.children && category.children.length > 0;
     const isSelected = selectedCategory === category.id;
+    const isExpanded = expandedCategories.has(category.id);
 
     return (
-      <div key={category.id} className={styles.categoryItem} style={{ paddingLeft: `${level * 1.5}rem` }}>
+      <div key={category.id} className={styles.categoryItem}>
         <div
           className={`${styles.categoryTitle} ${isSelected ? styles.active : ''}`}
-          onClick={() => onCategorySelect(isSelected ? undefined : category.id)}
+          style={{ paddingLeft: `${level * 1.5}rem` }}
         >
-          {hasChildren && <span className={styles.arrow}>▸</span>}
-          <span className={styles.categoryName}>{category.title}</span>
+          {hasChildren && (
+            <button
+              className={styles.expandButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleCategory(category.id);
+              }}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            >
+              <span className={`${styles.arrow} ${isExpanded ? styles.expanded : ''}`}>
+                ▸
+              </span>
+            </button>
+          )}
+          <div
+            className={styles.categoryContent}
+            onClick={() => onCategorySelect(isSelected ? undefined : category.id)}
+          >
+            <span className={styles.categoryIcon}>📁</span>
+            <span className={styles.categoryName}>{category.title}</span>
+          </div>
         </div>
-        {hasChildren && (
+        {hasChildren && isExpanded && (
           <div className={styles.categoryChildren}>
             {category.children!.map(child => renderCategory(child, level + 1))}
           </div>

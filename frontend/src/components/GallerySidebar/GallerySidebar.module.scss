@@ -74,29 +74,72 @@
   display: flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: $spacing-sm;
-  cursor: pointer;
-  border-radius: $radius-md;
-  transition: background-color 0.2s;
   font-size: 0.9rem;
+  transition: background-color 0.2s;
+
+  &.active {
+    .categoryContent {
+      background: #000;
+      color: #fff;
+    }
+  }
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
 
   &:hover {
     background: rgba(0, 0, 0, 0.1);
-  }
-
-  &.active {
-    background: #000;
-    color: #fff;
   }
 }
 
 .arrow {
   font-size: 0.7rem;
   transition: transform 0.2s;
+  display: inline-block;
+
+  &.expanded {
+    transform: rotate(90deg);
+  }
+}
+
+.categoryContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex: 1;
+  padding: $spacing-sm;
+  cursor: pointer;
+  border-radius: $radius-md;
+  transition: background-color 0.2s;
+  min-width: 0; // Allow text truncation
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.categoryIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .categoryName {
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .count {
@@ -105,9 +148,21 @@
 }
 
 .categoryChildren {
-  margin-left: $spacing-md;
-  padding-left: $spacing-md;
-  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  margin-left: 12px;
+  padding-left: $spacing-xs;
+  border-left: 2px solid rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
 }
 
 .tagList {
