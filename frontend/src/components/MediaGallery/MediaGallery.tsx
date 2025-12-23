@@ -36,7 +36,8 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
 
   useEffect(() => {
     refetchMedia();
-  }, [personId, refetchMedia]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personId]);
 
   useEffect(() => {
     if (fetchError) {
