@@ -36,10 +36,11 @@ const upload = multer({
 });
 
 // Public routes
+router.get('/', (req, res) => mediaController.getAllMedia(req, res)); // Gallery: get all media
 router.get('/search', (req, res) => mediaController.search(req, res));
-router.get('/:id', (req, res) => mediaController.getById(req, res));
 router.get('/person/:personId', (req, res) => mediaController.getByPersonId(req, res));
 router.get('/avatar/:personId', (req, res) => mediaController.getAvatarUrl(req, res));
+router.get('/:id', (req, res) => mediaController.getById(req, res)); // Must be last to avoid conflicts
 
 // Admin routes
 router.post('/upload', authMiddleware, upload.array('files', 10), (req, res) => 
