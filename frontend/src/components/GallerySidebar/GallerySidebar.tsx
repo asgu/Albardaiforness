@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from '@/i18n/useTranslations';
 import { useApi } from '@/hooks/useApi';
 import { categoryApi, tagApi } from '@/lib/api';
@@ -33,18 +33,21 @@ export default function GallerySidebar({
   const [activeView, setActiveView] = useState<SidebarView>(SidebarView.CATEGORIES);
 
   // Fetch categories
-  const { data: categories = [], loading: categoriesLoading, error: categoriesError } = useApi<Category[]>(
+  const { data: categories, loading: categoriesLoading, error: categoriesError, execute: fetchCategories } = useApi<Category[]>(
     () => categoryApi.getAll()
   );
 
   // Fetch tags
-  const { data: tags = [], loading: tagsLoading, error: tagsError } = useApi<Tag[]>(
+  const { data: tags, loading: tagsLoading, error: tagsError, execute: fetchTags } = useApi<Tag[]>(
     () => tagApi.getAll()
   );
 
-  // Debug logging
-  console.log('Categories:', categories, 'Loading:', categoriesLoading, 'Error:', categoriesError);
-  console.log('Tags:', tags, 'Loading:', tagsLoading, 'Error:', tagsError);
+  // Load data on mount
+  useEffect(() => {
+    fetchCategories();
+    fetchTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Build category tree
   const buildCategoryTree = (cats: Category[]): Category[] => {
@@ -76,6 +79,8 @@ export default function GallerySidebar({
   };
 
   const categoryTree = buildCategoryTree(categories || []);
+  
+  console.log('Categories loaded:', categories?.length, 'Tree roots:', categoryTree.length);
 
   const renderCategory = (category: Category, level = 0) => {
     const hasChildren = category.children && category.children.length > 0;
