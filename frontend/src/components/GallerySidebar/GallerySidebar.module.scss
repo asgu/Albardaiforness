@@ -149,16 +149,14 @@
   }
 }
 
-.categoryIcon {
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-
 .categoryName {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: $font-medium;
+  color: $text-color;
 }
 
 .count {
