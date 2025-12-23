@@ -67,6 +67,14 @@ export class PersonController {
         ...(person.childrenAsMother || []),
         ...(person.childrenAsFather || []),
       ];
+      
+      // Sort children by birth year (ascending, nulls last)
+      children.sort((a, b) => {
+        if (!a.birthYear && !b.birthYear) return 0;
+        if (!a.birthYear) return 1;
+        if (!b.birthYear) return -1;
+        return a.birthYear - b.birthYear;
+      });
 
       // Combine marriages with spouse info
       const spouses = [
@@ -91,6 +99,14 @@ export class PersonController {
           isCurrent: m.isCurrent,
         })),
       ];
+      
+      // Sort spouses by marriage year (ascending, nulls last)
+      spouses.sort((a, b) => {
+        if (!a.marriageYear && !b.marriageYear) return 0;
+        if (!a.marriageYear) return 1;
+        if (!b.marriageYear) return -1;
+        return a.marriageYear - b.marriageYear;
+      });
 
       // Get siblings (children of the same parents, excluding the person itself)
       const siblings: any[] = [];
@@ -122,11 +138,21 @@ export class PersonController {
             },
           });
           
-          siblings.push(...siblingsData.map(s => ({
+          const siblingsMapped = siblingsData.map(s => ({
             ...s,
             id: s.id.toString(),
             originalId: s.originalId?.toString(),
-          })));
+          }));
+          
+          // Sort siblings by birth year (ascending, nulls last)
+          siblingsMapped.sort((a, b) => {
+            if (!a.birthYear && !b.birthYear) return 0;
+            if (!a.birthYear) return 1;
+            if (!b.birthYear) return -1;
+            return a.birthYear - b.birthYear;
+          });
+          
+          siblings.push(...siblingsMapped);
         }
       }
 

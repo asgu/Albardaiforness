@@ -59,6 +59,15 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         onAddRelative={() => handleAddRelative('spouse')}
       />
 
+      {/* Children */}
+      <RelativesSection 
+        title={`${t('person.children')}${person.children ? ` (${person.children.length})` : ''}`}
+        relatives={person.children}
+        isEditing={isEditing}
+        isAuthenticated={isAuthenticated}
+        onAddRelative={() => handleAddRelative('child')}
+      />
+
       {/* Siblings */}
       {person.siblings !== undefined && (
         <RelativesSection 
@@ -68,15 +77,6 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
           isAuthenticated={isAuthenticated}
         />
       )}
-
-      {/* Children */}
-      <RelativesSection 
-        title={`${t('person.children')}${person.children ? ` (${person.children.length})` : ''}`}
-        relatives={person.children}
-        isEditing={isEditing}
-        isAuthenticated={isAuthenticated}
-        onAddRelative={() => handleAddRelative('child')}
-      />
 
       {/* Add Relative Modal */}
       <AddRelativeModal
