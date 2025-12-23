@@ -24,7 +24,9 @@
     "clear": "Clear",
     "remove": "Remove",
     "clickToEdit": "Click to edit",
-    "retry": "Retry"
+    "retry": "Retry",
+    "previous": "Previous",
+    "next": "Next"
   },
   "header": {
     "searchPlaceholder": "Search by name...",

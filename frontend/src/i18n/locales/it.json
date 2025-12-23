@@ -24,7 +24,9 @@
     "clear": "Pulisci",
     "remove": "Rimuovi",
     "clickToEdit": "Clicca per modificare",
-    "retry": "Riprova"
+    "retry": "Riprova",
+    "previous": "Precedente",
+    "next": "Successivo"
   },
   "header": {
     "searchPlaceholder": "Cerca per nome...",
