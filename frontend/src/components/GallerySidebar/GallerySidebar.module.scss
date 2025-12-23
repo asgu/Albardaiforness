@@ -112,18 +112,25 @@
   flex-shrink: 0;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.05);
   }
 }
 
 .arrow {
-  font-size: 0.7rem;
+  font-size: 1.2rem;
   transition: transform 0.2s;
   display: inline-block;
+  color: $text-color;
 
   &.expanded {
     transform: rotate(90deg);
   }
+}
+
+.expandButtonPlaceholder {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .categoryContent {
