@@ -15,6 +15,9 @@ export interface RelativeCardProps {
   marriageDate?: string | null;
   showMarriageInfo?: boolean;
   isAuthenticated?: boolean;
+  isHighlighted?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export default function RelativeCard({ 
@@ -22,7 +25,10 @@ export default function RelativeCard({
   marriageYear,
   marriageDate,
   showMarriageInfo = false,
-  isAuthenticated = false
+  isAuthenticated = false,
+  isHighlighted = false,
+  onMouseEnter,
+  onMouseLeave
 }: RelativeCardProps) {
   const formatMarriageDate = () => {
     if (marriageDate) return marriageDate;
@@ -34,7 +40,12 @@ export default function RelativeCard({
   const marriage = showMarriageInfo ? formatMarriageDate() : null;
 
   return (
-    <Link href={`/person/${getPersonUrlId(person)}`} className={styles.relativeCard}>
+    <Link 
+      href={`/person/${getPersonUrlId(person)}`} 
+      className={`${styles.relativeCard} ${isHighlighted ? styles.highlighted : ''}`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className={styles.avatar}>
         {person.avatarMediaId ? (
           <img 

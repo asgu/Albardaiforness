@@ -13,6 +13,8 @@ interface RelativesSectionProps {
   isEditing?: boolean;
   isAuthenticated?: boolean;
   onAddRelative?: () => void;
+  onSpouseHover?: (spouseId: string | null) => void;
+  highlightedIds?: string[];
 }
 
 export default function RelativesSection({ 
@@ -22,7 +24,9 @@ export default function RelativesSection({
   isParentsSection = false,
   isEditing = false,
   isAuthenticated = false,
-  onAddRelative
+  onAddRelative,
+  onSpouseHover,
+  highlightedIds = []
 }: RelativesSectionProps) {
   const hasRelatives = relatives && relatives.length > 0;
 
@@ -101,6 +105,8 @@ export default function RelativesSection({
                   marriageDate={item.marriageDate}
                   showMarriageInfo={showMarriageInfo}
                   isAuthenticated={isAuthenticated}
+                  onMouseEnter={() => onSpouseHover?.(item.person.id)}
+                  onMouseLeave={() => onSpouseHover?.(null)}
                 />
               ))
             ) : (
@@ -110,6 +116,7 @@ export default function RelativesSection({
                   key={person.id}
                   person={person}
                   isAuthenticated={isAuthenticated}
+                  isHighlighted={highlightedIds.includes(person.id)}
                 />
               ))
             )}

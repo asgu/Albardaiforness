@@ -17,6 +17,18 @@
     border-color: $primary-color;
     box-shadow: $shadow-md;
   }
+
+  &.highlighted {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    
+    &:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), $shadow-md;
+    }
+  }
 }
 
 .avatar {
