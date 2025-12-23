@@ -71,7 +71,7 @@ export default function GallerySidebar({
     return roots;
   };
 
-  const categoryTree = buildCategoryTree(categories);
+  const categoryTree = buildCategoryTree(categories || []);
 
   const renderCategory = (category: Category, level = 0) => {
     const hasChildren = category.children && category.children.length > 0;
