@@ -75,19 +75,60 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
   return (
     <div className={styles.personalInfo}>
       {/* Profile Header */}
-      <div className={styles.profile}>
-        <div className={styles.profileHeader}>
-          <div className={styles.profileAvatar}>
-            {person.avatarMediaId ? (
-              <img 
-                src={`/api/media/${person.avatarMediaId}`} 
-                alt={`${person.firstName} ${person.lastName}`}
-                className={styles.profilePhoto}
-              />
+      <div className={styles.profileCard}>
+        <div className={styles.profileAvatar}>
+          {person.avatarMediaId ? (
+            <img 
+              src={`/api/media/${person.avatarMediaId}`} 
+              alt={`${person.firstName} ${person.lastName}`}
+            />
+          ) : (
+            <div className={styles.noPhoto}>
+              <span>{getGenderIcon(person.gender)}</span>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.profileContent}>
+          <div className={styles.profileInfo}>
+            {isEditing ? (
+              <>
+                <EditableField
+                  value={person.lastName}
+                  onSave={(value) => handleSaveField('lastName', value)}
+                  placeholder={t('person.lastName')}
+                />
+                <EditableField
+                  value={person.firstName}
+                  onSave={(value) => handleSaveField('firstName', value)}
+                  placeholder={t('person.firstName')}
+                />
+                <EditableField
+                  value={person.nickName || ''}
+                  onSave={(value) => handleSaveField('nickName', value)}
+                  placeholder={t('person.nickName')}
+                />
+                <EditableField
+                  value={person.maidenName || ''}
+                  onSave={(value) => handleSaveField('maidenName', value)}
+                  placeholder={t('person.maidenName')}
+                />
+              </>
             ) : (
-              <div className={styles.noPhoto}>
-                <span>{getGenderIcon(person.gender)}</span>
-              </div>
+              <>
+                <div className={styles.lastName}>{capitalizeWords(person.lastName).toUpperCase()}</div>
+                <div className={styles.firstName}>{formatName(capitalizeWords(person.firstName))}</div>
+                {person.nickName && (
+                  <div className={styles.nickName}>
+                    <span className={styles.secondary}>"{capitalizeWords(person.nickName)}"</span>
+                  </div>
+                )}
+                {person.maidenName && (
+                  <div className={styles.maidenName}>
+                    <span className={styles.secondary}>({capitalizeWords(person.maidenName)})</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -102,49 +143,6 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
             )}
           </div>
         </div>
-
-        <div className={styles.profileInfo}>
-          {isEditing ? (
-            <>
-              <EditableField
-                value={person.lastName}
-                onSave={(value) => handleSaveField('lastName', value)}
-                placeholder={t('person.lastName')}
-              />
-              <EditableField
-                value={person.firstName}
-                onSave={(value) => handleSaveField('firstName', value)}
-                placeholder={t('person.firstName')}
-              />
-              <EditableField
-                value={person.nickName || ''}
-                onSave={(value) => handleSaveField('nickName', value)}
-                placeholder={t('person.nickName')}
-              />
-              <EditableField
-                value={person.maidenName || ''}
-                onSave={(value) => handleSaveField('maidenName', value)}
-                placeholder={t('person.maidenName')}
-              />
-            </>
-          ) : (
-            <>
-              <div className={styles.lastName}>{capitalizeWords(person.lastName).toUpperCase()}</div>
-              <div className={styles.firstName}>{formatName(capitalizeWords(person.firstName))}</div>
-              {person.nickName && (
-                <div className={styles.nickName}>
-                  <span className={styles.secondary}>"{capitalizeWords(person.nickName)}"</span>
-                </div>
-              )}
-              {person.maidenName && (
-                <div className={styles.maidenName}>
-                  <span className={styles.secondary}>({capitalizeWords(person.maidenName)})</span>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
       </div>
 
       {/* Details Table */}
