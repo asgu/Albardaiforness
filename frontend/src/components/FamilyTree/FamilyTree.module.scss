@@ -82,58 +82,109 @@
 }
 
 .card {
-  width: 180px;
-  height: 100px;
-  background: $bg-color;
-  border: 2px solid $border-color;
-  border-radius: $radius-md;
-  padding: 12px;
-  box-shadow: $shadow-sm;
+  width: 160px;
+  height: 220px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all $transition-base;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  &.current {
+    border-color: #000;
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.avatar {
+  width: 100%;
+  height: 160px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .noPhoto {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e5e5;
+    font-size: 48px;
+    color: #999;
+  }
+}
+
+.info {
+  flex: 1;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  transition: all $transition-base;
-
-  &:hover {
-    border-color: $primary-color;
-    box-shadow: $shadow-lg;
+  
+  .card.male & {
+    background: #e2f9ff;
   }
-
-  &.current {
-    border-color: $primary-color;
-    border-width: 3px;
-    background: linear-gradient(135deg, $bg-color 0%, lighten($primary-color, 45%) 100%);
-    box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+  
+  .card.female & {
+    background: #ffe9ff;
+  }
+  
+  .card.unknown & {
+    background: #f5f5f5;
   }
 }
 
 .name {
-  font-size: $font-size-sm;
-  font-weight: 600;
-  color: $text-color;
-  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .years {
-  font-size: $font-size-xs;
-  color: $text-light;
-  margin-bottom: 2px;
+  font-size: 10px;
+  color: #000;
+  font-weight: 500;
 }
 
 .nickname {
-  font-size: $font-size-xs;
-  color: $text-light;
+  font-size: 9px;
+  color: #666;
   font-style: italic;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  margin-top: 2px;
 }
 
 @media (max-width: $breakpoint-md) {

@@ -33,10 +33,10 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
   const buildTree = () => {
     const treeNodes: TreeNode[] = [];
     const addedPersons = new Set<string>();
-    const nodeWidth = 180;
-    const nodeHeight = 100;
+    const nodeWidth = 160;
+    const nodeHeight = 220;
     const horizontalGap = 40;
-    const verticalGap = 120;
+    const verticalGap = 80;
 
     // Build tree structure like Family Echo algorithm
     const addNode = (p: Person, x: number, y: number) => {
@@ -258,9 +258,9 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
           <svg className={styles.connections}>
             {nodes.map((node, index) => {
               const lines: JSX.Element[] = [];
-              const nodeCenter = { x: node.x + 90, y: node.y + 50 };
-              const nodeTop = { x: node.x + 90, y: node.y };
-              const nodeBottom = { x: node.x + 90, y: node.y + 100 };
+              const nodeCenter = { x: node.x + 80, y: node.y + 110 };
+              const nodeTop = { x: node.x + 80, y: node.y };
+              const nodeBottom = { x: node.x + 80, y: node.y + 220 };
               
               // Draw connection to parents (T-shaped)
               if (node.person.father || node.person.mother) {
@@ -269,9 +269,9 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                 
                 if (fatherNode && motherNode) {
                   // Both parents exist - draw T-connection
-                  const fatherBottom = { x: fatherNode.x + 90, y: fatherNode.y + 100 };
-                  const motherBottom = { x: motherNode.x + 90, y: motherNode.y + 100 };
-                  const midY = nodeTop.y - 30;
+                  const fatherBottom = { x: fatherNode.x + 80, y: fatherNode.y + 220 };
+                  const motherBottom = { x: motherNode.x + 80, y: motherNode.y + 220 };
+                  const midY = nodeTop.y - 40;
                   const parentMidX = (fatherBottom.x + motherBottom.x) / 2;
                   
                   // Horizontal line between parents
@@ -282,7 +282,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                       y1={fatherBottom.y}
                       x2={motherBottom.x}
                       y2={motherBottom.y}
-                      stroke="#94a3b8"
+                      stroke="#666"
                       strokeWidth="2"
                     />
                   );
@@ -292,7 +292,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                     <path
                       key={`child-line-${index}`}
                       d={`M ${parentMidX} ${fatherBottom.y} L ${parentMidX} ${midY} L ${nodeTop.x} ${midY} L ${nodeTop.x} ${nodeTop.y}`}
-                      stroke="#94a3b8"
+                      stroke="#666"
                       strokeWidth="2"
                       fill="none"
                     />
@@ -301,7 +301,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                   // Single parent
                   const parentNode = fatherNode || motherNode;
                   if (parentNode) {
-                    const parentBottom = { x: parentNode.x + 90, y: parentNode.y + 100 };
+                    const parentBottom = { x: parentNode.x + 80, y: parentNode.y + 220 };
                     lines.push(
                       <line
                         key={`single-parent-${index}`}
@@ -309,7 +309,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                         y1={parentBottom.y}
                         x2={nodeTop.x}
                         y2={nodeTop.y}
-                        stroke="#94a3b8"
+                        stroke="#666"
                         strokeWidth="2"
                       />
                     );
@@ -323,7 +323,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                   if (marriage.person) {
                     const spouseNode = nodes.find(n => n.person.id === marriage.person?.id);
                     if (spouseNode && spouseNode.generation === node.generation) {
-                      const spouseCenter = { x: spouseNode.x + 90, y: spouseNode.y + 50 };
+                      const spouseCenter = { x: spouseNode.x + 80, y: spouseNode.y + 110 };
                       lines.push(
                         <line
                           key={`spouse-${index}-${spouseIndex}`}
@@ -331,8 +331,8 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                           y1={nodeCenter.y}
                           x2={spouseCenter.x}
                           y2={spouseCenter.y}
-                          stroke="#10b981"
-                          strokeWidth="3"
+                          stroke="#666"
+                          strokeWidth="2"
                         />
                       );
                     }
@@ -344,25 +344,45 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             })}
           </svg>
 
-          {nodes.map((node, index) => (
-            <Link
-              key={index}
-              href={`/person/${getPersonUrlId(node.person)}`}
-              className={styles.node}
-              style={{
-                left: `${node.x}px`,
-                top: `${node.y}px`,
-              }}
-            >
-              <div className={`${styles.card} ${node.person.id === person.id ? styles.current : ''}`}>
-                <div className={styles.name}>{getFullName(node.person)}</div>
-                <div className={styles.years}>{getLifeYears(node.person)}</div>
-                {node.person.nickName && (
-                  <div className={styles.nickname}>"{node.person.nickName}"</div>
-                )}
-              </div>
-            </Link>
-          ))}
+          {nodes.map((node, index) => {
+            const genderClass = node.person.gender === 'male' ? styles.male : 
+                               node.person.gender === 'female' ? styles.female : 
+                               styles.unknown;
+            
+            return (
+              <Link
+                key={index}
+                href={`/person/${getPersonUrlId(node.person)}`}
+                className={styles.node}
+                style={{
+                  left: `${node.x}px`,
+                  top: `${node.y}px`,
+                }}
+              >
+                <div className={`${styles.card} ${genderClass} ${node.person.id === person.id ? styles.current : ''}`}>
+                  <div className={styles.avatar}>
+                    {node.person.avatarMediaId ? (
+                      <img 
+                        src={`/api/media/${node.person.avatarMediaId}`} 
+                        alt={getFullName(node.person)}
+                      />
+                    ) : (
+                      <div className={styles.noPhoto}>
+                        {node.person.gender === 'male' ? '👤' : node.person.gender === 'female' ? '👤' : '?'}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.info}>
+                    <div className={styles.name}>{getFullName(node.person)}</div>
+                    <div className={styles.years}>{getLifeYears(node.person)}</div>
+                    {node.person.nickName && (
+                      <div className={styles.nickname}>"{node.person.nickName}"</div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
