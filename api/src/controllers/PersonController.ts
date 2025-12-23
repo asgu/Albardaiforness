@@ -408,4 +408,52 @@ export class PersonController {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  async removeRelative(req: Request, res: Response) {
+    try {
+      const { id, relativeId } = req.params;
+      const userId = (req as any).user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Определяем сервер по домену запроса
+      const host = req.get('x-server-host') || req.get('host') || '';
+      let sourceDb: string | undefined;
+      
+      if (host.includes('albardaiforness')) {
+        sourceDb = 'albaro';
+      } else if (host.includes('alberodipreone')) {
+        sourceDb = 'preone';
+      } else if (host.includes('alberodiraveo')) {
+        sourceDb = 'raveo';
+      }
+
+      // Find person by originalId or internal ID
+      let personId: bigint;
+      const personByOriginalId = await personService.getByOriginalId(id, sourceDb);
+      if (personByOriginalId) {
+        personId = personByOriginalId.id;
+      } else {
+        personId = BigInt(id);
+      }
+
+      // Find relative by originalId or internal ID
+      let relativeIdBigInt: bigint;
+      const relativeByOriginalId = await personService.getByOriginalId(relativeId, sourceDb);
+      if (relativeByOriginalId) {
+        relativeIdBigInt = relativeByOriginalId.id;
+      } else {
+        relativeIdBigInt = BigInt(relativeId);
+      }
+
+      await personService.removeRelative(personId, relativeIdBigInt);
+      
+      res.json({ message: 'Relative removed successfully' });
+    } catch (error) {
+      console.error('Remove relative error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }

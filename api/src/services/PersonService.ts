@@ -624,5 +624,66 @@ export class PersonService {
         throw new Error(`Unknown relation type: ${relationType}`);
     }
   }
+
+  async removeRelative(personId: bigint, relativeId: bigint) {
+    // Сначала проверим, какой тип связи существует
+    const person = await prisma.person.findUnique({
+      where: { id: personId },
+      select: { 
+        fatherId: true, 
+        motherId: true,
+        gender: true,
+      },
+    });
+
+    // Удаляем связь родитель-ребенок
+    if (person?.fatherId === relativeId) {
+      await prisma.person.update({
+        where: { id: personId },
+        data: { fatherId: null },
+      });
+      return;
+    }
+
+    if (person?.motherId === relativeId) {
+      await prisma.person.update({
+        where: { id: personId },
+        data: { motherId: null },
+      });
+      return;
+    }
+
+    // Проверяем, является ли relativeId ребенком personId
+    const child = await prisma.person.findUnique({
+      where: { id: relativeId },
+      select: { fatherId: true, motherId: true },
+    });
+
+    if (child?.fatherId === personId) {
+      await prisma.person.update({
+        where: { id: relativeId },
+        data: { fatherId: null },
+      });
+      return;
+    }
+
+    if (child?.motherId === personId) {
+      await prisma.person.update({
+        where: { id: relativeId },
+        data: { motherId: null },
+      });
+      return;
+    }
+
+    // Удаляем брак (spouse)
+    await prisma.marriage.deleteMany({
+      where: {
+        OR: [
+          { person1Id: personId, person2Id: relativeId },
+          { person1Id: relativeId, person2Id: personId },
+        ],
+      },
+    });
+  }
 }
 

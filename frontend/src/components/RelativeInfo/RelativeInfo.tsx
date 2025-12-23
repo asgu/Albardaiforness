@@ -38,6 +38,16 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
     }
   };
 
+  const handleRemoveRelative = async (relativeId: string) => {
+    try {
+      await personApi.removeRelative(person.id, relativeId);
+      router.refresh();
+    } catch (error) {
+      console.error('Error removing relative:', error);
+      alert(t('common.error'));
+    }
+  };
+
   // Определяем детей от каждого супруга на основе motherId/fatherId
   const childrenBySpouse = useMemo(() => {
     if (!person.spouses || !person.children) return new Map<string, string[]>();
@@ -81,6 +91,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('father')}
+        onRemoveRelative={handleRemoveRelative}
       />
 
       {/* Spouses */}
@@ -91,6 +102,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('spouse')}
+        onRemoveRelative={handleRemoveRelative}
         onSpouseHover={setHoveredSpouseId}
       />
 
@@ -101,6 +113,7 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         isEditing={isEditing}
         isAuthenticated={isAuthenticated}
         onAddRelative={() => handleAddRelative('child')}
+        onRemoveRelative={handleRemoveRelative}
         highlightedIds={highlightedChildrenIds}
       />
 

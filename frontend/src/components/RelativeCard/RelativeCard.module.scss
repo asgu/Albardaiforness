@@ -134,3 +134,29 @@
   gap: $spacing-xs;
 }
 
+.removeButton {
+  position: absolute;
+  top: $spacing-xs;
+  right: $spacing-xs;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba($error-color, 0.9);
+  color: $bg-color;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+  z-index: 10;
+  padding: 0;
+
+  &:hover {
+    background: $error-color;
+    transform: scale(1.1);
+  }
+}
+

@@ -84,6 +84,9 @@ export const personApi = {
   
   addRelative: (personId: string, relativeId: string, relationType: 'father' | 'mother' | 'spouse' | 'child') =>
     api.post(`/api/person/${personId}/relative`, { relativeId, relationType }),
+  
+  removeRelative: (personId: string, relativeId: string) =>
+    api.delete(`/api/person/${personId}/relative/${relativeId}`),
 };
 
 export const serverApi = {

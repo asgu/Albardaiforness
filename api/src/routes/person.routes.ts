@@ -16,6 +16,7 @@ router.post('/admin/person', authMiddleware, (req, res) => personController.crea
 router.put('/admin/person/:id', authMiddleware, (req, res) => personController.update(req, res));
 router.patch('/person/:id', authMiddleware, (req, res) => personController.update(req, res));
 router.post('/person/:id/relative', authMiddleware, (req, res) => personController.addRelative(req, res));
+router.delete('/person/:id/relative/:relativeId', authMiddleware, (req, res) => personController.removeRelative(req, res));
 router.delete('/admin/person/:id', authMiddleware, (req, res) => personController.delete(req, res));
 
 export default router;

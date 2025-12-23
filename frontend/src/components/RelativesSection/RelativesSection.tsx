@@ -13,6 +13,7 @@ interface RelativesSectionProps {
   isEditing?: boolean;
   isAuthenticated?: boolean;
   onAddRelative?: () => void;
+  onRemoveRelative?: (personId: string) => void;
   onSpouseHover?: (spouseId: string | null) => void;
   highlightedIds?: string[];
 }
@@ -25,6 +26,7 @@ export default function RelativesSection({
   isEditing = false,
   isAuthenticated = false,
   onAddRelative,
+  onRemoveRelative,
   onSpouseHover,
   highlightedIds = []
 }: RelativesSectionProps) {
@@ -48,12 +50,15 @@ export default function RelativesSection({
       return null;
     }
 
+    const parentsCount = (father ? 1 : 0) + (mother ? 1 : 0);
+    const canAddParent = parentsCount < 2;
+
     return (
       <div className={styles.relativeSection}>
         <div className={styles.sectionHeader}>
           <h2>{title}</h2>
-          {isEditing && onAddRelative && (
-            <Button variant="secondary" onClick={onAddRelative}>
+          {isEditing && onAddRelative && canAddParent && (
+            <Button variant="secondary" onClick={onAddRelative} className={styles.compactButton}>
               + Aggiungi
             </Button>
           )}
@@ -65,6 +70,8 @@ export default function RelativesSection({
                 key={father.id}
                 person={father}
                 isAuthenticated={isAuthenticated}
+                isEditing={isEditing}
+                onRemove={onRemoveRelative}
               />
             )}
           </div>
@@ -74,6 +81,8 @@ export default function RelativesSection({
                 key={mother.id}
                 person={mother}
                 isAuthenticated={isAuthenticated}
+                isEditing={isEditing}
+                onRemove={onRemoveRelative}
               />
             )}
           </div>
@@ -87,7 +96,7 @@ export default function RelativesSection({
       <div className={styles.sectionHeader}>
         <h2>{title}</h2>
         {isEditing && onAddRelative && (
-          <Button variant="secondary" onClick={onAddRelative}>
+          <Button variant="secondary" onClick={onAddRelative} className={styles.compactButton}>
             + Aggiungi
           </Button>
         )}
@@ -105,6 +114,8 @@ export default function RelativesSection({
                   marriageDate={item.marriageDate}
                   showMarriageInfo={showMarriageInfo}
                   isAuthenticated={isAuthenticated}
+                  isEditing={isEditing}
+                  onRemove={onRemoveRelative}
                   onMouseEnter={() => onSpouseHover?.(item.person.id)}
                   onMouseLeave={() => onSpouseHover?.(null)}
                 />
@@ -116,6 +127,8 @@ export default function RelativesSection({
                   key={person.id}
                   person={person}
                   isAuthenticated={isAuthenticated}
+                  isEditing={isEditing}
+                  onRemove={onRemoveRelative}
                   isHighlighted={highlightedIds.includes(person.id)}
                 />
               ))

@@ -17,6 +17,14 @@
   }
 }
 
+.compactButton {
+  height: auto !important;
+  padding: $spacing-xs $spacing-md !important;
+  font-size: $font-size-sm !important;
+  min-height: auto !important;
+  line-height: 1.2 !important;
+}
+
 .relatives {
   display: grid;
   grid-template-columns: 1fr;

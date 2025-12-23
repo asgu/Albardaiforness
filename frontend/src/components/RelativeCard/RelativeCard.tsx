@@ -16,6 +16,8 @@ export interface RelativeCardProps {
   showMarriageInfo?: boolean;
   isAuthenticated?: boolean;
   isHighlighted?: boolean;
+  isEditing?: boolean;
+  onRemove?: (personId: string) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -27,9 +29,19 @@ export default function RelativeCard({
   showMarriageInfo = false,
   isAuthenticated = false,
   isHighlighted = false,
+  isEditing = false,
+  onRemove,
   onMouseEnter,
   onMouseLeave
 }: RelativeCardProps) {
+  
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRemove && confirm('Sei sicuro di voler rimuovere questo parente?')) {
+      onRemove(person.id);
+    }
+  };
   const formatMarriageDate = () => {
     if (marriageDate) return marriageDate;
     if (marriageYear) return marriageYear.toString();
@@ -89,6 +101,16 @@ export default function RelativeCard({
           </div>
         )}
       </div>
+
+      {isEditing && onRemove && (
+        <button 
+          className={styles.removeButton}
+          onClick={handleRemove}
+          title="Rimuovi parente"
+        >
+          ×
+        </button>
+      )}
     </Link>
   );
 }
