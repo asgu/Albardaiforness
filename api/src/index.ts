@@ -7,6 +7,7 @@ import apiRoutes from './routes/api.routes';
 import personRoutes from './routes/person.routes';
 import serverRoutes from './routes/server.routes';
 import duplicateRoutes from './routes/duplicate.routes';
+import mediaRoutes from './routes/media.routes';
 
 dotenv.config();
 
@@ -66,6 +67,7 @@ app.use('/api', apiRoutes);
 app.use('/api', serverRoutes);
 app.use('/api', duplicateRoutes);
 app.use('/api', personRoutes);
+app.use('/api/media', mediaRoutes);
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

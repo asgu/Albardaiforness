@@ -37,10 +37,12 @@ interface FileRow extends RowDataPacket {
 
 async function migrateMedia(
   serverCode: string,
-  dumpFileName: string
+  dumpFileName: string,
+  oldDomain: string
 ) {
   console.log(`\n🎬 Начинаем миграцию медиафайлов для ${serverCode}...`);
-  console.log(`📁 Дамп: ${dumpFileName}\n`);
+  console.log(`📁 Дамп: ${dumpFileName}`);
+  console.log(`🌐 Старый домен: ${oldDomain}\n`);
 
   // Получаем сервер из БД
   const server = await prisma.server.findUnique({
@@ -135,11 +137,14 @@ async function migrateMedia(
       else if (ext === '.gif') mimeType = 'image/gif';
       else if (ext === '.webp') mimeType = 'image/webp';
 
+      // Формируем полный URL к файлу на старом домене
+      const fullUrl = `${oldDomain}/uploads/photos/${photo.filePath}`;
+
       await prisma.media.create({
         data: {
           personId,
           mediaType: 'photo',
-          filePath: photo.filePath,
+          filePath: fullUrl,
           fileName: path.basename(photo.filePath),
           description: photo.description || null,
           sortOrder: photo.prior || 0,
@@ -198,11 +203,14 @@ async function migrateMedia(
         mimeType = 'audio/mpeg';
       }
 
+      // Формируем полный URL к файлу на старом домене
+      const fullUrl = `${oldDomain}/uploads/files/${file.filePath}`;
+
       await prisma.media.create({
         data: {
           personId,
           mediaType,
-          filePath: file.filePath,
+          filePath: fullUrl,
           fileName: file.fileName || path.basename(file.filePath),
           description: file.description || null,
           sortOrder: file.prior || 0,
@@ -235,10 +243,10 @@ async function migrateMedia(
 async function main() {
   try {
     // Миграция Albaro (ad1.sql)
-    await migrateMedia('albaro', 'ad1.sql');
+    await migrateMedia('albaro', 'ad1.sql', 'https://albardaiforness.org');
 
     // Миграция Preone (d2.sql)
-    await migrateMedia('preone', 'd2.sql');
+    await migrateMedia('preone', 'd2.sql', 'https://alberodipreone.org');
 
     console.log('🎉 Все медиафайлы успешно импортированы!');
   } catch (error) {
