@@ -2,8 +2,8 @@
  * Миграция медиафайлов (Photo и File) из старых баз данных
  * 
  * Импортирует:
- * - Фотографии из таблицы Photo (ad1.sql - Albaro, d2.sql - Preone)
- * - Файлы из таблицы File (ad1.sql - Albaro, d2.sql - Preone)
+ * - Фотографии из таблицы Photo (forness-person.sql - Albaro, preone-person.sql - Preone)
+ * - Файлы из таблицы File (forness-person.sql - Albaro, preone-person.sql - Preone)
  * 
  * Связывает медиафайлы с персонами по originalId
  */
@@ -242,11 +242,11 @@ async function migrateMedia(
 
 async function main() {
   try {
-    // Миграция Albaro (ad1.sql)
-    await migrateMedia('albaro', 'ad1.sql', 'https://albardaiforness.org');
+    // Миграция Albaro (forness-person.sql)
+    await migrateMedia('albaro', 'forness-person.sql', 'https://albardaiforness.org');
 
-    // Миграция Preone (d2.sql)
-    await migrateMedia('preone', 'd2.sql', 'https://alberodipreone.org');
+    // Миграция Preone (preone-person.sql)
+    await migrateMedia('preone', 'preone-person.sql', 'https://alberodipreone.org');
 
     console.log('🎉 Все медиафайлы успешно импортированы!');
   } catch (error) {

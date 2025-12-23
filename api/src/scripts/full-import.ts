@@ -33,12 +33,24 @@ const steps = [
     command: 'npm run fix:parent-links',
   },
   {
+    name: 'Импорт медиа Albaro (фото и файлы персон)',
+    command: 'npm run migrate:media',
+  },
+  {
     name: 'Импорт галереи Albaro (forness)',
     command: 'npm run migrate:gallery:albaro',
   },
   {
     name: 'Импорт галереи Preone',
     command: 'npm run migrate:gallery:preone',
+  },
+  {
+    name: 'Импорт меток на фото',
+    command: 'npm run migrate:photo-tags',
+  },
+  {
+    name: 'Установка аватаров',
+    command: 'npm run set:avatars',
   },
   {
     name: 'Назначение категорий для фото персон',

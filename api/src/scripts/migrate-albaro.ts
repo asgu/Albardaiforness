@@ -343,6 +343,21 @@ async function migrateAlbaroData() {
 
         if (person1Id && person2Id) {
           try {
+            // Проверяем, существует ли уже такой брак
+            const existingMarriage = await prisma.marriage.findFirst({
+              where: {
+                OR: [
+                  { person1Id, person2Id },
+                  { person1Id: person2Id, person2Id: person1Id },
+                ],
+              },
+            });
+
+            if (existingMarriage) {
+              // Брак уже существует, пропускаем
+              continue;
+            }
+
             // Парсим дату брака
             let marriageYear = null;
             let marriageMonth = null;
@@ -367,7 +382,7 @@ async function migrateAlbaroData() {
             });
             importedMarriages++;
           } catch (error) {
-            // Игнорируем дубликаты браков
+            // Игнорируем ошибки
           }
         }
       }
