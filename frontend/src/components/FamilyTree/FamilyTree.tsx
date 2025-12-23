@@ -197,43 +197,53 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     }
     
     const sr = FSM(p, p.spouses?.[0]?.person?.id);
-    const sx = sr ? 1 : -1;
+    let currentSx = sr ? 1 : -1;
     
     // Add person
     TAE(d, p, 0, 0, false);
     
-    // Add own children
+    // Add own children (without specific partner)
     const ac = FLA(p);
     if (ac.length > 0) {
       const childGroup = BCG(ac, depth - 1);
       BCD(d, childGroup.ds, childGroup.aw, 0, 1, 0, 0);
     }
     
-    // Add spouse
-    if (p.spouses && p.spouses.length > 0 && p.spouses[0].person) {
-      const spouse = p.spouses[0].person;
-      const tc = FLP(p, spouse.id);
-      
-      if (tc.length > 0) {
-        const childGroup = BCG(tc, depth - 1);
-        const newSx = ac.length > 0
-          ? (sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 + 0.5 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2 - 0.5)
-          : sx;
-        const cx = sr ? newSx - 0.5 : newSx + 0.5;
-        BCD(d, childGroup.ds, childGroup.aw, cx, 1, cx, 0);
-      }
-      
-      // Marriage line
-      TAL(d, 0, 0, sx, 0, true);
-      TAE(d, spouse, sx, 0, false);
-      
-      // Spouse's own children
-      const spouseChildren = FLA(spouse);
-      if (spouseChildren.length > 0) {
-        const childGroup = BCG(spouseChildren, depth - 1);
-        const cx = sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2;
-        BCD(d, childGroup.ds, childGroup.aw, cx, 1, sx, 0);
-      }
+    // Add ALL spouses
+    if (p.spouses && p.spouses.length > 0) {
+      p.spouses.forEach((marriage, index) => {
+        if (!marriage.person) return;
+        
+        const spouse = marriage.person;
+        const spouseX = currentSx;
+        
+        // Children with this specific spouse
+        const tc = FLP(p, spouse.id);
+        
+        if (tc.length > 0) {
+          const childGroup = BCG(tc, depth - 1);
+          const newSx = ac.length > 0
+            ? (sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 + 0.5 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2 - 0.5)
+            : spouseX;
+          const cx = sr ? newSx - 0.5 : newSx + 0.5;
+          BCD(d, childGroup.ds, childGroup.aw, cx, 1, cx, 0);
+        }
+        
+        // Marriage line
+        TAL(d, 0, 0, spouseX, 0, true);
+        TAE(d, spouse, spouseX, 0, false);
+        
+        // Spouse's own children (from other relationships)
+        const spouseChildren = FLA(spouse);
+        if (spouseChildren.length > 0) {
+          const childGroup = BCG(spouseChildren, depth - 1);
+          const cx = sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2;
+          BCD(d, childGroup.ds, childGroup.aw, cx, 1, spouseX, 0);
+        }
+        
+        // Next spouse further away
+        currentSx += sr ? 1.2 : -1.2;
+      });
     }
     
     return d;
