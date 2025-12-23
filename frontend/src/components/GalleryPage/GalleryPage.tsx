@@ -56,7 +56,8 @@ export default function GalleryPage() {
       page: currentPage,
       limit: 20,
     });
-  }, [selectedCategory, selectedTag, searchQuery, currentPage, fetchMedia]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, selectedTag, searchQuery, currentPage]);
 
   const media = mediaResponse?.data || [];
   const pagination = mediaResponse?.pagination;
