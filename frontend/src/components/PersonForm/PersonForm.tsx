@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
-import { Button, Input, Card, GenderSelect } from '@/ui';
+import { Button, Input, Card, GenderSelect, Textarea, FormSection, DateInput } from '@/ui';
 import { personApi } from '@/lib/api';
 import { Person } from '@/types';
 import styles from './PersonForm.module.scss';
@@ -139,9 +139,7 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           {/* Names Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('person.basicInfo')}</h2>
-            
+          <FormSection title={t('person.basicInfo')}>
             <div className={styles.row}>
               <Input
                 label={t('person.firstName')}
@@ -189,39 +187,19 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
                 />
               </div>
             )}
-          </div>
+          </FormSection>
 
           {/* Birth Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('person.birth')}</h2>
-            
-            <div className={styles.dateRow}>
-              <Input
-                label={t('person.year')}
-                type="number"
-                value={formData.birthYear}
-                onChange={(e) => handleChange('birthYear', e.target.value)}
-                placeholder="YYYY"
-              />
-              <Input
-                label={t('person.month')}
-                type="number"
-                min="1"
-                max="12"
-                value={formData.birthMonth}
-                onChange={(e) => handleChange('birthMonth', e.target.value)}
-                placeholder="MM"
-              />
-              <Input
-                label={t('person.day')}
-                type="number"
-                min="1"
-                max="31"
-                value={formData.birthDay}
-                onChange={(e) => handleChange('birthDay', e.target.value)}
-                placeholder="DD"
-              />
-            </div>
+          <FormSection title={t('person.birth')}>
+            <DateInput
+              label={t('person.year')}
+              year={formData.birthYear}
+              month={formData.birthMonth}
+              day={formData.birthDay}
+              onYearChange={(value) => handleChange('birthYear', value)}
+              onMonthChange={(value) => handleChange('birthMonth', value)}
+              onDayChange={(value) => handleChange('birthDay', value)}
+            />
 
             <div className={styles.row}>
               <Input
@@ -231,39 +209,19 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
                 fullWidth
               />
             </div>
-          </div>
+          </FormSection>
 
           {/* Death Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('person.death')}</h2>
-            
-            <div className={styles.dateRow}>
-              <Input
-                label={t('person.year')}
-                type="number"
-                value={formData.deathYear}
-                onChange={(e) => handleChange('deathYear', e.target.value)}
-                placeholder="YYYY"
-              />
-              <Input
-                label={t('person.month')}
-                type="number"
-                min="1"
-                max="12"
-                value={formData.deathMonth}
-                onChange={(e) => handleChange('deathMonth', e.target.value)}
-                placeholder="MM"
-              />
-              <Input
-                label={t('person.day')}
-                type="number"
-                min="1"
-                max="31"
-                value={formData.deathDay}
-                onChange={(e) => handleChange('deathDay', e.target.value)}
-                placeholder="DD"
-              />
-            </div>
+          <FormSection title={t('person.death')}>
+            <DateInput
+              label={t('person.year')}
+              year={formData.deathYear}
+              month={formData.deathMonth}
+              day={formData.deathDay}
+              onYearChange={(value) => handleChange('deathYear', value)}
+              onMonthChange={(value) => handleChange('deathMonth', value)}
+              onDayChange={(value) => handleChange('deathDay', value)}
+            />
 
             <div className={styles.row}>
               <Input
@@ -282,12 +240,10 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
                 fullWidth
               />
             </div>
-          </div>
+          </FormSection>
 
           {/* Additional Info Section */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('person.additionalInfo')}</h2>
-            
+          <FormSection title={t('person.additionalInfo')}>
             <div className={styles.row}>
               <Input
                 label={t('person.occupation')}
@@ -298,25 +254,25 @@ export default function PersonForm({ person, mode }: PersonFormProps) {
             </div>
 
             <div className={styles.row}>
-              <label className={styles.fieldLabel}>{t('person.note')}</label>
-              <textarea
-                className={styles.textarea}
+              <Textarea
+                label={t('person.note')}
                 value={formData.note}
                 onChange={(e) => handleChange('note', e.target.value)}
                 rows={3}
+                fullWidth
               />
             </div>
 
             <div className={styles.row}>
-              <label className={styles.fieldLabel}>{t('person.privateNote')}</label>
-              <textarea
-                className={styles.textarea}
+              <Textarea
+                label={t('person.privateNote')}
                 value={formData.privateNote}
                 onChange={(e) => handleChange('privateNote', e.target.value)}
                 rows={3}
+                fullWidth
               />
             </div>
-          </div>
+          </FormSection>
 
           {/* Actions */}
           <div className={styles.actions}>

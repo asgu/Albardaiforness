@@ -1,0 +1,74 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.textareaWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  
+  &.fullWidth {
+    width: 100%;
+  }
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-semibold;
+  color: $text-color;
+  display: block;
+}
+
+.required {
+  color: $error-color;
+  margin-left: $spacing-2xs;
+}
+
+.textarea {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-family: inherit;
+  line-height: 1.5;
+  color: $text-color;
+  background: $bg-color;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  resize: vertical;
+  transition: all $transition-base;
+  min-height: 80px;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &:disabled {
+    background: $bg-light;
+    color: $text-light;
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: $error-color;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+    }
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $text-light;
+}
+
+.errorText {
+  font-size: $font-size-sm;
+  color: $error-color;
+}
+

@@ -5,6 +5,9 @@ export type { ButtonProps, ButtonVariant, ButtonSize } from './Button/Button';
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/Input';
 
+export { Textarea } from './Textarea/Textarea';
+export type { TextareaProps } from './Textarea/Textarea';
+
 export { Card, CardHeader, CardBody, CardFooter } from './Card/Card';
 export type { CardProps } from './Card/Card';
 
@@ -27,3 +30,18 @@ export type { ConfirmModalProps } from './ConfirmModal/ConfirmModal';
 
 export { ErrorModal } from './ErrorModal/ErrorModal';
 export type { ErrorModalProps } from './ErrorModal/ErrorModal';
+
+export { FormSection } from './FormSection/FormSection';
+export type { FormSectionProps } from './FormSection/FormSection';
+
+export { DateInput } from './DateInput/DateInput';
+export type { DateInputProps } from './DateInput/DateInput';
+
+export { SectionHeader } from './SectionHeader/SectionHeader';
+export type { SectionHeaderProps } from './SectionHeader/SectionHeader';
+
+export { EmptyState } from './EmptyState/EmptyState';
+export type { EmptyStateProps } from './EmptyState/EmptyState';
+
+export { SearchInput } from './SearchInput/SearchInput';
+export type { SearchInputProps } from './SearchInput/SearchInput';

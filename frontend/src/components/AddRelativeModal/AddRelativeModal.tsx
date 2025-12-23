@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Input, Button } from '@/ui';
-import { Modal } from '@/ui';
+import { SearchInput, EmptyState, Modal } from '@/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
 import { PersonSummary } from '@/types';
@@ -33,21 +32,21 @@ export default function AddRelativeModal({
     }
   }, [isOpen]);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
 
     setLoading(true);
     try {
       // Проверяем, является ли запрос числом (ID)
-      const isNumericSearch = /^\d+$/.test(searchQuery.trim());
+      const isNumericSearch = /^\d+$/.test(query.trim());
       
       if (isNumericSearch) {
         // Поиск по ID
-        const response = await personApi.loadByIds([parseInt(searchQuery.trim())]);
+        const response = await personApi.loadByIds([parseInt(query.trim())]);
         setResults(response.data);
       } else {
         // Обычный текстовый поиск
-        const response = await personApi.search({ q: searchQuery });
+        const response = await personApi.search({ q: query });
         setResults(response.data);
       }
     } catch (error) {
@@ -55,12 +54,6 @@ export default function AddRelativeModal({
       setResults([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
     }
   };
 
@@ -81,25 +74,22 @@ export default function AddRelativeModal({
       title={`${t('common.add')} ${getRelationTitle()}`}
       size="md"
     >
-      <div className={styles.searchSection}>
-        <Input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder={`${t('search.placeholder')} ${t('search.orSearchById')}`}
-          fullWidth
-        />
-        <Button onClick={handleSearch} disabled={loading}>
-          {loading ? t('common.loading') : t('common.search')}
-        </Button>
-      </div>
+      <SearchInput
+        value={searchQuery}
+        onChange={setSearchQuery}
+        onSearch={handleSearch}
+        placeholder={`${t('search.placeholder')} ${t('search.orSearchById')}`}
+        buttonText={t('common.search')}
+        loading={loading}
+        className={styles.searchSection}
+      />
 
       <div className={styles.results}>
         {results.length === 0 && !loading && searchQuery && (
-          <div className={styles.noResults}>
-            {t('search.noResults')}
-          </div>
+          <EmptyState
+            icon="🔍"
+            message={t('search.noResults')}
+          />
         )}
         
         {results.map((person) => (

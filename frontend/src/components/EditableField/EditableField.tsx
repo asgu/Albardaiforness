@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Input } from '@/ui';
+import { Input, Textarea } from '@/ui';
 import { useTranslations } from '@/i18n/useTranslations';
 import classNames from 'classnames';
 import styles from './EditableField.module.scss';
@@ -79,15 +79,15 @@ export default function EditableField({
   if (type === 'textarea') {
     return (
       <div className={styles.editWrapper}>
-        <textarea
+        <Textarea
           ref={textareaRef}
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleSave}
-          className={classNames(styles.textarea, className)}
           placeholder={placeholder}
           rows={3}
+          fullWidth
         />
       </div>
     );

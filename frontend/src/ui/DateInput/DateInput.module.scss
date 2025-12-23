@@ -1,0 +1,37 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.dateInput {
+  width: 100%;
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: $spacing-md;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.yearInput {
+  grid-column: 1;
+}
+
+.monthInput {
+  grid-column: 2;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-column: 1;
+  }
+}
+
+.dayInput {
+  grid-column: 3;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-column: 1;
+  }
+}
+

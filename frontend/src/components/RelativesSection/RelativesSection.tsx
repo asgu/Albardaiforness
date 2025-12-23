@@ -1,7 +1,7 @@
 'use client';
 
 import { Person, Marriage } from '@/types';
-import { Button } from '@/ui';
+import { Button, SectionHeader } from '@/ui';
 import RelativeCard from '@/components/RelativeCard/RelativeCard';
 import styles from './RelativesSection.module.scss';
 
@@ -55,14 +55,16 @@ export default function RelativesSection({
 
     return (
       <div className={styles.relativeSection}>
-        <div className={styles.sectionHeader}>
-          <h2>{title}</h2>
-          {isEditing && onAddRelative && canAddParent && (
-            <Button variant="secondary" onClick={onAddRelative} className={styles.compactButton}>
-              + Aggiungi
-            </Button>
-          )}
-        </div>
+        <SectionHeader
+          title={title}
+          action={
+            isEditing && onAddRelative && canAddParent ? (
+              <Button variant="secondary" size="sm" onClick={onAddRelative}>
+                + Aggiungi
+              </Button>
+            ) : undefined
+          }
+        />
         <div className={`${styles.relatives} ${styles.parentsGrid}`}>
           <div className={styles.fatherSlot}>
             {father && (
@@ -93,14 +95,16 @@ export default function RelativesSection({
 
   return (
     <div className={styles.relativeSection}>
-      <div className={styles.sectionHeader}>
-        <h2>{title}</h2>
-        {isEditing && onAddRelative && (
-          <Button variant="secondary" onClick={onAddRelative} className={styles.compactButton}>
-            + Aggiungi
-          </Button>
-        )}
-      </div>
+      <SectionHeader
+        title={title}
+        action={
+          isEditing && onAddRelative ? (
+            <Button variant="secondary" size="sm" onClick={onAddRelative}>
+              + Aggiungi
+            </Button>
+          ) : undefined
+        }
+      />
       <div className={styles.relatives}>
         {hasRelatives && (
           <>
