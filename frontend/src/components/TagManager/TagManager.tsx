@@ -82,7 +82,7 @@ export default function TagManager() {
         </Button>
       </div>
 
-      {tags.length === 0 ? (
+      {!tags || tags.length === 0 ? (
         <EmptyState
           icon="🏷️"
           message={t('gallery.noTags')}

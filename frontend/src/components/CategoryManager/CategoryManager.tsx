@@ -91,7 +91,7 @@ export default function CategoryManager() {
         </Button>
       </div>
 
-      {categories.length === 0 ? (
+      {!categories || categories.length === 0 ? (
         <EmptyState
           icon="📁"
           message={t('gallery.noCategories')}
