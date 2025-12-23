@@ -60,9 +60,9 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
       />
 
       {/* Siblings */}
-      {person.siblings && person.siblings.length > 0 && (
+      {person.siblings !== undefined && (
         <RelativesSection 
-          title={`${t('person.siblings')}${person.siblings ? ` (${person.siblings.length})` : ''}`}
+          title={`${t('person.siblings')}${person.siblings && person.siblings.length > 0 ? ` (${person.siblings.length})` : ''}`}
           relatives={person.siblings}
           isEditing={false}
           isAuthenticated={isAuthenticated}

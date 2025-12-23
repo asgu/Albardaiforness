@@ -31,9 +31,14 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
 
     // Рождение
     if (person.birthYear) {
-      const bornKey = person.gender === 'male' ? 'timeline.bornMale' : 
-                      person.gender === 'female' ? 'timeline.bornFemale' : 
-                      'timeline.born';
+      // Если есть место рождения, используем ключ "bornIn", иначе просто "born"
+      const bornKey = person.birthPlace 
+        ? (person.gender === 'male' ? 'timeline.bornInMale' : 
+           person.gender === 'female' ? 'timeline.bornInFemale' : 
+           'timeline.bornIn')
+        : (person.gender === 'male' ? 'timeline.bornMale' : 
+           person.gender === 'female' ? 'timeline.bornFemale' : 
+           'timeline.born');
       timelineEvents.push({
         year: person.birthYear,
         type: 'birth',
@@ -130,14 +135,7 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
                 {event.place && (
                   <>
                     {' '}
-                    {event.type === 'birth' && (
-                      <>
-                        {person.gender === 'male' ? t('timeline.bornInMale') : 
-                         person.gender === 'female' ? t('timeline.bornInFemale') : 
-                         t('timeline.bornIn')}{' '}
-                        <span className={styles.place}>{capitalizeWords(event.place)}</span>
-                      </>
-                    )}
+                    <span className={styles.place}>{capitalizeWords(event.place)}</span>
                   </>
                 )}
               </div>

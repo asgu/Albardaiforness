@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { PersonService } from '../services/PersonService';
+import { prisma } from '../lib/prisma';
 
 const personService = new PersonService();
 
@@ -91,6 +92,44 @@ export class PersonController {
         })),
       ];
 
+      // Get siblings (children of the same parents, excluding the person itself)
+      const siblings: any[] = [];
+      if (person.motherId || person.fatherId) {
+        const where: any = {
+          id: { not: person.id },
+          OR: [],
+        };
+        if (person.motherId) {
+          where.OR.push({ motherId: person.motherId });
+        }
+        if (person.fatherId) {
+          where.OR.push({ fatherId: person.fatherId });
+        }
+        
+        if (where.OR.length > 0) {
+          const siblingsData = await prisma.person.findMany({
+            where,
+            select: {
+              id: true,
+              originalId: true,
+              firstName: true,
+              lastName: true,
+              nickName: true,
+              birthYear: true,
+              deathYear: true,
+              gender: true,
+              avatarMediaId: true,
+            },
+          });
+          
+          siblings.push(...siblingsData.map(s => ({
+            ...s,
+            id: s.id.toString(),
+            originalId: s.originalId?.toString(),
+          })));
+        }
+      }
+
       // Calculate age
       const age = person.birthYear && person.deathYear 
         ? person.deathYear - person.birthYear
@@ -102,6 +141,7 @@ export class PersonController {
         ...person,
         children,
         spouses,
+        siblings,
         age,
       };
 

@@ -89,7 +89,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const lastName = capitalizeWords(person.lastName);
   
   return {
-    title: `${firstName} ${lastName} - Albero`,
+    title: `${lastName} ${firstName} - Albero`,
     description: `Informazioni su ${firstName} ${lastName}${person.birthYear ? ` (${person.birthYear}` : ''}${person.deathYear ? ` - ${person.deathYear})` : person.birthYear ? ')' : ''}`,
   };
 }
