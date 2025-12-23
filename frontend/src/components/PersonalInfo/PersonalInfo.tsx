@@ -317,14 +317,14 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                   label={t('person.birth')} 
                   value={formatDate(person.birthYear, person.birthMonth, person.birthDay, person.birthDate)} 
                 />
-                <PersonInfoRow label={t('person.birthPlace')} value={person.birthPlace} />
+                <PersonInfoRow label={t('person.birthPlace')} value={person.birthPlace ? capitalizeWords(person.birthPlace) : undefined} />
                 <PersonInfoRow 
                   label={t('person.death')} 
                   value={formatDate(person.deathYear, person.deathMonth, person.deathDay, person.deathDate)} 
                 />
-                <PersonInfoRow label={t('person.deathPlace')} value={person.deathPlace} />
-                <PersonInfoRow label={t('person.burialPlace')} value={person.burialPlace} />
-                <PersonInfoRow label={t('person.occupation')} value={person.occupation} />
+                <PersonInfoRow label={t('person.deathPlace')} value={person.deathPlace ? capitalizeWords(person.deathPlace) : undefined} />
+                <PersonInfoRow label={t('person.burialPlace')} value={person.burialPlace ? capitalizeWords(person.burialPlace) : undefined} />
+                <PersonInfoRow label={t('person.occupation')} value={person.occupation ? capitalizeWords(person.occupation) : undefined} />
                 <PersonInfoRow label={t('person.note')} value={person.note} />
                 {isAuthenticated && person.privateNote && (
                   <PersonInfoRow label={t('person.privateNote')}>

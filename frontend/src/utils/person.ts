@@ -64,8 +64,16 @@ export function formatDate(
     }
   }
 
-  if (year && month && day) return `${day}.${month}.${year}`;
-  if (year && month) return `${month}.${year}`;
+  // Форматируем дату единообразно: день/месяц/год
+  if (year && month && day) {
+    const d = day.toString().padStart(2, '0');
+    const m = month.toString().padStart(2, '0');
+    return `${d}/${m}/${year}`;
+  }
+  if (year && month) {
+    const m = month.toString().padStart(2, '0');
+    return `${m}/${year}`;
+  }
   if (year) return `${year}`;
   return 'Sconosciuto';
 }
