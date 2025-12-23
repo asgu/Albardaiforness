@@ -2,18 +2,21 @@
 @use '../../styles/mixins' as *;
 
 .confirmModal {
-  padding: $spacing-2xl;
+  padding: $spacing-xl $spacing-2xl;
   text-align: center;
   max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
   @media (max-width: $breakpoint-sm) {
-    padding: $spacing-xl;
+    padding: $spacing-lg $spacing-xl;
   }
 }
 
 .icon {
-  font-size: 64px;
-  margin-bottom: $spacing-lg;
+  font-size: 56px;
+  margin-bottom: $spacing-md;
   animation: scaleIn 0.3s ease-out;
   
   @keyframes scaleIn {
@@ -29,17 +32,17 @@
 }
 
 .title {
-  font-size: $font-size-2xl;
+  font-size: $font-size-xl;
   font-weight: $font-bold;
   color: $text-color;
-  margin: 0 0 $spacing-md 0;
+  margin: 0 0 $spacing-sm 0;
 }
 
 .message {
   font-size: $font-size-base;
   color: $text-light;
-  line-height: 1.6;
-  margin: 0 0 $spacing-2xl 0;
+  line-height: 1.5;
+  margin: 0 0 $spacing-xl 0;
 }
 
 .actions {
