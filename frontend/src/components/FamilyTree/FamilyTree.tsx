@@ -292,7 +292,16 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
           }}
         >
-          <svg className={styles.connections}>
+          <svg 
+            className={styles.connections}
+            style={{
+              width: '10000px',
+              height: '10000px',
+              position: 'absolute',
+              top: '-2000px',
+              left: '-2000px',
+            }}
+          >
             {nodes.map((node, index) => {
               const lines: JSX.Element[] = [];
               const nodeCenter = { x: node.x + 80, y: node.y + 110 };
