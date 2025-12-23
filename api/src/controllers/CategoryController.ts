@@ -29,10 +29,24 @@ export class CategoryController {
           isDeleted: false,
         },
         include: {
-          parent: true,
-          children: true,
+          parent: {
+            where: {
+              isDeleted: false,
+            },
+          },
+          children: {
+            where: {
+              isDeleted: false,
+            },
+          },
           _count: {
-            select: { media: true },
+            select: { 
+              media: {
+                where: {
+                  deletedAt: null,
+                },
+              },
+            },
           },
         },
         orderBy: {
@@ -73,16 +87,30 @@ export class CategoryController {
       const { id } = req.params;
 
       const category = await prisma.category.findUnique({
-        where: { id: BigInt(id) },
+        where: { 
+          id: BigInt(id),
+        },
         include: {
-          parent: true,
-          children: true,
+          parent: {
+            where: {
+              isDeleted: false,
+            },
+          },
+          children: {
+            where: {
+              isDeleted: false,
+            },
+          },
           media: {
             where: { deletedAt: null },
             orderBy: { sortOrder: 'asc' },
           },
         },
       });
+
+      if (!category || category.isDeleted) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
 
       if (!category) {
         return res.status(404).json({ error: 'Category not found' });
