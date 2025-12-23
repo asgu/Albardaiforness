@@ -79,8 +79,6 @@ export default function GallerySidebar({
   };
 
   const categoryTree = buildCategoryTree(categories || []);
-  
-  console.log('Categories loaded:', categories?.length, 'Tree roots:', categoryTree.length);
 
   const renderCategory = (category: Category, level = 0) => {
     const hasChildren = category.children && category.children.length > 0;
@@ -131,7 +129,9 @@ export default function GallerySidebar({
         {activeView === SidebarView.CATEGORIES ? (
           categoriesLoading ? (
             <LoadingState text={t('common.loading')} />
-          ) : categoryTree.length === 0 ? (
+          ) : categoriesError ? (
+            <EmptyState message={categoriesError} />
+          ) : !categories || categoryTree.length === 0 ? (
             <EmptyState message={t('gallery.noCategories')} />
           ) : (
             <div className={styles.categoryList}>
@@ -141,6 +141,8 @@ export default function GallerySidebar({
         ) : (
           tagsLoading ? (
             <LoadingState text={t('common.loading')} />
+          ) : tagsError ? (
+            <EmptyState message={tagsError} />
           ) : !tags || tags.length === 0 ? (
             <EmptyState message={t('gallery.noTags')} />
           ) : (
