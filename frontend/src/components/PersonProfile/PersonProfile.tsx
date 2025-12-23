@@ -8,6 +8,7 @@ import PersonalInfo from '@/components/PersonalInfo/PersonalInfo';
 import RelativeInfo from '@/components/RelativeInfo/RelativeInfo';
 import PersonTimeline from '@/components/PersonTimeline/PersonTimeline';
 import MediaGallery from '@/components/MediaGallery/MediaGallery';
+import FamilyTree from '@/components/FamilyTree/FamilyTree';
 import styles from './PersonProfile.module.scss';
 
 interface PersonProfileProps {
@@ -60,6 +61,11 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
             <MediaGallery personId={person.id} />
           </div>
         </div>
+      </div>
+      
+      {/* Family Tree - Full width at bottom */}
+      <div className={styles.treeSection}>
+        <FamilyTree person={person} />
       </div>
     </div>
   );

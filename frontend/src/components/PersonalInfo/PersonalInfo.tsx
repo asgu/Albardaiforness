@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/useTranslations';
 import { Person } from '@/types';
@@ -93,11 +92,6 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
           </div>
 
           <div className={styles.actionButtons}>
-            <Link href={`/tree/${getPersonUrlId(person)}`}>
-              <Button variant="secondary">
-                {t('person.tree')}
-              </Button>
-            </Link>
             {isAuthenticated && (
               <Button 
                 variant={isEditing ? 'secondary' : 'primary'}

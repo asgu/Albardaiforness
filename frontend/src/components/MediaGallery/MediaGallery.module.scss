@@ -114,66 +114,99 @@
   white-space: nowrap;
 }
 
-// Modal
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: $spacing-xl;
-}
-
-.modalContent {
+// Modal content
+.modalImageContainer {
   position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.closeButton {
-  position: absolute;
-  top: -$spacing-xl;
-  right: -$spacing-xl;
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-full;
-  background: $bg-color;
-  border: none;
-  font-size: $font-size-3xl;
-  line-height: 1;
-  cursor: pointer;
-  transition: all $transition-base;
-  color: $text-color;
-
-  &:hover {
-    background: $error-color;
-    color: $bg-color;
-    transform: scale(1.1);
-  }
+  gap: $spacing-lg;
 }
 
 .fullImage {
   max-width: 100%;
-  max-height: 80vh;
+  max-height: 70vh;
   object-fit: contain;
-  border-radius: $radius-lg;
+  border-radius: $radius-md;
 }
 
 .imageDescription {
-  margin-top: $spacing-lg;
   padding: $spacing-md;
-  background: $bg-color;
+  background: $bg-light;
   border-radius: $radius-md;
   color: $text-color;
-  max-width: 600px;
   text-align: center;
+  font-size: $font-size-sm;
+}
+
+// Navigation buttons
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: $radius-full;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid $border-color;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all $transition-base;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    background: $primary-color;
+    color: $bg-color;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: $shadow-lg;
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+}
+
+.navButtonPrev {
+  left: -60px;
+
+  @media (max-width: $breakpoint-md) {
+    left: 10px;
+  }
+}
+
+.navButtonNext {
+  right: -60px;
+
+  @media (max-width: $breakpoint-md) {
+    right: 10px;
+  }
+}
+
+// Image counter
+.imageCounter {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: $spacing-xs $spacing-md;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-semibold;
+  backdrop-filter: blur(4px);
+  z-index: 10;
 }
 

@@ -29,4 +29,5 @@ export { default as BirthdayList } from './BirthdayList/BirthdayList';
 export { default as EditableField } from './EditableField/EditableField';
 export { default as AddRelativeModal } from './AddRelativeModal/AddRelativeModal';
 export { default as LanguageSwitcher } from './LanguageSwitcher/LanguageSwitcher';
+export { default as MediaGallery } from './MediaGallery/MediaGallery';
 
