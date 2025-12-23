@@ -97,6 +97,20 @@ export interface Server {
   updatedAt?: string;
 }
 
+export interface MediaTaggedPerson {
+  id: string;
+  personId: string;
+  positionX: number | null;
+  positionY: number | null;
+  person: {
+    id: string;
+    originalId?: string;
+    firstName: string;
+    lastName: string;
+    nickName?: string;
+  };
+}
+
 export interface Media {
   id: string;
   personId?: string;
@@ -112,6 +126,7 @@ export interface Media {
   location?: string;
   sortOrder: number;
   isPublic: boolean;
+  taggedPersons?: MediaTaggedPerson[];
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;

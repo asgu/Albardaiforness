@@ -10,19 +10,6 @@ import { mediaApi } from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
 import styles from './MediaGallery.module.scss';
 
-interface TaggedPerson {
-  id: string;
-  personId: string;
-  positionX: number | null;
-  positionY: number | null;
-  person: {
-    id: string;
-    originalId?: string;
-    firstName: string;
-    lastName: string;
-    nickName?: string;
-  };
-}
 
 interface MediaGalleryProps {
   personId: string;
