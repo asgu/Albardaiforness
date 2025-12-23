@@ -103,7 +103,7 @@ export default function GalleryContent({
   }, [selectedMedia, currentIndex]);
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
+    onSearchChange(query);
     setCurrentPage(1);
   };
 
