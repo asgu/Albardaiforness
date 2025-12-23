@@ -176,19 +176,13 @@ export class MediaController {
 
       for (const file of files) {
         // Определить тип медиа по MIME типу
-        let mediaType: 'photo' | 'document' | 'video' | 'audio' | 'other' = 'other';
+        let mediaType: 'photo' | 'document' | 'video' | 'audio' = 'document';
         if (file.mimetype.startsWith('image/')) {
           mediaType = 'photo';
         } else if (file.mimetype.startsWith('video/')) {
           mediaType = 'video';
         } else if (file.mimetype.startsWith('audio/')) {
           mediaType = 'audio';
-        } else if (
-          file.mimetype === 'application/pdf' ||
-          file.mimetype.includes('document') ||
-          file.mimetype.includes('word')
-        ) {
-          mediaType = 'document';
         }
 
         // Создать запись в БД
@@ -198,7 +192,7 @@ export class MediaController {
             mediaType,
             filePath: `/uploads/media/${file.filename}`,
             fileName: file.originalname,
-            fileSize: BigInt(file.size),
+            fileSize: file.size,
             mimeType: file.mimetype,
             isPublic: true,
             isPrimary: false,
@@ -209,8 +203,8 @@ export class MediaController {
         uploadedMedia.push({
           ...media,
           id: media.id.toString(),
-          personId: media.personId.toString(),
-          fileSize: media.fileSize.toString(),
+          personId: media.personId?.toString() || '',
+          fileSize: media.fileSize?.toString() || '0',
         });
       }
 
@@ -237,7 +231,6 @@ export class MediaController {
         where: { id: BigInt(id) },
         data: {
           deletedAt: new Date(),
-          deletedBy: userId,
         },
       });
 
