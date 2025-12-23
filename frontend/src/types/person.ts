@@ -61,6 +61,7 @@ export interface Person {
   mother?: Person;
   father?: Person;
   children?: Person[];
+  siblings?: Person[];
   spouses?: Marriage[];
 }
 

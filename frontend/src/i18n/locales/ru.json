@@ -112,9 +112,17 @@
   "timeline": {
     "title": "События жизни",
     "born": "Родился/лась",
+    "bornMale": "Родился",
+    "bornFemale": "Родилась",
     "died": "Умер/ла",
+    "diedMale": "Умер",
+    "diedFemale": "Умерла",
     "married": "Женился/вышла замуж за",
+    "marriedMale": "Женился на",
+    "marriedFemale": "Вышла замуж за",
     "divorced": "Развелся/лась с",
+    "divorcedMale": "Развелся с",
+    "divorcedFemale": "Развелась с",
     "childBorn": "Родился/лась ребенок",
     "sonBorn": "Родился сын",
     "daughterBorn": "Родилась дочь"

@@ -179,3 +179,17 @@ export function hasSpouses(person: Person): boolean {
   return !!(person.spouses && person.spouses.length > 0);
 }
 
+/**
+ * Получить братьев и сестер (дети тех же родителей, исключая саму персону)
+ */
+export function getSiblings(person: Person): Person[] {
+  // Используем siblings из API, если они есть
+  if (person.siblings) {
+    return person.siblings;
+  }
+  
+  // Fallback: если siblings нет в данных, возвращаем пустой массив
+  // (API должен возвращать siblings, но на случай если их нет)
+  return [];
+}
+

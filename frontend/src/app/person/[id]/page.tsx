@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import Header from '@/components/Header/Header';
 import PersonProfile from '@/components/PersonProfile/PersonProfile';
+import { capitalizeWords } from '@/utils/string';
 import { Person } from '@/types';
 import styles from './page.module.scss';
 
@@ -84,9 +85,12 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     };
   }
 
+  const firstName = capitalizeWords(person.firstName);
+  const lastName = capitalizeWords(person.lastName);
+  
   return {
-    title: `${person.firstName} ${person.lastName} - Albero`,
-    description: `Informazioni su ${person.firstName} ${person.lastName}${person.birthYear ? ` (${person.birthYear}` : ''}${person.deathYear ? ` - ${person.deathYear})` : person.birthYear ? ')' : ''}`,
+    title: `${firstName} ${lastName} - Albero`,
+    description: `Informazioni su ${firstName} ${lastName}${person.birthYear ? ` (${person.birthYear}` : ''}${person.deathYear ? ` - ${person.deathYear})` : person.birthYear ? ')' : ''}`,
   };
 }
 

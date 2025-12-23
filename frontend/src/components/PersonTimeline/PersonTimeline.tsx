@@ -30,10 +30,13 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
 
     // Рождение
     if (person.birthYear) {
+      const bornKey = person.gender === 'male' ? 'timeline.bornMale' : 
+                      person.gender === 'female' ? 'timeline.bornFemale' : 
+                      'timeline.born';
       timelineEvents.push({
         year: person.birthYear,
         type: 'birth',
-        description: t('timeline.born'),
+        description: t(bornKey),
       });
     }
 
@@ -42,10 +45,13 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
       const spouse = marriage.person;
       
       if (marriage.marriageYear && spouse) {
+        const marriedKey = person.gender === 'male' ? 'timeline.marriedMale' : 
+                          person.gender === 'female' ? 'timeline.marriedFemale' : 
+                          'timeline.married';
         timelineEvents.push({
           year: marriage.marriageYear,
           type: 'marriage',
-          description: t('timeline.married'),
+          description: t(marriedKey),
         relatedPerson: {
           id: spouse.id,
           name: `${capitalizeWords(spouse.firstName)} ${capitalizeWords(spouse.lastName)}`,
@@ -54,10 +60,13 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
       }
 
       if (marriage.divorceYear && spouse) {
+        const divorcedKey = person.gender === 'male' ? 'timeline.divorcedMale' : 
+                           person.gender === 'female' ? 'timeline.divorcedFemale' : 
+                           'timeline.divorced';
         timelineEvents.push({
           year: marriage.divorceYear,
           type: 'divorce',
-          description: t('timeline.divorced'),
+          description: t(divorcedKey),
         relatedPerson: {
           id: spouse.id,
           name: `${capitalizeWords(spouse.firstName)} ${capitalizeWords(spouse.lastName)}`,
@@ -87,10 +96,13 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
 
     // Смерть
     if (person.deathYear) {
+      const diedKey = person.gender === 'male' ? 'timeline.diedMale' : 
+                      person.gender === 'female' ? 'timeline.diedFemale' : 
+                      'timeline.died';
       timelineEvents.push({
         year: person.deathYear,
         type: 'death',
-        description: t('timeline.died'),
+        description: t(diedKey),
       });
     }
 

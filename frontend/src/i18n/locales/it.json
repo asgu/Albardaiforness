@@ -112,9 +112,17 @@
   "timeline": {
     "title": "Eventi della vita",
     "born": "Nato/a",
+    "bornMale": "Nato",
+    "bornFemale": "Nata",
     "died": "Morto/a",
+    "diedMale": "Morto",
+    "diedFemale": "Morta",
     "married": "Sposato/a con",
+    "marriedMale": "Sposato con",
+    "marriedFemale": "Sposata con",
     "divorced": "Divorziato/a da",
+    "divorcedMale": "Divorziato da",
+    "divorcedFemale": "Divorziata da",
     "childBorn": "Nato/a figlio/a",
     "sonBorn": "Nato figlio",
     "daughterBorn": "Nata figlia"

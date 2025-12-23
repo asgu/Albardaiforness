@@ -112,9 +112,17 @@
   "timeline": {
     "title": "Life Events",
     "born": "Born",
+    "bornMale": "Born",
+    "bornFemale": "Born",
     "died": "Died",
+    "diedMale": "Died",
+    "diedFemale": "Died",
     "married": "Married to",
+    "marriedMale": "Married",
+    "marriedFemale": "Married",
     "divorced": "Divorced from",
+    "divorcedMale": "Divorced from",
+    "divorcedFemale": "Divorced from",
     "childBorn": "Child born",
     "sonBorn": "Son born",
     "daughterBorn": "Daughter born"

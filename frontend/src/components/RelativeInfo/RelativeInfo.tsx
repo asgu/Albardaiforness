@@ -59,6 +59,16 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
         onAddRelative={() => handleAddRelative('spouse')}
       />
 
+      {/* Siblings */}
+      {person.siblings && person.siblings.length > 0 && (
+        <RelativesSection 
+          title={`${t('person.siblings')}${person.siblings ? ` (${person.siblings.length})` : ''}`}
+          relatives={person.siblings}
+          isEditing={false}
+          isAuthenticated={isAuthenticated}
+        />
+      )}
+
       {/* Children */}
       <RelativesSection 
         title={`${t('person.children')}${person.children ? ` (${person.children.length})` : ''}`}
