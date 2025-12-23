@@ -21,9 +21,9 @@
   &::before {
     content: '';
     position: absolute;
-    left: calc(70px + #{$spacing-md} + 12px); // year width + gap + half marker width (16px + 4px border = 20px / 2 = 10px, но учитываем border)
-    top: 0;
-    bottom: 0;
+    left: calc(#{$spacing-xl} + 70px + #{$spacing-md} + 8px - 1.5px); // padding + year width + gap + (marker width) / 2 - (line width) / 2
+    top: calc(2px + 8px); // marker margin-top + half marker height
+    bottom: calc(#{$spacing-lg} + 2px + 8px); // last event padding-bottom + marker margin-top + half marker height
     width: 3px;
     background: linear-gradient(to bottom, 
       rgba(16, 185, 129, 0.3),
@@ -44,11 +44,6 @@
   margin-bottom: $spacing-xl;
   align-items: start;
   padding-bottom: $spacing-lg;
-  transition: transform $transition-base;
-  
-  &:hover {
-    transform: translateX(4px);
-  }
   
   &:last-child {
     margin-bottom: 0;
@@ -91,12 +86,6 @@
   margin-top: 2px;
   z-index: 3;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform $transition-base, box-shadow $transition-base;
-  
-  &:hover {
-    transform: scale(1.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
 }
 
 .content {
@@ -120,7 +109,6 @@
   font-size: $font-size-base;
   color: $primary-color;
   font-weight: $font-semibold;
-  transition: all $transition-base;
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: $spacing-xs;
