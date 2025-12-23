@@ -132,20 +132,19 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
             <div className={styles.content}>
               <div className={styles.description}>
                 {event.description}
-                {event.place && (
-                  <>
-                    {' '}
-                    <span className={styles.place}>{capitalizeWords(event.place)}</span>
-                  </>
+                {event.relatedPerson && (
+                  <Link 
+                    href={`/person/${event.relatedPerson.id}`}
+                    className={styles.relatedPerson}
+                  >
+                    {event.relatedPerson.name}
+                  </Link>
                 )}
               </div>
-              {event.relatedPerson && (
-                <Link 
-                  href={`/person/${event.relatedPerson.id}`}
-                  className={styles.relatedPerson}
-                >
-                  {event.relatedPerson.name}
-                </Link>
+              {event.place && (
+                <div className={styles.placeContainer}>
+                  <span className={styles.place}>{capitalizeWords(event.place)}</span>
+                </div>
               )}
             </div>
           </div>
