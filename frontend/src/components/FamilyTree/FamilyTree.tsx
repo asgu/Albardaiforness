@@ -128,31 +128,63 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       });
     };
 
-    // Add siblings horizontally
+    // Add siblings horizontally (split left and right like in original algorithm)
     const addSiblings = (p: Person, x: number, y: number) => {
       if (!p.siblings || p.siblings.length === 0) return;
       
-      let currentX = x + 2.5; // Start further right to avoid overlap with main person's spouse
+      // Split siblings into older (left) and younger (right)
+      const olderSiblings: typeof p.siblings = [];
+      const youngerSiblings: typeof p.siblings = [];
       
       p.siblings.forEach((sibling) => {
+        // Compare birth years to determine position
+        const personBirthYear = p.birthYear || 9999;
+        const siblingBirthYear = sibling.birthYear || 9999;
+        
+        if (siblingBirthYear < personBirthYear) {
+          olderSiblings.push(sibling);
+        } else {
+          youngerSiblings.push(sibling);
+        }
+      });
+      
+      // Add older siblings to the left
+      let leftX = x - 2.5;
+      olderSiblings.reverse().forEach((sibling) => {
         if (!addedPersons.has(sibling.id)) {
-          addNode(sibling, currentX, y);
-          currentX += 1.2; // Move right for next sibling
+          addNode(sibling, leftX, y);
           
-          // Add sibling's spouse if any
+          // Add sibling's spouse to the left of them
           if (sibling.spouses && sibling.spouses.length > 0) {
             sibling.spouses.forEach((marriage) => {
               if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                addNode(marriage.person, currentX, y);
-                currentX += 1.2; // Move right after spouse
+                leftX -= 1.2;
+                addNode(marriage.person, leftX, y);
               }
             });
           }
           
-          // Add sibling's children
-          addChildren(sibling, currentX - 1.2, y); // Children under the sibling
+          leftX -= 2.5; // Gap before next sibling
+        }
+      });
+      
+      // Add younger siblings to the right
+      let rightX = x + 2.5;
+      youngerSiblings.forEach((sibling) => {
+        if (!addedPersons.has(sibling.id)) {
+          addNode(sibling, rightX, y);
           
-          currentX += 0.5; // Add gap before next sibling
+          // Add sibling's spouse to the right of them
+          if (sibling.spouses && sibling.spouses.length > 0) {
+            sibling.spouses.forEach((marriage) => {
+              if (marriage.person && !addedPersons.has(marriage.person.id)) {
+                rightX += 1.2;
+                addNode(marriage.person, rightX, y);
+              }
+            });
+          }
+          
+          rightX += 2.5; // Gap before next sibling
         }
       });
     };
