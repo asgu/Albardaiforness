@@ -8,7 +8,7 @@
  * Связывает медиафайлы с персонами по originalId
  */
 
-import mysql from 'mysql2/promise';
+import mysql, { RowDataPacket } from 'mysql2/promise';
 import { prisma } from '../lib/prisma';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -16,7 +16,7 @@ import * as fs from 'fs';
 
 dotenv.config();
 
-interface PhotoRow {
+interface PhotoRow extends RowDataPacket {
   id: number;
   person: number | null;
   filePath: string;
@@ -26,7 +26,7 @@ interface PhotoRow {
   is_private: number;
 }
 
-interface FileRow {
+interface FileRow extends RowDataPacket {
   id: number;
   person: number | null;
   filePath: string;
