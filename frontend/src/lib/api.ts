@@ -198,6 +198,12 @@ export const tagApi = {
   
   create: (data: { title: string }): Promise<AxiosResponse<Tag>> =>
     api.post<Tag>('/api/tags', data),
+  
+  update: (id: string, data: { title: string }): Promise<AxiosResponse<Tag>> =>
+    api.put<Tag>(`/api/tags/${id}`, data),
+  
+  delete: (id: string): Promise<AxiosResponse<void>> =>
+    api.delete<void>(`/api/tags/${id}`),
 };
 
 export const galleryApi = {
