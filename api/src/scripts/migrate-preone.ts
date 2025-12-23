@@ -78,7 +78,7 @@ async function migratePreoneData() {
 
     // Загружаем дамп
     console.log('📥 Загрузка дампа d2.sql...');
-    const dumpPath = path.join(process.cwd(), '../d/d2.sql');
+    const dumpPath = path.join(process.cwd(), '../d/preone-person.sql');
     const dumpSql = fs.readFileSync(dumpPath, 'utf8');
     
     // Разбиваем на отдельные команды и выполняем

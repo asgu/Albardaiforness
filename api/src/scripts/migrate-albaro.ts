@@ -129,7 +129,7 @@ async function migrateAlbaroData() {
 
     // Загружаем дамп
     console.log('📥 Загрузка дампа ad1.sql...');
-    const dumpPath = process.env.DUMP_PATH || path.join(process.cwd(), '../d/ad1.sql');
+    const dumpPath = process.env.DUMP_PATH || path.join(process.cwd(), '../d/forness-person.sql');
     
     if (!fs.existsSync(dumpPath)) {
       console.error(`❌ Файл дампа не найден: ${dumpPath}`);

@@ -190,7 +190,9 @@ async function main() {
 
   try {
     // Читаем дамп из файла
-    const dumpPath = path.join(__dirname, '../../../d/gallery.sql');
+    const serverCode = process.argv[2] || 'albaro';
+    const dumpFileName = serverCode === 'preone' ? 'preone-gallery.sql' : 'forness-gallery.sql';
+    const dumpPath = path.join(__dirname, '../../../d/', dumpFileName);
     const { categories: oldCategories, tags: oldTags, media: oldMediaFiles, mediaTags: oldMediaTags } = parseSqlDump(dumpPath);
 
     // Получаем ID сервера Albaro
