@@ -228,6 +228,7 @@ npm run migrate:preone           # Персоны, браки, связи
 npm run migrate:media            # Photo и File из ad1.sql и d2.sql
 npm run migrate:photo-tags       # Метки персон на фото (координаты)
 npm run set:avatars              # Установка аватаров персонам
+npm run migrate:gallery          # Галерея из gallery.sql (3950 фото, 165 категорий)
 
 # Миграция пользователей из FOSUserBundle
 npm run migrate:users
