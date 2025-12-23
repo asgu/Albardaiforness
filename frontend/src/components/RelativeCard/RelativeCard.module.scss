@@ -13,7 +13,7 @@
   text-decoration: none;
   color: $text-color;
   overflow: hidden;
-  min-height: 120px;
+  height: 120px; // Фиксированная высота
 
   &:hover {
     background: $bg-light;
@@ -144,8 +144,8 @@
   background: rgba($error-color, 0.9);
   color: $bg-color;
   border: none;
-  font-size: 24px;
-  line-height: 1;
+  font-size: 20px; // Уменьшен размер шрифта для лучшего центрирования
+  line-height: 28px; // Равен высоте кнопки
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -153,6 +153,7 @@
   transition: all $transition-base;
   z-index: 10;
   padding: 0;
+  font-family: Arial, sans-serif; // Для лучшего отображения символа ×
 
   &:hover {
     background: $error-color;
