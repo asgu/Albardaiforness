@@ -214,7 +214,7 @@ export default function GalleryPage() {
           </div>
         </Card>
 
-        {mediaLoading && <LoadingState message={t('common.loading')} />}
+        {mediaLoading && <LoadingState text={t('common.loading')} />}
         {mediaError && <ErrorState message={mediaError} onRetry={() => fetchMedia({})} />}
 
         {!mediaLoading && !mediaError && media.length === 0 && (

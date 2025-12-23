@@ -75,7 +75,7 @@ export default function CategoryManager() {
   };
 
   if (loading) {
-    return <LoadingState message={t('common.loading')} />;
+    return <LoadingState text={t('common.loading')} />;
   }
 
   if (error) {
