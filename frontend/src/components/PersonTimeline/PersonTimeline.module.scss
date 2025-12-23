@@ -1,17 +1,13 @@
 @use '@/styles/variables' as *;
 @use '@/styles/mixins' as *;
 
-.timeline {
-  margin-top: $spacing-xl;
-}
-
 .title {
   font-size: $font-size-xl;
   font-weight: $font-bold;
   color: $text-color;
   margin: 0 0 $spacing-xl 0;
   padding-bottom: $spacing-md;
-  border-bottom: 2px solid $border-color;
+  border-bottom: 1px solid $border-color;
 }
 
 .events {

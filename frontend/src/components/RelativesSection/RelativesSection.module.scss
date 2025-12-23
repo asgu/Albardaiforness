@@ -11,11 +11,11 @@
   justify-content: space-between;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-sm;
-  border-bottom: 2px solid $border-color;
+  border-bottom: 1px solid $border-color;
 
   h2 {
     font-size: $font-size-xl;
-    font-weight: 700;
+    font-weight: $font-bold;
     color: $text-color;
     margin: 0;
   }
@@ -37,7 +37,7 @@
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
   }
 }
@@ -51,7 +51,7 @@
   // Mother always on the right (second column)
   grid-column: 2;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     grid-column: 1;
   }
 }
