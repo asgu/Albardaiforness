@@ -41,7 +41,7 @@
   }
 }
 
-// Gallery visibility control
+// Gallery visibility control (old, not used anymore)
 .galleryDesktop {
   display: block;
   
@@ -55,6 +55,17 @@
   
   @media (max-width: 968px) {
     display: block;
+  }
+}
+
+// Gallery full width - spans both columns
+.galleryFullWidth {
+  grid-column: 1 / -1; // Span all columns
+  margin-top: 30px;
+  
+  @media (max-width: 968px) {
+    grid-column: 1;
+    margin-top: 0;
   }
 }
 

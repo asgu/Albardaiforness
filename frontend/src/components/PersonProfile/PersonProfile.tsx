@@ -36,11 +36,6 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
           <div className={styles.timelineDesktop}>
             <PersonTimeline person={person} />
           </div>
-          
-          {/* Media Gallery - Desktop only */}
-          <div className={styles.galleryDesktop}>
-            <MediaGallery personId={person.id} />
-          </div>
         </div>
 
         {/* Right Column - Relatives */}
@@ -55,15 +50,15 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
           <div className={styles.timelineMobile}>
             <PersonTimeline person={person} />
           </div>
-          
-          {/* Media Gallery - Mobile only */}
-          <div className={styles.galleryMobile}>
-            <MediaGallery personId={person.id} />
-          </div>
+        </div>
+        
+        {/* Media Gallery - Full width across both columns */}
+        <div className={styles.galleryFullWidth}>
+          <MediaGallery personId={person.id} />
         </div>
       </div>
       
-      {/* Family Tree - Full width at bottom, outside container */}
+      {/* Family Tree - Full width at bottom */}
       <div className={styles.treeSection}>
         <FamilyTree person={person} />
       </div>
