@@ -63,7 +63,7 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
         </div>
       </div>
       
-      {/* Family Tree - Full width at bottom */}
+      {/* Family Tree - Full width at bottom, outside container */}
       <div className={styles.treeSection}>
         <FamilyTree person={person} />
       </div>
