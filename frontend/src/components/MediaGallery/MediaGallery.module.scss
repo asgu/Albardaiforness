@@ -121,6 +121,17 @@
   flex-direction: column;
   align-items: center;
   gap: $spacing-lg;
+  overflow-x: hidden; // Запретить горизонтальный скролл
+  max-width: 100%;
+}
+
+.imageWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden; // Запретить горизонтальный скролл
 }
 
 .fullImage {
@@ -128,6 +139,7 @@
   max-height: 70vh;
   object-fit: contain;
   border-radius: $radius-md;
+  display: block;
 }
 
 .imageDescription {
@@ -208,5 +220,57 @@
   font-weight: $font-semibold;
   backdrop-filter: blur(4px);
   z-index: 10;
+}
+
+// Tagged persons
+.personTag {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.tagMarker {
+  width: 12px;
+  height: 12px;
+  border-radius: $radius-full;
+  background: $primary-color;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.tagLabel {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: $spacing-xs $spacing-sm;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-semibold;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.95);
+    transform: translateX(-50%) scale(1.05);
+  }
 }
 

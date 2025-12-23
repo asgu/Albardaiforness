@@ -5,6 +5,20 @@ import { useTranslations } from '@/i18n/useTranslations';
 import { Card, Modal } from '@/ui';
 import styles from './MediaGallery.module.scss';
 
+interface TaggedPerson {
+  id: string;
+  personId: string;
+  positionX: number | null;
+  positionY: number | null;
+  person: {
+    id: string;
+    originalId?: string;
+    firstName: string;
+    lastName: string;
+    nickName?: string;
+  };
+}
+
 interface Media {
   id: string;
   mediaType: 'photo' | 'document' | 'video' | 'audio' | 'other';
@@ -18,6 +32,7 @@ interface Media {
   isPrimary: boolean;
   dateTaken?: string;
   location?: string;
+  taggedPersons?: TaggedPerson[];
 }
 
 interface MediaGalleryProps {
@@ -30,6 +45,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
   const [loading, setLoading] = useState(true);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showTags, setShowTags] = useState(false);
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -193,11 +209,41 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
               </button>
             )}
 
-            <img
-              src={selectedMedia.filePath}
-              alt={selectedMedia.title || selectedMedia.fileName}
-              className={styles.fullImage}
-            />
+            <div 
+              className={styles.imageWrapper}
+              onMouseEnter={() => setShowTags(true)}
+              onMouseLeave={() => setShowTags(false)}
+            >
+              <img
+                src={selectedMedia.filePath}
+                alt={selectedMedia.title || selectedMedia.fileName}
+                className={styles.fullImage}
+              />
+              
+              {/* Tagged persons */}
+              {showTags && selectedMedia.taggedPersons && selectedMedia.taggedPersons.length > 0 && (
+                <>
+                  {selectedMedia.taggedPersons.map((tag) => (
+                    tag.positionX !== null && tag.positionY !== null && (
+                      <div
+                        key={tag.id}
+                        className={styles.personTag}
+                        style={{
+                          left: `${tag.positionX}%`,
+                          top: `${tag.positionY}%`,
+                        }}
+                      >
+                        <div className={styles.tagMarker} />
+                        <div className={styles.tagLabel}>
+                          {tag.person.firstName} {tag.person.lastName}
+                          {tag.person.nickName && ` "${tag.person.nickName}"`}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </>
+              )}
+            </div>
 
             {/* Next button */}
             {currentIndex < photos.length - 1 && (

@@ -57,15 +57,16 @@
 
 .connections {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -5000px;
+  left: -5000px;
+  width: 10000px;
+  height: 10000px;
   pointer-events: none;
   overflow: visible;
   
-  line {
-    stroke: $border-color;
+  line, path {
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }
 

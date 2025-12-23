@@ -68,6 +68,23 @@ export class MediaController {
           isPrimary: true,
           dateTaken: true,
           location: true,
+          taggedPersons: {
+            select: {
+              id: true,
+              personId: true,
+              positionX: true,
+              positionY: true,
+              person: {
+                select: {
+                  id: true,
+                  originalId: true,
+                  firstName: true,
+                  lastName: true,
+                  nickName: true,
+                },
+              },
+            },
+          },
         },
         orderBy: [
           { isPrimary: 'desc' },
@@ -80,6 +97,18 @@ export class MediaController {
         media.map(m => ({
           ...m,
           id: m.id.toString(),
+          taggedPersons: m.taggedPersons.map(tp => ({
+            ...tp,
+            id: tp.id.toString(),
+            personId: tp.personId.toString(),
+            positionX: tp.positionX ? Number(tp.positionX) : null,
+            positionY: tp.positionY ? Number(tp.positionY) : null,
+            person: {
+              ...tp.person,
+              id: tp.person.id.toString(),
+              originalId: tp.person.originalId?.toString(),
+            },
+          })),
         }))
       );
     } catch (error) {
