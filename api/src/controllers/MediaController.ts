@@ -154,5 +154,98 @@ export class MediaController {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  /**
+   * Загрузить медиафайлы
+   */
+  async upload(req: Request, res: Response) {
+    try {
+      const files = req.files as Express.Multer.File[];
+      const { personId } = req.body;
+      const userId = (req as any).user?.id;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ error: 'No files uploaded' });
+      }
+
+      if (!personId) {
+        return res.status(400).json({ error: 'personId is required' });
+      }
+
+      const uploadedMedia = [];
+
+      for (const file of files) {
+        // Определить тип медиа по MIME типу
+        let mediaType: 'photo' | 'document' | 'video' | 'audio' | 'other' = 'other';
+        if (file.mimetype.startsWith('image/')) {
+          mediaType = 'photo';
+        } else if (file.mimetype.startsWith('video/')) {
+          mediaType = 'video';
+        } else if (file.mimetype.startsWith('audio/')) {
+          mediaType = 'audio';
+        } else if (
+          file.mimetype === 'application/pdf' ||
+          file.mimetype.includes('document') ||
+          file.mimetype.includes('word')
+        ) {
+          mediaType = 'document';
+        }
+
+        // Создать запись в БД
+        const media = await prisma.media.create({
+          data: {
+            personId: BigInt(personId),
+            mediaType,
+            filePath: `/uploads/media/${file.filename}`,
+            fileName: file.originalname,
+            fileSize: BigInt(file.size),
+            mimeType: file.mimetype,
+            isPublic: true,
+            isPrimary: false,
+            createdBy: userId,
+          },
+        });
+
+        uploadedMedia.push({
+          ...media,
+          id: media.id.toString(),
+          personId: media.personId.toString(),
+          fileSize: media.fileSize.toString(),
+        });
+      }
+
+      res.json({
+        message: 'Files uploaded successfully',
+        media: uploadedMedia,
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  /**
+   * Удалить медиафайл
+   */
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user?.id;
+
+      // Мягкое удаление
+      await prisma.media.update({
+        where: { id: BigInt(id) },
+        data: {
+          deletedAt: new Date(),
+          deletedBy: userId,
+        },
+      });
+
+      res.json({ message: 'Media deleted successfully' });
+    } catch (error) {
+      console.error('Delete media error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }
 

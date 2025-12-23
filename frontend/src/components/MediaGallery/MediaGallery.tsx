@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from '@/i18n/useTranslations';
-import { Card, Modal } from '@/ui';
+import { Card, Modal, ErrorModal } from '@/ui';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import styles from './MediaGallery.module.scss';
@@ -52,6 +52,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -151,11 +152,12 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
         const data = await mediaResponse.json();
         setMedia(data);
       } else {
-        alert(t('common.error'));
+        const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
+        setErrorMessage(errorData.error || t('media.uploadError'));
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert(t('common.error'));
+      setErrorMessage(t('media.uploadError'));
     } finally {
       setUploading(false);
     }
@@ -202,11 +204,12 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
         // Удалить из локального состояния
         setMedia(media.filter(m => m.id !== mediaId));
       } else {
-        alert(t('common.error'));
+        const errorData = await response.json().catch(() => ({ error: 'Delete failed' }));
+        setErrorMessage(errorData.error || t('media.deleteError'));
       }
     } catch (error) {
       console.error('Delete error:', error);
-      alert(t('common.error'));
+      setErrorMessage(t('media.deleteError'));
     } finally {
       setDeletingId(null);
     }
@@ -415,6 +418,14 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
           </div>
         )}
       </Modal>
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={!!errorMessage}
+        title={t('common.error')}
+        message={errorMessage || ''}
+        onClose={() => setErrorMessage(null)}
+      />
     </>
   );
 }

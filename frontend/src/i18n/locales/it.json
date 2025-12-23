@@ -69,7 +69,9 @@
     "primary": "Principale",
     "noMedia": "Nessun media disponibile",
     "uploadFiles": "Carica file",
-    "confirmDelete": "Sei sicuro di voler eliminare questo file?"
+    "confirmDelete": "Sei sicuro di voler eliminare questo file?",
+    "uploadError": "Errore durante il caricamento dei file",
+    "deleteError": "Errore durante l'eliminazione del file"
   },
   "person": {
     "id": "ID",
