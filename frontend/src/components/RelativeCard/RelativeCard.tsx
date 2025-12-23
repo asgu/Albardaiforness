@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { PersonSummary } from '@/types';
-import { Avatar } from '@/ui';
+import { Avatar, ConfirmModal } from '@/ui';
 import { capitalizeWords } from '@/utils/string';
 import { getPersonUrlId, getGenderIcon, getLifeYears } from '@/utils/person';
+import { useTranslations } from '@/i18n/useTranslations';
 import styles from './RelativeCard.module.scss';
 
 export interface RelativeCardProps {
@@ -34,14 +36,26 @@ export default function RelativeCard({
   onMouseEnter,
   onMouseLeave
 }: RelativeCardProps) {
+  const { t } = useTranslations();
+  const [showConfirm, setShowConfirm] = useState(false);
   
-  const handleRemove = (e: React.MouseEvent) => {
+  const handleRemoveClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onRemove && confirm('Sei sicuro di voler rimuovere questo parente?')) {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (onRemove) {
       onRemove(person.id);
     }
+    setShowConfirm(false);
   };
+
+  const handleCancelRemove = () => {
+    setShowConfirm(false);
+  };
+
   const formatMarriageDate = () => {
     if (marriageDate) return marriageDate;
     if (marriageYear) return marriageYear.toString();
@@ -103,13 +117,28 @@ export default function RelativeCard({
       </div>
 
       {isEditing && onRemove && (
-        <button 
-          className={styles.removeButton}
-          onClick={handleRemove}
-          title="Rimuovi parente"
-        >
-          ×
-        </button>
+        <>
+          <button 
+            className={styles.removeButton}
+            onClick={handleRemoveClick}
+            title={t('common.remove')}
+          >
+            ×
+          </button>
+
+          <ConfirmModal
+            isOpen={showConfirm}
+            title={t('person.removeRelativeTitle')}
+            message={t('person.removeRelativeMessage', { 
+              name: `${capitalizeWords(person.firstName)} ${capitalizeWords(person.lastName)}` 
+            })}
+            confirmText={t('common.remove')}
+            cancelText={t('common.cancel')}
+            variant="danger"
+            onConfirm={handleConfirmRemove}
+            onCancel={handleCancelRemove}
+          />
+        </>
       )}
     </Link>
   );

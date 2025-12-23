@@ -22,6 +22,7 @@
     "edit": "Edit",
     "done": "Done",
     "clear": "Clear",
+    "remove": "Remove",
     "clickToEdit": "Click to edit"
   },
   "header": {
@@ -98,6 +99,8 @@
     "maidenName": "Maiden name",
     "basicInfo": "Basic information",
     "additionalInfo": "Additional information",
+    "removeRelativeTitle": "Remove relative?",
+    "removeRelativeMessage": "Are you sure you want to remove {name} from relatives?",
     "year": "Year",
     "month": "Month",
     "day": "Day",

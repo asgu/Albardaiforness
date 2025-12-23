@@ -22,6 +22,7 @@
     "edit": "Modifica",
     "done": "Fine",
     "clear": "Pulisci",
+    "remove": "Rimuovi",
     "clickToEdit": "Clicca per modificare"
   },
   "header": {
@@ -98,6 +99,8 @@
     "maidenName": "Nome da nubile",
     "basicInfo": "Informazioni di base",
     "additionalInfo": "Informazioni aggiuntive",
+    "removeRelativeTitle": "Rimuovere parente?",
+    "removeRelativeMessage": "Sei sicuro di voler rimuovere {name} dai parenti?",
     "year": "Anno",
     "month": "Mese",
     "day": "Giorno",

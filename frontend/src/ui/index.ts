@@ -21,3 +21,6 @@ export { default as Loader } from './Loader/Loader';
 
 export { Modal } from './Modal/Modal';
 export type { ModalProps } from './Modal/Modal';
+
+export { ConfirmModal } from './ConfirmModal/ConfirmModal';
+export type { ConfirmModalProps } from './ConfirmModal/ConfirmModal';
