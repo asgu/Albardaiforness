@@ -256,25 +256,29 @@ npm run fix:marriages
 
 ## Деплой
 
-### Быстрый деплой (Git + Deploy)
+### ⚠️ ВАЖНО: Единственный способ деплоя
+
+**ВСЕГДА используй только эту команду для деплоя:**
 
 ```bash
 ./push-deploy.sh "Commit message"
 ```
 
+**НЕ используй:**
+- ❌ Прямые git команды + отдельный деплой
+- ❌ `./infrastructure/deploy.sh` напрямую
+- ❌ Ручной rsync
+- ❌ Любые другие способы
+
+### Что делает push-deploy.sh
+
 Автоматически выполняет:
 1. `git add .`
 2. `git commit -m "message"`
-3. `git push`
-4. `./infrastructure/deploy.sh`
+3. `git push origin main`
+4. `./infrastructure/deploy.sh` (локальный билд + загрузка + перезапуск)
 
-### Автоматический деплой
-
-```bash
-./infrastructure/deploy.sh
-```
-
-Скрипт автоматически выполняет:
+Скрипт деплоя (`infrastructure/deploy.sh`) выполняет:
 1. Локальный билд (API + Frontend)
 2. Создание бэкапа на сервере
 3. Загрузку через rsync
