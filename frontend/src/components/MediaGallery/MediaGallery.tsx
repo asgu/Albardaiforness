@@ -39,9 +39,10 @@ interface Media {
 
 interface MediaGalleryProps {
   personId: string;
+  isEditing?: boolean;
 }
 
-export default function MediaGallery({ personId }: MediaGalleryProps) {
+export default function MediaGallery({ personId, isEditing = false }: MediaGalleryProps) {
   const { t } = useTranslations();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const [media, setMedia] = useState<Media[]>([]);
@@ -175,7 +176,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isAuthenticated) {
+    if (isAuthenticated && isEditing) {
       setIsDragging(true);
     }
   };
@@ -191,7 +192,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
     e.stopPropagation();
     setIsDragging(false);
 
-    if (isAuthenticated && e.dataTransfer.files) {
+    if (isAuthenticated && isEditing && e.dataTransfer.files) {
       handleFileSelect(e.dataTransfer.files);
     }
   };
@@ -264,7 +265,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
           </h3>
           <div className={styles.grid}>
             {/* Upload Button - First Item */}
-            {isAuthenticated && (
+            {isAuthenticated && isEditing && (
               <div 
                 className={styles.uploadItem}
                 onClick={() => fileInputRef.current?.click()}
@@ -302,7 +303,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
                     {t('media.primary')}
                   </div>
                 )}
-                {isAuthenticated && (
+                {isAuthenticated && isEditing && (
                   <button
                     className={styles.deleteButton}
                     onClick={(e) => handleDeleteMedia(photo.id, e)}
@@ -342,7 +343,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
                     )}
                   </div>
                 </a>
-                {isAuthenticated && (
+                {isAuthenticated && isEditing && (
                   <button
                     className={styles.deleteButtonDoc}
                     onClick={(e) => handleDeleteMedia(doc.id, e)}

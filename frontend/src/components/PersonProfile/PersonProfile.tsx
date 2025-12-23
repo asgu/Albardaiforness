@@ -54,7 +54,7 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
         
         {/* Media Gallery - Full width across both columns */}
         <div className={styles.galleryFullWidth}>
-          <MediaGallery personId={person.id} />
+          <MediaGallery personId={person.id} isEditing={isEditing} />
         </div>
       </div>
       
