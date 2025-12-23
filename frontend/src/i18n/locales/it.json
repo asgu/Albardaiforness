@@ -33,6 +33,7 @@
   "search": {
     "title": "Ricerca",
     "placeholder": "Cerca una persona...",
+    "orSearchById": "o cerca per ID",
     "advancedSearch": "Ricerca avanzata",
     "simpleSearch": "Ricerca semplice",
     "id": "ID",

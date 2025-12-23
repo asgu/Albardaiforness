@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Input, Button, Modal } from '@/ui';
+import { Input, Button } from '@/ui';
+import { Modal } from '@/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
 import { PersonSummary } from '@/types';
@@ -37,10 +38,21 @@ export default function AddRelativeModal({
 
     setLoading(true);
     try {
-      const response = await personApi.search({ q: searchQuery });
-      setResults(response.data);
+      // Проверяем, является ли запрос числом (ID)
+      const isNumericSearch = /^\d+$/.test(searchQuery.trim());
+      
+      if (isNumericSearch) {
+        // Поиск по ID
+        const response = await personApi.loadByIds([parseInt(searchQuery.trim())]);
+        setResults(response.data);
+      } else {
+        // Обычный текстовый поиск
+        const response = await personApi.search({ q: searchQuery });
+        setResults(response.data);
+      }
     } catch (error) {
       console.error('Search error:', error);
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -75,7 +87,7 @@ export default function AddRelativeModal({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder={t('search.placeholder')}
+          placeholder={`${t('search.placeholder')} ${t('search.orSearchById')}`}
           fullWidth
         />
         <Button onClick={handleSearch} disabled={loading}>
@@ -103,12 +115,19 @@ export default function AddRelativeModal({
               <div className={styles.personName}>
                 {person.firstName} {person.lastName}
               </div>
-              {person.birthYear && (
-                <div className={styles.personDates}>
-                  {person.birthYear}
-                  {person.deathYear && ` - ${person.deathYear}`}
-                </div>
-              )}
+              <div className={styles.personMeta}>
+                {(person.originalId || person.id) && (
+                  <span className={styles.personId}>
+                    ID: {person.originalId || person.id}
+                  </span>
+                )}
+                {person.birthYear && (
+                  <span className={styles.personDates}>
+                    {person.birthYear}
+                    {person.deathYear && ` - ${person.deathYear}`}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         ))}

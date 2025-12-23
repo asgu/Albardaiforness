@@ -47,6 +47,22 @@
   color: $text-color;
 }
 
+.personMeta {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.personId {
+  font-size: $font-size-sm;
+  color: $primary-color;
+  font-weight: $font-semibold;
+  background: rgba($primary-color, 0.1);
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+}
+
 .personDates {
   font-size: $font-size-sm;
   color: $text-light;

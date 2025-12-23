@@ -33,6 +33,7 @@
   "search": {
     "title": "Поиск",
     "placeholder": "Найти человека...",
+    "orSearchById": "или поиск по ID",
     "advancedSearch": "Расширенный поиск",
     "simpleSearch": "Простой поиск",
     "id": "ID",
