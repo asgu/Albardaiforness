@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Person } from '@/types';
 import { Button } from '@/ui';
-import { getPersonUrlId, getFullName, getLifeYears } from '@/utils/person';
+import { getPersonUrlId, getBasicName, getLifeYears } from '@/utils/person';
 import styles from './FamilyTree.module.scss';
 
 interface FamilyTreeProps {
@@ -417,7 +417,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       if (e.p.avatarMediaId) {
         const img = document.createElement('img');
         img.src = `/api/media/${e.p.avatarMediaId}`;
-        img.alt = getFullName(e.p);
+        img.alt = getBasicName(e.p);
         avatar.appendChild(img);
       } else {
         const noPhoto = document.createElement('div');
@@ -430,7 +430,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       
       const name = document.createElement('div');
       name.className = styles.name;
-      name.textContent = getFullName(e.p);
+      name.textContent = getBasicName(e.p);
       
       const years = document.createElement('div');
       years.className = styles.years;
@@ -438,13 +438,6 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       
       info.appendChild(name);
       info.appendChild(years);
-      
-      if (e.p.nickName) {
-        const nickname = document.createElement('div');
-        nickname.className = styles.nickname;
-        nickname.textContent = `"${e.p.nickName}"`;
-        info.appendChild(nickname);
-      }
       
       card.appendChild(avatar);
       card.appendChild(info);

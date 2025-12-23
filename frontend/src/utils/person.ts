@@ -100,6 +100,13 @@ export function getFullName(person: Person): string {
 }
 
 /**
+ * Получить основное имя (без прозвища)
+ */
+export function getBasicName(person: Person): string {
+  return `${person.firstName} ${person.lastName}`;
+}
+
+/**
  * Получить возраст
  */
 export function getAge(person: Person): number | undefined {
