@@ -101,7 +101,7 @@ export default function GallerySidebar({
       <div key={category.id} className={styles.categoryItem}>
         <div
           className={`${styles.categoryTitle} ${isSelected ? styles.active : ''}`}
-          style={{ paddingLeft: level === 0 ? '0.75rem' : `${0.75 + level * 1.5}rem` }}
+          style={{ paddingLeft: level === 0 ? '0.75rem' : `${0.75 + level * 1}rem` }}
         >
           {hasChildren ? (
             <button
