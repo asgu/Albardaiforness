@@ -188,7 +188,7 @@ export default function GalleryPage() {
                 disabled={categoriesLoading}
               >
                 <option value="">{t('gallery.allCategories')}</option>
-                {categories.map((cat) => (
+                {categories?.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.title}
                   </option>
@@ -204,7 +204,7 @@ export default function GalleryPage() {
                 disabled={tagsLoading}
               >
                 <option value="">{t('gallery.allTags')}</option>
-                {tags.map((tag) => (
+                {tags?.map((tag) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.title}
                   </option>
