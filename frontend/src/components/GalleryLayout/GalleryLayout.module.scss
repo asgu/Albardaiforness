@@ -1,0 +1,13 @@
+@import '@/styles/variables';
+
+.galleryLayout {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 60px); // Header height
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
