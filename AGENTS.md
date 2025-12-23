@@ -224,6 +224,9 @@ npm run fix:albaro-links-fast    # Связи родителей (быстро)
 # Миграция данных Preone (new.alberodipreone.org)
 npm run migrate:preone           # Персоны, браки, связи
 
+# Миграция медиафайлов (фото и файлы)
+npm run migrate:media            # Photo и File из ad1.sql и d2.sql
+
 # Миграция пользователей из FOSUserBundle
 npm run migrate:users
 
@@ -236,6 +239,12 @@ npm run fix:marriages
 - В старой базе связи родителей записаны наоборот (используйте `fix-albaro-links-fast.ts`)
 - Браки дублируются при импорте (требуется удаление дубликатов)
 - Подробности: `api/ALBARO_MIGRATION.md`
+
+**Миграция медиафайлов:**
+- Импорт фотографий и файлов из таблиц Photo и File
+- Автоматическое определение типов файлов и MIME типов
+- Связывание с персонами по originalId
+- Подробности: `api/MEDIA_MIGRATION.md`
 
 ### Миграция пользователей
 Старая система использовала FOSUserBundle (Symfony 2) с SHA-512 хешированием паролей.
