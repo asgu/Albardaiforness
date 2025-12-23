@@ -196,7 +196,6 @@ export class MediaController {
             mimeType: file.mimetype,
             isPublic: true,
             isPrimary: false,
-            createdBy: userId,
           },
         });
 
