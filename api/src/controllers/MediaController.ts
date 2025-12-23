@@ -156,6 +156,90 @@ export class MediaController {
   }
 
   /**
+   * Получить все медиафайлы (для галереи)
+   * Поддерживает фильтрацию по категории, тегу, поиску и пагинацию
+   */
+  async getAllMedia(req: Request, res: Response) {
+    try {
+      const { categoryId, tagId, search, page = '1', limit = '20' } = req.query;
+      const skip = (Number(page) - 1) * Number(limit);
+
+      const where: any = {
+        deletedAt: null,
+        isPublic: true,
+      };
+
+      if (categoryId) {
+        where.categoryId = BigInt(categoryId as string);
+      }
+
+      if (tagId) {
+        where.tags = {
+          some: {
+            tagId: BigInt(tagId as string),
+          },
+        };
+      }
+
+      if (search) {
+        where.OR = [
+          { title: { contains: search as string, mode: 'insensitive' } },
+          { description: { contains: search as string, mode: 'insensitive' } },
+          { fileName: { contains: search as string, mode: 'insensitive' } },
+        ];
+      }
+
+      const [media, total] = await Promise.all([
+        prisma.media.findMany({
+          where,
+          include: {
+            category: {
+              select: { id: true, title: true },
+            },
+            tags: {
+              include: {
+                tag: {
+                  select: { id: true, title: true },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: Number(limit),
+        }),
+        prisma.media.count({ where }),
+      ]);
+
+      res.json({
+        data: media.map(m => ({
+          ...m,
+          id: m.id.toString(),
+          personId: m.personId?.toString(),
+          categoryId: m.categoryId?.toString(),
+          category: m.category ? {
+            id: m.category.id.toString(),
+            title: m.category.title,
+          } : undefined,
+          tags: m.tags.map((mt: any) => ({
+            id: mt.tag.id.toString(),
+            title: mt.tag.title,
+          })),
+        })),
+        pagination: {
+          total,
+          page: Number(page),
+          limit: Number(limit),
+          totalPages: Math.ceil(total / Number(limit)),
+        },
+      });
+    } catch (error) {
+      console.error('Get all media error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  /**
    * Загрузить медиафайлы
    */
   async upload(req: Request, res: Response) {
