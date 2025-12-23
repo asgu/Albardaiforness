@@ -18,6 +18,7 @@
     "migrate:users": "ts-node src/scripts/migrate-users.ts",
     "migrate:media": "ts-node src/scripts/migrate-media.ts",
     "migrate:photo-tags": "ts-node src/scripts/migrate-photo-tags.ts",
+    "set:avatars": "ts-node src/scripts/set-avatars.ts",
     "find:duplicates": "ts-node src/scripts/find-duplicates.ts",
     "fix:parent-links": "ts-node src/scripts/fix-parent-links.ts",
     "fix:albaro-links": "ts-node src/scripts/fix-albaro-links.ts",
