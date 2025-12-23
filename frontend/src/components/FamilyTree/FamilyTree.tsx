@@ -198,51 +198,26 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     
     const primarySpouse = p.spouses?.[0]?.person;
     const sr = FSM(p, primarySpouse?.id);
-    const sx = sr ? 1 : -1;
+    let sx = sr ? 1 : -1;
     
     // Add person
     TAE(d, p, 0, 0, false);
     
-    // Add own children (without specific partner)
+    // Add ALL children (centered under person) - like in original
     const ac = FLA(p);
     if (ac.length > 0) {
       const childGroup = BCG(ac, depth - 1);
       BCD(d, childGroup.ds, childGroup.aw, 0, 1, 0, 0);
     }
     
-    // Add PRIMARY spouse (first one)
+    // Add PRIMARY spouse
     if (primarySpouse) {
-      // Children with primary spouse
-      const tc = FLP(p, primarySpouse.id);
-      
-      let finalSx = sx;
-      if (tc.length > 0) {
-        const childGroup = BCG(tc, depth - 1);
-        if (ac.length > 0) {
-          finalSx = sr 
-            ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 + 0.5 
-            : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2 - 0.5;
-        }
-        const cx = sr ? finalSx - 0.5 : finalSx + 0.5;
-        BCD(d, childGroup.ds, childGroup.aw, cx, 1, cx, 0);
-      }
-      
       // Marriage line
-      TAL(d, 0, 0, finalSx, 0, true);
-      TAE(d, primarySpouse, finalSx, 0, false);
+      TAL(d, 0, 0, sx, 0, true);
+      TAE(d, primarySpouse, sx, 0, false);
       
-      // Primary spouse's own children
-      const spouseChildren = FLA(primarySpouse);
-      if (spouseChildren.length > 0) {
-        const childGroup = BCG(spouseChildren, depth - 1);
-        const cx = sr 
-          ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 
-          : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2;
-        BCD(d, childGroup.ds, childGroup.aw, cx, 1, finalSx, 0);
-      }
-      
-      // Add OTHER spouses (BDA logic)
-      BDA(d, primarySpouse, p.id, depth - 1, sr, finalSx, 0);
+      // Add OTHER spouses (BDA logic) - they go further away
+      BDA(d, primarySpouse, p.id, depth - 1, sr, sx, 0);
     }
     
     // Add person's other partners (excluding primary)
