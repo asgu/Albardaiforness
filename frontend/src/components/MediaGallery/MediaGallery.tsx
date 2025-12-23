@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from '@/i18n/useTranslations';
 import { Card, Modal } from '@/ui';
+import { useAppSelector } from '@/store/hooks';
+import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import styles from './MediaGallery.module.scss';
 
 interface TaggedPerson {
@@ -41,11 +43,15 @@ interface MediaGalleryProps {
 
 export default function MediaGallery({ personId }: MediaGalleryProps) {
   const { t } = useTranslations();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showTags, setShowTags] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchMedia = async () => {
@@ -115,6 +121,69 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
     }
   };
 
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    
+    Array.from(files).forEach((file) => {
+      formData.append('files', file);
+    });
+    formData.append('personId', personId);
+
+    try {
+      const response = await fetch('/api/media/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Перезагрузить галерею
+        const apiUrl = typeof window !== 'undefined' && 
+          (window.location.hostname.includes('albardaiforness.org') || 
+           window.location.hostname.includes('alberodipreone.org') ||
+           window.location.hostname.includes('alberodiraveo.org'))
+          ? '' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300');
+        
+        const mediaResponse = await fetch(`${apiUrl}/api/media/person/${personId}`);
+        const data = await mediaResponse.json();
+        setMedia(data);
+      } else {
+        alert(t('common.error'));
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(t('common.error'));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isAuthenticated) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (isAuthenticated && e.dataTransfer.files) {
+      handleFileSelect(e.dataTransfer.files);
+    }
+  };
+
   if (loading) {
     return (
       <Card className={styles.gallery}>
@@ -132,12 +201,40 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
 
   return (
     <>
-      {photos.length > 0 && (
-        <Card className={styles.gallery}>
+      {(photos.length > 0 || isAuthenticated) && (
+        <Card 
+          className={`${styles.gallery} ${isDragging ? styles.dragging : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <h3 className={styles.title}>
             {t('media.photos')} ({photos.length})
           </h3>
           <div className={styles.grid}>
+            {/* Upload Button - First Item */}
+            {isAuthenticated && (
+              <div 
+                className={styles.uploadItem}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*,application/pdf,.doc,.docx"
+                  onChange={(e) => handleFileSelect(e.target.files)}
+                  style={{ display: 'none' }}
+                />
+                <div className={styles.uploadIcon}>
+                  {uploading ? '⏳' : '+'}
+                </div>
+                <div className={styles.uploadText}>
+                  {uploading ? t('common.loading') : t('media.uploadFiles')}
+                </div>
+              </div>
+            )}
+
             {photos.map((photo, index) => (
               <div
                 key={photo.id}

@@ -67,7 +67,8 @@
     "photos": "Photos",
     "documents": "Documents",
     "primary": "Primary",
-    "noMedia": "No media available"
+    "noMedia": "No media available",
+    "uploadFiles": "Upload files"
   },
   "person": {
     "id": "ID",

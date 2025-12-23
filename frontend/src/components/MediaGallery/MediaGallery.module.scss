@@ -3,6 +3,13 @@
 
 .gallery {
   margin-top: $spacing-xl;
+  transition: all $transition-base;
+  
+  &.dragging {
+    background: rgba($primary-color, 0.05);
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
 }
 
 .title {
@@ -30,6 +37,42 @@
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: $spacing-sm;
   }
+}
+
+// Upload item
+.uploadItem {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition-base;
+  background: linear-gradient(135deg, $bg-light 0%, $bg-secondary 100%);
+  border: 2px dashed $border-color;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  &:hover {
+    border-color: $primary-color;
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+    transform: scale(1.02);
+  }
+}
+
+.uploadIcon {
+  font-size: 48px;
+  color: $primary-color;
+  font-weight: 300;
+}
+
+.uploadText {
+  font-size: $font-size-sm;
+  color: $text-light;
+  text-align: center;
+  padding: 0 $spacing-sm;
 }
 
 .photoItem {

@@ -67,7 +67,8 @@
     "photos": "Foto",
     "documents": "Documenti",
     "primary": "Principale",
-    "noMedia": "Nessun media disponibile"
+    "noMedia": "Nessun media disponibile",
+    "uploadFiles": "Carica file"
   },
   "person": {
     "id": "ID",
