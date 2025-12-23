@@ -132,7 +132,7 @@ export default function GallerySidebar({
         ) : (
           tagsLoading ? (
             <LoadingState text={t('common.loading')} />
-          ) : tags.length === 0 ? (
+          ) : !tags || tags.length === 0 ? (
             <EmptyState message={t('gallery.noTags')} />
           ) : (
             <div className={styles.tagList}>
