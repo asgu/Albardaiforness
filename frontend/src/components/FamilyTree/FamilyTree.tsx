@@ -109,13 +109,16 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       return { minX, maxX };
     };
 
-    // Add children below person
-    const addChildren = (p: Person, x: number, y: number) => {
+    // Add children below person (centered between parents if both exist)
+    const addChildren = (p: Person, x: number, y: number, spouseX?: number) => {
       if (!p.children || p.children.length === 0) return;
       
       const childY = y + 1;
       const childCount = p.children.length;
-      const startX = x - (childCount - 1) * 0.5;
+      
+      // If spouse exists, center children between parents
+      const centerX = spouseX !== undefined ? (x + spouseX) / 2 : x;
+      const startX = centerX - (childCount - 1) * 0.5;
       
       p.children.forEach((child, index) => {
         if (!addedPersons.has(child.id)) {
@@ -189,19 +192,26 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       });
     };
 
-    // Add spouse next to person
-    const addSpouse = (p: Person, x: number, y: number) => {
-      if (!p.spouses || p.spouses.length === 0) return x;
+    // Add spouse next to person (like in original algorithm)
+    const addSpouse = (p: Person, x: number, y: number): number | undefined => {
+      if (!p.spouses || p.spouses.length === 0) return undefined;
       
-      let spouseX = x + 1.2;
-      p.spouses.forEach((marriage) => {
+      // Determine spouse position based on gender (like FSM function in original)
+      // Female (-1) + Male (1) = 0, but if person is female, spouse (male) goes right
+      // If person is male, spouse (female) goes left
+      const spouseRight = p.gender === 'female'; // Female's spouse (male) on right
+      let lastSpouseX: number | undefined;
+      
+      p.spouses.forEach((marriage, index) => {
         if (marriage.person && !addedPersons.has(marriage.person.id)) {
+          const offset = index === 0 ? 1.2 : (index + 1) * 1.2;
+          const spouseX = spouseRight ? x + offset : x - offset;
           addNode(marriage.person, spouseX, y);
-          spouseX += 1.2;
+          lastSpouseX = spouseX;
         }
       });
       
-      return spouseX;
+      return lastSpouseX;
     };
 
     // Start building from center person
@@ -211,14 +221,14 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     // Add main person with ancestors
     addPersonWithAncestors(person, centerX, centerY, 2);
     
-    // Add spouse(s)
-    addSpouse(person, centerX, centerY);
+    // Add spouse(s) and get their position
+    const spouseX = addSpouse(person, centerX, centerY);
     
     // Add siblings
     addSiblings(person, centerX, centerY);
     
-    // Add children
-    addChildren(person, centerX, centerY);
+    // Add children (centered between person and spouse if spouse exists)
+    addChildren(person, centerX, centerY, spouseX);
 
     setNodes(treeNodes);
   };
