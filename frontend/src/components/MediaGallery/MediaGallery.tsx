@@ -42,9 +42,10 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use useApi hook for fetching media
-  const { data: media = [], loading, error: fetchError, execute: refetchMedia } = useApi<Media[]>(
+  const { data, loading, error: fetchError, execute: refetchMedia } = useApi<Media[]>(
     () => mediaApi.getByPersonId(personId)
   );
+  const media = data || [];
 
   useEffect(() => {
     refetchMedia();
