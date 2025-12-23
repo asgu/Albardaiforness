@@ -68,7 +68,8 @@
     "documents": "Документы",
     "primary": "Основное",
     "noMedia": "Нет медиафайлов",
-    "uploadFiles": "Загрузить файлы"
+    "uploadFiles": "Загрузить файлы",
+    "confirmDelete": "Вы уверены, что хотите удалить этот файл?"
   },
   "person": {
     "id": "ID",

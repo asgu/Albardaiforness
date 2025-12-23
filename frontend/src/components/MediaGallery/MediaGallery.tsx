@@ -51,6 +51,7 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
   const [showTags, setShowTags] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -184,6 +185,33 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
     }
   };
 
+  const handleDeleteMedia = async (mediaId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!confirm(t('media.confirmDelete'))) {
+      return;
+    }
+
+    setDeletingId(mediaId);
+    try {
+      const response = await fetch(`/api/media/${mediaId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Удалить из локального состояния
+        setMedia(media.filter(m => m.id !== mediaId));
+      } else {
+        alert(t('common.error'));
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert(t('common.error'));
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (loading) {
     return (
       <Card className={styles.gallery}>
@@ -251,6 +279,16 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
                     {t('media.primary')}
                   </div>
                 )}
+                {isAuthenticated && (
+                  <button
+                    className={styles.deleteButton}
+                    onClick={(e) => handleDeleteMedia(photo.id, e)}
+                    disabled={deletingId === photo.id}
+                    title={t('common.delete')}
+                  >
+                    {deletingId === photo.id ? '⏳' : '×'}
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -264,23 +302,34 @@ export default function MediaGallery({ personId }: MediaGalleryProps) {
           </h3>
           <div className={styles.documentList}>
             {documents.map((doc) => (
-              <a
-                key={doc.id}
-                href={doc.filePath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.documentItem}
-              >
-                <div className={styles.documentIcon}>📄</div>
-                <div className={styles.documentInfo}>
-                  <div className={styles.documentName}>{doc.fileName}</div>
-                  {doc.description && (
-                    <div className={styles.documentDescription}>
-                      {doc.description}
-                    </div>
-                  )}
-                </div>
-              </a>
+              <div key={doc.id} className={styles.documentItemWrapper}>
+                <a
+                  href={doc.filePath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.documentItem}
+                >
+                  <div className={styles.documentIcon}>📄</div>
+                  <div className={styles.documentInfo}>
+                    <div className={styles.documentName}>{doc.fileName}</div>
+                    {doc.description && (
+                      <div className={styles.documentDescription}>
+                        {doc.description}
+                      </div>
+                    )}
+                  </div>
+                </a>
+                {isAuthenticated && (
+                  <button
+                    className={styles.deleteButtonDoc}
+                    onClick={(e) => handleDeleteMedia(doc.id, e)}
+                    disabled={deletingId === doc.id}
+                    title={t('common.delete')}
+                  >
+                    {deletingId === doc.id ? '⏳' : '×'}
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </Card>

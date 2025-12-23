@@ -68,7 +68,8 @@
     "documents": "Documenti",
     "primary": "Principale",
     "noMedia": "Nessun media disponibile",
-    "uploadFiles": "Carica file"
+    "uploadFiles": "Carica file",
+    "confirmDelete": "Sei sicuro di voler eliminare questo file?"
   },
   "person": {
     "id": "ID",
