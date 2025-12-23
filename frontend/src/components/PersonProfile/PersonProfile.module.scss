@@ -41,6 +41,23 @@
   }
 }
 
+// Gallery visibility control
+.galleryDesktop {
+  display: block;
+  
+  @media (max-width: 968px) {
+    display: none;
+  }
+}
+
+.galleryMobile {
+  display: none;
+  
+  @media (max-width: 968px) {
+    display: block;
+  }
+}
+
 .profile {
   background: white;
   border-radius: 12px;

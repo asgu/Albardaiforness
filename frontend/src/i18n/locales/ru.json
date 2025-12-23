@@ -60,6 +60,13 @@
     "found": "Найдено",
     "results": "результатов"
   },
+  "media": {
+    "gallery": "Галерея",
+    "photos": "Фотографии",
+    "documents": "Документы",
+    "primary": "Основное",
+    "noMedia": "Нет медиафайлов"
+  },
   "person": {
     "id": "ID",
     "gender": "Пол",

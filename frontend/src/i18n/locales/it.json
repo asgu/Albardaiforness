@@ -60,6 +60,13 @@
     "found": "Trovati",
     "results": "risultati"
   },
+  "media": {
+    "gallery": "Galleria",
+    "photos": "Foto",
+    "documents": "Documenti",
+    "primary": "Principale",
+    "noMedia": "Nessun media disponibile"
+  },
   "person": {
     "id": "ID",
     "gender": "Sesso",

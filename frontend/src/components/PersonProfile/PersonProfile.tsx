@@ -7,6 +7,7 @@ import { Person } from '@/types';
 import PersonalInfo from '@/components/PersonalInfo/PersonalInfo';
 import RelativeInfo from '@/components/RelativeInfo/RelativeInfo';
 import PersonTimeline from '@/components/PersonTimeline/PersonTimeline';
+import MediaGallery from '@/components/MediaGallery/MediaGallery';
 import styles from './PersonProfile.module.scss';
 
 interface PersonProfileProps {
@@ -34,6 +35,11 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
           <div className={styles.timelineDesktop}>
             <PersonTimeline person={person} />
           </div>
+          
+          {/* Media Gallery - Desktop only */}
+          <div className={styles.galleryDesktop}>
+            <MediaGallery personId={person.id} />
+          </div>
         </div>
 
         {/* Right Column - Relatives */}
@@ -47,6 +53,11 @@ export default function PersonProfile({ person, serverColor }: PersonProfileProp
           {/* Timeline - Mobile only */}
           <div className={styles.timelineMobile}>
             <PersonTimeline person={person} />
+          </div>
+          
+          {/* Media Gallery - Mobile only */}
+          <div className={styles.galleryMobile}>
+            <MediaGallery personId={person.id} />
           </div>
         </div>
       </div>

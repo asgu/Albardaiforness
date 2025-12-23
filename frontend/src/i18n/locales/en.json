@@ -60,6 +60,13 @@
     "found": "Found",
     "results": "results"
   },
+  "media": {
+    "gallery": "Gallery",
+    "photos": "Photos",
+    "documents": "Documents",
+    "primary": "Primary",
+    "noMedia": "No media available"
+  },
   "person": {
     "id": "ID",
     "gender": "Gender",
