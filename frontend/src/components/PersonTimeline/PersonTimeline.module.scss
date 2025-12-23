@@ -23,7 +23,7 @@
     position: absolute;
     left: calc(#{$spacing-xl} + 70px + #{$spacing-md} + 8px - 1.5px);
     top: 16px;
-    bottom: 28px;
+    bottom: 22px;
     width: 3px;
     background: linear-gradient(to bottom,
         rgba(16, 185, 129, 0.3),
@@ -103,7 +103,6 @@
 .place {
   color: $text-light;
   font-style: italic;
-  margin-left: $spacing-xs;
 }
 
 // Event type colors
