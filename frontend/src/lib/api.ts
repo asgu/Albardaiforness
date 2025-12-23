@@ -1,5 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
-import { Person, PersonSummary, PersonSearchResult, Server, Duplicate } from '@/types';
+import { Person, PersonSummary, PersonSearchResult, Server } from '@/types';
+
+interface Duplicate {
+  id: number;
+  person1Id: number;
+  person2Id: number;
+  similarity: number;
+  status: string;
+}
 
 // Determine if we're in browser and on production domain
 const isProduction = typeof window !== 'undefined' && 
