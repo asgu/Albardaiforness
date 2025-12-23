@@ -161,6 +161,8 @@
   },
   "gallery": {
     "title": "Galleria",
+    "categories": "Cartelle",
+    "tags": "Tags",
     "category": "Categoria",
     "tag": "Etichetta",
     "allCategories": "Tutte le categorie",

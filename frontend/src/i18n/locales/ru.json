@@ -161,6 +161,8 @@
   },
   "gallery": {
     "title": "Галерея",
+    "categories": "Папки",
+    "tags": "Теги",
     "category": "Категория",
     "tag": "Метка",
     "allCategories": "Все категории",

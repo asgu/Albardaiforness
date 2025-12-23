@@ -161,6 +161,8 @@
   },
   "gallery": {
     "title": "Gallery",
+    "categories": "Folders",
+    "tags": "Tags",
     "category": "Category",
     "tag": "Tag",
     "allCategories": "All categories",
