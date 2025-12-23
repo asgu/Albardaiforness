@@ -294,7 +294,7 @@ export default function GalleryPage() {
       </div>
 
       {selectedMedia && (
-        <Modal isOpen={!!selectedMedia} onClose={() => setSelectedMedia(null)} size="full">
+        <Modal isOpen={!!selectedMedia} onClose={() => setSelectedMedia(null)} size="xl">
           <div className={styles.modalContentWrapper}>
             <button
               className={styles.navButton}
