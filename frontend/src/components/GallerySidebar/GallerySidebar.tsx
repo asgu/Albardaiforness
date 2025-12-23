@@ -33,14 +33,18 @@ export default function GallerySidebar({
   const [activeView, setActiveView] = useState<SidebarView>(SidebarView.CATEGORIES);
 
   // Fetch categories
-  const { data: categories = [], loading: categoriesLoading } = useApi<Category[]>(
+  const { data: categories = [], loading: categoriesLoading, error: categoriesError } = useApi<Category[]>(
     () => categoryApi.getAll()
   );
 
   // Fetch tags
-  const { data: tags = [], loading: tagsLoading } = useApi<Tag[]>(
+  const { data: tags = [], loading: tagsLoading, error: tagsError } = useApi<Tag[]>(
     () => tagApi.getAll()
   );
+
+  // Debug logging
+  console.log('Categories:', categories, 'Loading:', categoriesLoading, 'Error:', categoriesError);
+  console.log('Tags:', tags, 'Loading:', tagsLoading, 'Error:', tagsError);
 
   // Build category tree
   const buildCategoryTree = (cats: Category[]): Category[] => {
