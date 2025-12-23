@@ -220,7 +220,7 @@ export default function GalleryPage() {
         {!mediaLoading && !mediaError && media.length === 0 && (
           <EmptyState
             icon="📷"
-            message={t('media.noMediaFound')}
+            message={t('search.noResults')}
           />
         )}
 
