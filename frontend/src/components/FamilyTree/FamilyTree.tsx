@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Person } from '@/types';
 import { Button } from '@/ui';
@@ -11,247 +12,431 @@ interface FamilyTreeProps {
   person: Person;
 }
 
+// Tree node data structure (like TND in original)
+interface TreeData {
+  l: number;  // left boundary
+  r: number;  // right boundary
+  w: number;  // width
+  t: number;  // top boundary
+  b: number;  // bottom boundary
+  h: number;  // height
+  e: { [key: string]: TreeNode };  // entities (persons)
+  n: TreeLine[];  // lines
+}
+
 interface TreeNode {
-  person: Person;
+  p: Person;
   x: number;
   y: number;
-  generation: number;
+  k: boolean;  // key person flag
+}
+
+interface TreeLine {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  k: boolean | null;  // marriage line flag
 }
 
 export default function FamilyTree({ person }: FamilyTreeProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  // Node dimensions (like TDS in original)
+  const nodeWidth = 160;
+  const nodeHeight = 220;
+  const horizontalGap = 20;
+  const verticalGap = 40;
+
   useEffect(() => {
-    buildTree();
+    const treeData = buildTree();
+    renderTree(treeData);
   }, [person]);
 
-  const buildTree = () => {
-    const treeNodes: TreeNode[] = [];
-    const addedPersons = new Set<string>();
-    const nodeWidth = 160;
-    const nodeHeight = 220;
-    const horizontalGap = 40;
-    const verticalGap = 80;
+  // Create new tree data (TND)
+  const TND = (): TreeData => ({
+    l: 0,
+    r: 0,
+    w: 0,
+    t: 0,
+    b: 0,
+    h: 0,
+    e: {},
+    n: []
+  });
+
+  // Add entity to tree (TAE)
+  const TAE = (d: TreeData, p: Person, x: number, y: number, k: boolean = false) => {
+    d.e[p.id] = { p, x, y, k };
+    d.l = Math.min(d.l, x);
+    d.r = Math.max(d.r, x + 1);
+    d.w = d.r - d.l;
+    d.t = Math.min(d.t, y);
+    d.b = Math.max(d.b, y + 1);
+    d.h = d.b - d.t;
+  };
+
+  // Add line to tree (TAL)
+  const TAL = (d: TreeData, x1: number, y1: number, x2: number, y2: number, k: boolean | null = false) => {
+    d.n.push({ x1, y1, x2, y2, k });
+  };
+
+  // Add tree data to another (TAD)
+  const TAD = (od: TreeData, d: TreeData, dx: number, dy: number) => {
+    // Add lines
+    d.n.forEach(n => {
+      TAL(od, n.x1 + dx, n.y1 + dy, n.x2 + dx, n.y2 + dy, n.k);
+    });
+    // Add entities
+    Object.values(d.e).forEach(e => {
+      TAE(od, e.p, e.x + dx, e.y + dy, e.k);
+    });
+  };
+
+  // Get gender modifier (FGM)
+  const FGM = (gender?: string): number => {
+    if (gender === 'female') return -1;
+    if (gender === 'male') return 1;
+    return 0;
+  };
+
+  // Compare persons (FCM)
+  const FCM = (p1?: Person, p2?: Person): number => {
+    return FGM(p1?.gender) - FGM(p2?.gender);
+  };
+
+  // Determine spouse position (FSM)
+  const FSM = (person: Person, spouseId?: string): boolean => {
+    const spouse = person.spouses?.find(s => s.person?.id === spouseId)?.person;
+    const cm = FCM(person, spouse);
+    return cm ? cm < 0 : false;
+  };
+
+  // Get all children (FLA)
+  const FLA = (person: Person): Person[] => {
+    return person.children || [];
+  };
+
+  // Get children with specific partner (FLP)
+  const FLP = (person: Person, partnerId?: string): Person[] => {
+    if (!person.children) return [];
+    return person.children.filter(child => {
+      if (person.gender === 'male') {
+        return child.motherId === partnerId;
+      } else {
+        return child.fatherId === partnerId;
+      }
+    });
+  };
+
+  // Get siblings (FLS)
+  const FLS = (person: Person): Person[] => {
+    return person.siblings || [];
+  };
+
+  // Build children group (BCG)
+  const BCG = (children: Person[], depth: number): { ds: TreeData[]; tw: number; fl: number; lr: number; aw: number } => {
+    const ds: TreeData[] = [];
+    let tw = 0;
     
-    // Tree data structure like original
-    interface TreeData {
-      l: number;  // left boundary
-      r: number;  // right boundary
-      t: number;  // top boundary
-      b: number;  // bottom boundary
-      nodes: Map<string, { x: number; y: number }>;
+    children.forEach(child => {
+      const d = BDD(child, depth);
+      ds.push(d);
+      tw += d.w;
+    });
+    
+    const fl = ds[0]?.l || 0;
+    const lr = ds[ds.length - 1]?.r || 0;
+    
+    return {
+      ds,
+      tw,
+      fl,
+      lr,
+      aw: tw + fl - lr
+    };
+  };
+
+  // Build children display (BCD)
+  const BCD = (d: TreeData, ds: TreeData[], aw: number, cx: number, cy: number, vx: number, vy: number) => {
+    const al = cx - aw / 2;
+    const ar = cx + aw / 2;
+    
+    // Vertical line from parent
+    if (vx < al || vx > ar) {
+      TAL(d, vx, vy, vx, cy - 0.75, false);
+      TAL(d, vx, cy - 0.75, cx, cy - 0.75, false);
+      TAL(d, cx, cy - 0.75, cx, cy - 0.5, false);
+    } else {
+      TAL(d, vx, vy, vx, cy - 0.5, false);
     }
     
-    const treeData: TreeData = {
-      l: 0,
-      r: 0,
-      t: 0,
-      b: 0,
-      nodes: new Map()
-    };
+    // Horizontal line connecting children
+    TAL(d, al, cy - 0.5, ar, cy - 0.5, false);
     
-    // Add node to tree
-    const addNodeToTree = (p: Person, x: number, y: number) => {
-      if (addedPersons.has(p.id)) return;
-      
-      treeNodes.push({
-        person: p,
-        x: x * (nodeWidth + horizontalGap),
-        y: y * (nodeHeight + verticalGap),
-        generation: y,
-      });
-      
-      treeData.nodes.set(p.id, { x, y });
-      treeData.l = Math.min(treeData.l, x);
-      treeData.r = Math.max(treeData.r, x + 1);
-      treeData.t = Math.min(treeData.t, y);
-      treeData.b = Math.max(treeData.b, y + 1);
-      
-      addedPersons.add(p.id);
-    };
+    // Add each child
+    let x = cx - aw / 2 + ds[0].l;
+    ds.forEach(cd => {
+      TAL(cd, 0, 0, 0, -0.5, false);
+      TAD(d, cd, x - cd.l, cy);
+      x += cd.w;
+    });
+  };
+
+  // Build person with descendants (BDD)
+  const BDD = (p: Person, depth: number): TreeData => {
+    const d = TND();
     
-    // Build person subtree (BDD from original)
-    const buildPersonTree = (p: Person, depth: number): TreeData => {
-      const d: TreeData = { l: 0, r: 0, t: 0, b: 0, nodes: new Map() };
+    if (depth <= 0) {
+      TAE(d, p, 0, 0, false);
+      return d;
+    }
+    
+    const sr = FSM(p, p.spouses?.[0]?.person?.id);
+    const sx = sr ? 1 : -1;
+    
+    // Add person
+    TAE(d, p, 0, 0, false);
+    
+    // Add own children
+    const ac = FLA(p);
+    if (ac.length > 0) {
+      const childGroup = BCG(ac, depth - 1);
+      BCD(d, childGroup.ds, childGroup.aw, 0, 1, 0, 0);
+    }
+    
+    // Add spouse
+    if (p.spouses && p.spouses.length > 0 && p.spouses[0].person) {
+      const spouse = p.spouses[0].person;
+      const tc = FLP(p, spouse.id);
       
-      if (depth <= 0 || addedPersons.has(p.id)) {
-        return d;
+      if (tc.length > 0) {
+        const childGroup = BCG(tc, depth - 1);
+        const newSx = ac.length > 0
+          ? (sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 + 0.5 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2 - 0.5)
+          : sx;
+        const cx = sr ? newSx - 0.5 : newSx + 0.5;
+        BCD(d, childGroup.ds, childGroup.aw, cx, 1, cx, 0);
       }
       
-      // Add person at origin
-      addNodeToTree(p, 0, 0);
-      d.nodes.set(p.id, { x: 0, y: 0 });
+      // Marriage line
+      TAL(d, 0, 0, sx, 0, true);
+      TAE(d, spouse, sx, 0, false);
       
-      // Determine spouse position (FSM logic)
-      const spouseRight = p.gender === 'female';
-      let currentSpouseX = spouseRight ? 1.2 : -1.2;
-      
-      // Add ALL spouses
-      if (p.spouses && p.spouses.length > 0) {
-        p.spouses.forEach((marriage, index) => {
-          if (marriage.person && !addedPersons.has(marriage.person.id)) {
-            const spouseX = spouseRight ? currentSpouseX : -currentSpouseX;
-            addNodeToTree(marriage.person, spouseX, 0);
-            d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
-            d.l = Math.min(d.l, spouseX);
-            d.r = Math.max(d.r, spouseX + 1);
-            
-            // Next spouse further away
-            currentSpouseX += 1.2;
-          }
-        });
+      // Spouse's own children
+      const spouseChildren = FLA(spouse);
+      if (spouseChildren.length > 0) {
+        const childGroup = BCG(spouseChildren, depth - 1);
+        const cx = sr ? d.r + (childGroup.tw - childGroup.fl - childGroup.lr) / 2 : d.l - (childGroup.tw + childGroup.lr + childGroup.fl) / 2;
+        BCD(d, childGroup.ds, childGroup.aw, cx, 1, sx, 0);
       }
-      
-      // Add children
-      if (p.children && p.children.length > 0 && depth > 1) {
-        const childCount = p.children.length;
-        const startX = -(childCount - 1) * 0.5;
-        
-        p.children.forEach((child, index) => {
-          if (!addedPersons.has(child.id)) {
-            const childX = startX + index;
-            addNodeToTree(child, childX, 1);
-            d.nodes.set(child.id, { x: childX, y: 1 });
-            d.l = Math.min(d.l, childX);
-            d.r = Math.max(d.r, childX + 1);
-            d.b = Math.max(d.b, 2);
-          }
-        });
+    }
+    
+    return d;
+  };
+
+  // Build siblings section (BSS)
+  const BSS = (d: TreeData, p: Person, siblings: Person[], depth: number, cy: number): { al: number; ar: number; ll: number; rl: number } => {
+    const li: Person[] = [];
+    const ri: Person[] = [];
+    
+    siblings.forEach(sibling => {
+      if (FCM(p, sibling) < 0) {
+        ri.push(sibling);
+      } else {
+        li.push(sibling);
       }
+    });
+    
+    const al = BDS(d, li, depth, false, cy);
+    const ar = BDS(d, ri, depth, true, cy);
+    
+    return { al, ar, ll: li.length, rl: ri.length };
+  };
+
+  // Build siblings display (BDS)
+  const BDS = (d: TreeData, siblings: Person[], depth: number, dr: boolean, cy: number): number => {
+    let al = 0;
+    
+    siblings.forEach((sibling, j) => {
+      const sd = BDD(sibling, depth);
+      const x = dr ? d.r - sd.l : d.l - sd.r;
+      TAD(d, sd, x, cy);
+      TAL(d, x, cy, x, cy - 0.5, false);
+      al = x;
+    });
+    
+    return al;
+  };
+
+  // Build full tree (BFT)
+  const buildTree = (): TreeData => {
+    const d = BDD(person, 3);  // depth 3 for children
+    
+    // Add siblings
+    const bs = FLS(person);
+    if (bs.length > 0) {
+      const aa = BSS(d, person, bs, 2, 0);
+      TAL(d, aa.al, -0.5, aa.ar, -0.5, false);
+    }
+    
+    // Add parents
+    if (person.father || person.mother) {
+      TAL(d, 0, 0, 0, -0.5, false);
       
-      // Add siblings
-      if (p.siblings && p.siblings.length > 0) {
-        // Split siblings by birth year
-        const olderSiblings: typeof p.siblings = [];
-        const youngerSiblings: typeof p.siblings = [];
-        
-        p.siblings.forEach((sibling) => {
-          const personBirthYear = p.birthYear || 9999;
-          const siblingBirthYear = sibling.birthYear || 9999;
-          
-          if (siblingBirthYear < personBirthYear) {
-            olderSiblings.push(sibling);
-          } else {
-            youngerSiblings.push(sibling);
-          }
-        });
-        
-        // Add older siblings to the left
-        let leftX = d.l - 1.5;
-        olderSiblings.reverse().forEach((sibling) => {
-          if (!addedPersons.has(sibling.id)) {
-            addNodeToTree(sibling, leftX, 0);
-            d.nodes.set(sibling.id, { x: leftX, y: 0 });
-            
-            // Add sibling's spouses
-            if (sibling.spouses && sibling.spouses.length > 0) {
-              const sibSpouseRight = sibling.gender === 'female';
-              sibling.spouses.forEach((marriage) => {
-                if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                  const spouseX = sibSpouseRight ? leftX + 1.2 : leftX - 1.2;
-                  addNodeToTree(marriage.person, spouseX, 0);
-                  d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
-                  d.l = Math.min(d.l, spouseX);
-                  d.r = Math.max(d.r, spouseX + 1);
-                }
-              });
-            }
-            
-            d.l = Math.min(d.l, leftX);
-            leftX -= 2.5;
-          }
-        });
-        
-        // Add younger siblings to the right
-        let rightX = d.r + 0.5;
-        youngerSiblings.forEach((sibling) => {
-          if (!addedPersons.has(sibling.id)) {
-            addNodeToTree(sibling, rightX, 0);
-            d.nodes.set(sibling.id, { x: rightX, y: 0 });
-            
-            // Add sibling's spouses
-            if (sibling.spouses && sibling.spouses.length > 0) {
-              const sibSpouseRight = sibling.gender === 'female';
-              sibling.spouses.forEach((marriage) => {
-                if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                  const spouseX = sibSpouseRight ? rightX + 1.2 : rightX - 1.2;
-                  addNodeToTree(marriage.person, spouseX, 0);
-                  d.nodes.set(marriage.person.id, { x: spouseX, y: 0 });
-                  d.r = Math.max(d.r, spouseX + 1);
-                }
-              });
-            }
-            
-            d.r = Math.max(d.r, rightX + 1);
-            rightX += 2.5;
-          }
-        });
-      }
+      const px = 0;
+      TAL(d, px, -0.5, px, -1, false);
       
-      // Add parents recursively
-      if ((p.father || p.mother) && depth > 1) {
-        const parentY = -1;
+      if (person.father && person.mother) {
+        const mx = px - 0.5;
+        const fx = px + 0.5;
         
-        if (p.father && p.mother) {
-          const fatherX = -0.5;
-          const motherX = 0.5;
-          
-          if (!addedPersons.has(p.father.id)) {
-            addNodeToTree(p.father, fatherX, parentY);
-            d.nodes.set(p.father.id, { x: fatherX, y: parentY });
-            d.l = Math.min(d.l, fatherX);
-            d.r = Math.max(d.r, fatherX + 1);
-            
-            // Recursively add father's ancestors
-            if (depth > 2 && (p.father.father || p.father.mother)) {
-              buildPersonTree(p.father, depth - 1);
-            }
-          }
-          
-          if (!addedPersons.has(p.mother.id)) {
-            addNodeToTree(p.mother, motherX, parentY);
-            d.nodes.set(p.mother.id, { x: motherX, y: parentY });
-            d.l = Math.min(d.l, motherX);
-            d.r = Math.max(d.r, motherX + 1);
-            
-            // Recursively add mother's ancestors
-            if (depth > 2 && (p.mother.father || p.mother.mother)) {
-              buildPersonTree(p.mother, depth - 1);
-            }
-          }
-          
-          d.t = Math.min(d.t, parentY);
-        } else {
-          const parent = p.father || p.mother;
-          if (parent && !addedPersons.has(parent.id)) {
-            addNodeToTree(parent, 0, parentY);
-            d.nodes.set(parent.id, { x: 0, y: parentY });
-            d.t = Math.min(d.t, parentY);
-            
-            // Recursively add parent's ancestors
-            if (depth > 2) {
-              buildPersonTree(parent, depth - 1);
-            }
-          }
+        TAL(d, mx, -1, fx, -1, true);
+        TAE(d, person.mother, mx, -1, false);
+        TAE(d, person.father, fx, -1, false);
+        
+        // Add grandparents recursively
+        addAncestors(d, person.mother, mx, -1, 5);
+        addAncestors(d, person.father, fx, -1, 5);
+      } else {
+        const parent = person.father || person.mother;
+        if (parent) {
+          TAE(d, parent, px, -1, false);
+          addAncestors(d, parent, px, -1, 5);
         }
       }
+    }
+    
+    d.e[person.id].k = true;
+    return d;
+  };
+
+  // Add ancestors recursively
+  const addAncestors = (d: TreeData, p: Person, x: number, y: number, depth: number) => {
+    if (depth <= 0 || (!p.father && !p.mother)) return;
+    
+    TAL(d, x, y, x, y - 0.5, false);
+    const py = y - 1;
+    
+    if (p.father && p.mother) {
+      const mx = x - 0.5;
+      const fx = x + 0.5;
       
-      return d;
-    };
+      TAL(d, x, y - 0.5, x, py, false);
+      TAL(d, mx, py, fx, py, true);
+      
+      TAE(d, p.mother, mx, py, false);
+      TAE(d, p.father, fx, py, false);
+      
+      addAncestors(d, p.mother, mx, py, depth - 1);
+      addAncestors(d, p.father, fx, py, depth - 1);
+    } else {
+      const parent = p.father || p.mother;
+      if (parent) {
+        TAL(d, x, y - 0.5, x, py, false);
+        TAE(d, parent, x, py, false);
+        addAncestors(d, parent, x, py, depth - 1);
+      }
+    }
+  };
+
+  // Render tree to DOM
+  const renderTree = (d: TreeData) => {
+    if (!canvasRef.current) return;
     
-    // Build main tree
-    buildPersonTree(person, 10); // depth 10 for all ancestors
+    const canvas = canvasRef.current;
+    canvas.innerHTML = '';
     
-    setNodes(treeNodes);
+    // Calculate dimensions
+    const tw = (nodeWidth + horizontalGap) * d.w - horizontalGap;
+    const th = (nodeHeight + verticalGap) * d.h - verticalGap;
+    const ox = nodeWidth / 2 - d.l * (nodeWidth + horizontalGap);
+    const oy = nodeHeight / 2 - d.t * (nodeHeight + verticalGap);
+    
+    // Create SVG for lines
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.style.position = 'absolute';
+    svg.style.width = tw + 'px';
+    svg.style.height = th + 'px';
+    svg.style.left = '0';
+    svg.style.top = '0';
+    svg.style.pointerEvents = 'none';
+    svg.style.zIndex = '1';
+    
+    // Draw lines
+    d.n.forEach(n => {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', String(ox + n.x1 * (nodeWidth + horizontalGap)));
+      line.setAttribute('y1', String(oy + n.y1 * (nodeHeight + verticalGap)));
+      line.setAttribute('x2', String(ox + n.x2 * (nodeWidth + horizontalGap)));
+      line.setAttribute('y2', String(oy + n.y2 * (nodeHeight + verticalGap)));
+      line.setAttribute('stroke', '#666');
+      line.setAttribute('stroke-width', n.k ? '3' : '2');
+      svg.appendChild(line);
+    });
+    
+    canvas.appendChild(svg);
+    
+    // Draw nodes
+    Object.values(d.e).forEach(e => {
+      const node = document.createElement('a');
+      node.href = `/person/${getPersonUrlId(e.p)}`;
+      node.className = styles.node;
+      node.style.position = 'absolute';
+      node.style.left = ox + e.x * (nodeWidth + horizontalGap) - nodeWidth / 2 + 'px';
+      node.style.top = oy + e.y * (nodeHeight + verticalGap) - nodeHeight / 2 + 'px';
+      node.style.zIndex = e.k ? '10' : '2';
+      
+      const card = document.createElement('div');
+      card.className = `${styles.card} ${e.k ? styles.current : ''} ${styles[e.p.gender || 'unknown']}`;
+      
+      const photo = document.createElement('div');
+      photo.className = styles.photo;
+      
+      if (e.p.avatarMediaId) {
+        const img = document.createElement('img');
+        img.src = `/api/media/${e.p.avatarMediaId}`;
+        img.alt = getFullName(e.p);
+        photo.appendChild(img);
+      } else {
+        const noPhoto = document.createElement('div');
+        noPhoto.className = styles.noPhoto;
+        photo.appendChild(noPhoto);
+      }
+      
+      const info = document.createElement('div');
+      info.className = styles.info;
+      
+      const name = document.createElement('div');
+      name.className = styles.name;
+      name.textContent = getFullName(e.p);
+      
+      const years = document.createElement('div');
+      years.className = styles.years;
+      years.textContent = getLifeYears(e.p);
+      
+      info.appendChild(name);
+      info.appendChild(years);
+      
+      if (e.p.nickName) {
+        const nickname = document.createElement('div');
+        nickname.className = styles.nickname;
+        nickname.textContent = `"${e.p.nickName}"`;
+        info.appendChild(nickname);
+      }
+      
+      card.appendChild(photo);
+      card.appendChild(info);
+      node.appendChild(card);
+      canvas.appendChild(node);
+    });
   };
 
   const handleWheel = (e: React.WheelEvent) => {
-    // Убрали зум колесом - теперь только кнопками
     e.preventDefault();
   };
 
@@ -305,7 +490,6 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       </div>
 
       <div
-        ref={canvasRef}
         className={styles.canvas}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
@@ -314,151 +498,13 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
         onMouseLeave={handleMouseUp}
       >
         <div
+          ref={canvasRef}
           className={styles.tree}
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
           }}
-        >
-          <svg 
-            className={styles.connections}
-            style={{
-              width: '10000px',
-              height: '10000px',
-              position: 'absolute',
-              top: '-2000px',
-              left: '-2000px',
-            }}
-          >
-            {nodes.map((node, index) => {
-              const lines: JSX.Element[] = [];
-              const nodeCenter = { x: node.x + 80, y: node.y + 110 };
-              const nodeTop = { x: node.x + 80, y: node.y };
-              const nodeBottom = { x: node.x + 80, y: node.y + 220 };
-              
-              // Draw connection to parents (T-shaped)
-              if (node.person.father || node.person.mother) {
-                const fatherNode = node.person.father ? nodes.find(n => n.person.id === node.person.father?.id) : null;
-                const motherNode = node.person.mother ? nodes.find(n => n.person.id === node.person.mother?.id) : null;
-                
-                if (fatherNode && motherNode) {
-                  // Both parents exist - draw T-connection
-                  const fatherBottom = { x: fatherNode.x + 80, y: fatherNode.y + 220 };
-                  const motherBottom = { x: motherNode.x + 80, y: motherNode.y + 220 };
-                  const midY = nodeTop.y - 40;
-                  const parentMidX = (fatherBottom.x + motherBottom.x) / 2;
-                  
-                  // Horizontal line between parents
-                  lines.push(
-                    <line
-                      key={`parent-line-${index}`}
-                      x1={fatherBottom.x}
-                      y1={fatherBottom.y}
-                      x2={motherBottom.x}
-                      y2={motherBottom.y}
-                      stroke="#666"
-                      strokeWidth="2"
-                    />
-                  );
-                  
-                  // Vertical line from parents to child
-                  lines.push(
-                    <path
-                      key={`child-line-${index}`}
-                      d={`M ${parentMidX} ${fatherBottom.y} L ${parentMidX} ${midY} L ${nodeTop.x} ${midY} L ${nodeTop.x} ${nodeTop.y}`}
-                      stroke="#666"
-                      strokeWidth="2"
-                      fill="none"
-                    />
-                  );
-                } else if (fatherNode || motherNode) {
-                  // Single parent
-                  const parentNode = fatherNode || motherNode;
-                  if (parentNode) {
-                    const parentBottom = { x: parentNode.x + 80, y: parentNode.y + 220 };
-                    lines.push(
-                      <line
-                        key={`single-parent-${index}`}
-                        x1={parentBottom.x}
-                        y1={parentBottom.y}
-                        x2={nodeTop.x}
-                        y2={nodeTop.y}
-                        stroke="#666"
-                        strokeWidth="2"
-                      />
-                    );
-                  }
-                }
-              }
-
-              // Draw line to spouse (horizontal, marriage line)
-              if (node.person.spouses && node.person.spouses.length > 0) {
-                node.person.spouses.forEach((marriage, spouseIndex) => {
-                  if (marriage.person) {
-                    const spouseNode = nodes.find(n => n.person.id === marriage.person?.id);
-                    if (spouseNode && spouseNode.generation === node.generation) {
-                      const spouseCenter = { x: spouseNode.x + 80, y: spouseNode.y + 110 };
-                      lines.push(
-                        <line
-                          key={`spouse-${index}-${spouseIndex}`}
-                          x1={nodeCenter.x}
-                          y1={nodeCenter.y}
-                          x2={spouseCenter.x}
-                          y2={spouseCenter.y}
-                          stroke="#666"
-                          strokeWidth="2"
-                        />
-                      );
-                    }
-                  }
-                });
-              }
-
-              return lines;
-            })}
-          </svg>
-
-          {nodes.map((node, index) => {
-            const genderClass = node.person.gender === 'male' ? styles.male : 
-                               node.person.gender === 'female' ? styles.female : 
-                               styles.unknown;
-            
-            return (
-              <Link
-                key={index}
-                href={`/person/${getPersonUrlId(node.person)}`}
-                className={styles.node}
-                style={{
-                  left: `${node.x}px`,
-                  top: `${node.y}px`,
-                }}
-              >
-                <div className={`${styles.card} ${genderClass} ${node.person.id === person.id ? styles.current : ''}`}>
-                  <div className={styles.avatar}>
-                    {node.person.avatarMediaId ? (
-                      <img 
-                        src={`/api/media/${node.person.avatarMediaId}`} 
-                        alt={getFullName(node.person)}
-                      />
-                    ) : (
-                      <div className={styles.noPhoto}>
-                        {node.person.gender === 'male' ? '👤' : node.person.gender === 'female' ? '👤' : '?'}
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.info}>
-                    <div className={styles.name}>{getFullName(node.person)}</div>
-                    <div className={styles.years}>{getLifeYears(node.person)}</div>
-                    {node.person.nickName && (
-                      <div className={styles.nickname}>"{node.person.nickName}"</div>
-                    )}
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        />
       </div>
     </div>
   );
 }
-
