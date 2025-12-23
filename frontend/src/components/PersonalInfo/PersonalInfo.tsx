@@ -151,60 +151,6 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
           )}
         </div>
 
-        {isEditing ? (
-          <>
-            <div className={styles.fullWidthInfo}>
-              <strong>{t('person.occupation')}:</strong>
-              <EditableField
-                value={person.occupation || ''}
-                onSave={(value) => handleSaveField('occupation', value)}
-                placeholder={t('person.occupation')}
-              />
-            </div>
-            <div className={styles.fullWidthInfo}>
-              <strong>{t('person.note')}:</strong>
-              <EditableField
-                value={person.note || ''}
-                onSave={(value) => handleSaveField('note', value)}
-                placeholder={t('person.note')}
-                type="textarea"
-              />
-            </div>
-            {isAuthenticated && (
-              <div className={styles.fullWidthInfo}>
-                <strong>{t('person.privateNote')}:</strong>
-                <EditableField
-                  value={person.privateNote || ''}
-                  onSave={(value) => handleSaveField('privateNote', value)}
-                  placeholder={t('person.privateNote')}
-                  type="textarea"
-                />
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            {person.occupation && (
-              <div className={styles.fullWidthInfo}>
-                <strong>{t('person.occupation')}:</strong> {person.occupation}
-              </div>
-            )}
-
-            {person.note && (
-              <div className={styles.fullWidthInfo}>
-                <strong>{t('person.note')}:</strong> {person.note}
-              </div>
-            )}
-
-            {isAuthenticated && person.privateNote && (
-              <div className={styles.fullWidthInfo}>
-                <span className={styles.privateNote}>
-                  <strong>{t('person.privateNote')}:</strong> {person.privateNote}
-                </span>
-              </div>
-            )}
-          </>
-        )}
       </div>
 
       {/* Details Table */}
@@ -330,6 +276,40 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                     />
                   </td>
                 </tr>
+                <tr>
+                  <td>{t('person.occupation')}</td>
+                  <td>
+                    <EditableField
+                      value={person.occupation || ''}
+                      onSave={(value) => handleSaveField('occupation', value)}
+                      placeholder={t('person.occupation')}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>{t('person.note')}</td>
+                  <td>
+                    <EditableField
+                      value={person.note || ''}
+                      onSave={(value) => handleSaveField('note', value)}
+                      placeholder={t('person.note')}
+                      type="textarea"
+                    />
+                  </td>
+                </tr>
+                {isAuthenticated && (
+                  <tr>
+                    <td>{t('person.privateNote')}</td>
+                    <td>
+                      <EditableField
+                        value={person.privateNote || ''}
+                        onSave={(value) => handleSaveField('privateNote', value)}
+                        placeholder={t('person.privateNote')}
+                        type="textarea"
+                      />
+                    </td>
+                  </tr>
+                )}
               </>
             ) : (
               <>
@@ -344,6 +324,13 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
                 />
                 <PersonInfoRow label={t('person.deathPlace')} value={person.deathPlace} />
                 <PersonInfoRow label={t('person.burialPlace')} value={person.burialPlace} />
+                <PersonInfoRow label={t('person.occupation')} value={person.occupation} />
+                <PersonInfoRow label={t('person.note')} value={person.note} />
+                {isAuthenticated && person.privateNote && (
+                  <PersonInfoRow label={t('person.privateNote')}>
+                    <span className={styles.privateNote}>{person.privateNote}</span>
+                  </PersonInfoRow>
+                )}
               </>
             )}
             

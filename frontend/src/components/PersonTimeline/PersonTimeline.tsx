@@ -12,6 +12,7 @@ interface TimelineEvent {
   year: number;
   type: 'birth' | 'marriage' | 'divorce' | 'child_birth' | 'death';
   description: string;
+  place?: string;
   relatedPerson?: {
     id: string;
     name: string;
@@ -37,6 +38,7 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
         year: person.birthYear,
         type: 'birth',
         description: t(bornKey),
+        place: person.birthPlace,
       });
     }
 
@@ -123,7 +125,22 @@ export default function PersonTimeline({ person }: PersonTimelineProps) {
             <div className={styles.year}>{event.year}</div>
             <div className={styles.marker}></div>
             <div className={styles.content}>
-              <div className={styles.description}>{event.description}</div>
+              <div className={styles.description}>
+                {event.description}
+                {event.place && (
+                  <>
+                    {' '}
+                    {event.type === 'birth' && (
+                      <>
+                        {person.gender === 'male' ? t('timeline.bornInMale') : 
+                         person.gender === 'female' ? t('timeline.bornInFemale') : 
+                         t('timeline.bornIn')}{' '}
+                        <span className={styles.place}>{capitalizeWords(event.place)}</span>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
               {event.relatedPerson && (
                 <Link 
                   href={`/person/${event.relatedPerson.id}`}
