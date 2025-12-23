@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SearchInput, EmptyState, Modal } from '@/ui';
 import { personApi } from '@/lib/api';
 import { useTranslations } from '@/i18n/useTranslations';
 import { PersonSummary } from '@/types';
+import { useApi } from '@/hooks/useApi';
 import styles from './AddRelativeModal.module.scss';
 
 interface AddRelativeModalProps {
@@ -23,38 +24,40 @@ export default function AddRelativeModal({
   const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<PersonSummary[]>([]);
-  const [loading, setLoading] = useState(false);
+
+  // Wrapper function for search that handles both ID and text search
+  const searchPersons = useCallback(async (query: string) => {
+    const isNumericSearch = /^\d+$/.test(query.trim());
+    
+    if (isNumericSearch) {
+      return await personApi.loadByIds([parseInt(query.trim())]);
+    } else {
+      return await personApi.search({ q: query });
+    }
+  }, []);
+
+  const { data, loading, error, execute, reset } = useApi<PersonSummary[]>(searchPersons);
+
+  useEffect(() => {
+    if (data) {
+      setResults(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('');
       setResults([]);
+      reset();
     }
-  }, [isOpen]);
+  }, [isOpen, reset]);
 
   const handleSearch = async (query: string) => {
-    if (!query.trim()) return;
-
-    setLoading(true);
-    try {
-      // Проверяем, является ли запрос числом (ID)
-      const isNumericSearch = /^\d+$/.test(query.trim());
-      
-      if (isNumericSearch) {
-        // Поиск по ID
-        const response = await personApi.loadByIds([parseInt(query.trim())]);
-        setResults(response.data);
-      } else {
-        // Обычный текстовый поиск
-        const response = await personApi.search({ q: query });
-        setResults(response.data);
-      }
-    } catch (error) {
-      console.error('Search error:', error);
+    if (!query.trim()) {
       setResults([]);
-    } finally {
-      setLoading(false);
+      return;
     }
+    await execute(query);
   };
 
   const getRelationTitle = () => {
@@ -85,7 +88,10 @@ export default function AddRelativeModal({
       />
 
       <div className={styles.results}>
-        {results.length === 0 && !loading && searchQuery && (
+        {error && (
+          <div className={styles.error}>{error}</div>
+        )}
+        {results.length === 0 && !loading && searchQuery && !error && (
           <EmptyState
             icon="🔍"
             message={t('search.noResults')}

@@ -33,6 +33,14 @@
   align-items: center;
   justify-content: center;
   margin-bottom: $spacing-xl;
+  
+  &.topRow {
+    height: 40%;
+  }
+  
+  &.bottomRow {
+    height: 60%;
+  }
 }
 
 .savorgnani {
@@ -46,7 +54,7 @@
     color: $text-color;
     
     @include md {
-      font-size: 48px;
+      font-size: $font-size-5xl;
     }
   }
   
@@ -55,11 +63,11 @@
   }
   
   .emblemIcon {
-    font-size: 80px;
+    font-size: $font-size-7xl;
     display: inline-block;
     
     @include md {
-      font-size: 100px;
+      font-size: $font-size-8xl;
     }
   }
   
@@ -103,10 +111,10 @@
   }
   
   .pennant {
-    font-size: 60px;
+    font-size: $font-size-6xl;
     
     @include md {
-      font-size: 80px;
+      font-size: $font-size-7xl;
     }
   }
   

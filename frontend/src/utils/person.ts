@@ -104,6 +104,25 @@ export function formatName(name: string): string {
 }
 
 /**
+ * Форматировать имя с разделением на первую часть и остальные
+ * Возвращает объект с prime (первая часть) и secondary (остальные части)
+ * 
+ * @example
+ * formatNameWithParts("John Michael Smith")
+ * // { prime: "John", secondary: "Michael Smith" }
+ */
+export function formatNameWithParts(firstName: string): { prime: string; secondary?: string } {
+  const parts = firstName.split(' ');
+  if (parts.length > 1) {
+    return {
+      prime: parts[0],
+      secondary: parts.slice(1).join(' ')
+    };
+  }
+  return { prime: firstName };
+}
+
+/**
  * Получить полное имя
  */
 export function getFullName(person: Person): string {

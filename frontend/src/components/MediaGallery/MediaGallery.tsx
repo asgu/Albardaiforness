@@ -5,6 +5,9 @@ import { useTranslations } from '@/i18n/useTranslations';
 import { Card, Modal, ErrorModal } from '@/ui';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
+import { Media } from '@/types';
+import { mediaApi } from '@/lib/api';
+import { useApi } from '@/hooks/useApi';
 import styles from './MediaGallery.module.scss';
 
 interface TaggedPerson {
@@ -21,22 +24,6 @@ interface TaggedPerson {
   };
 }
 
-interface Media {
-  id: string;
-  mediaType: 'photo' | 'document' | 'video' | 'audio' | 'other';
-  filePath: string;
-  fileName: string;
-  thumbnailPath?: string;
-  title?: string;
-  description?: string;
-  sortOrder: number;
-  isPublic: boolean;
-  isPrimary: boolean;
-  dateTaken?: string;
-  location?: string;
-  taggedPersons?: TaggedPerson[];
-}
-
 interface MediaGalleryProps {
   personId: string;
   isEditing?: boolean;
@@ -45,8 +32,6 @@ interface MediaGalleryProps {
 export default function MediaGallery({ personId, isEditing = false }: MediaGalleryProps) {
   const { t } = useTranslations();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const [media, setMedia] = useState<Media[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showTags, setShowTags] = useState(false);
@@ -56,32 +41,20 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const fetchMedia = async () => {
-      try {
-        // In production, use relative path (Nginx proxies /api/ to backend)
-        // In development, use full URL to localhost API
-        const isProduction = typeof window !== 'undefined' && 
-          (window.location.hostname.includes('albardaiforness.org') || 
-           window.location.hostname.includes('alberodipreone.org') ||
-           window.location.hostname.includes('alberodiraveo.org'));
-        
-        const apiUrl = isProduction ? '' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300');
-        const response = await fetch(`${apiUrl}/api/media/person/${personId}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setMedia(data);
-        }
-      } catch (error) {
-        console.error('Error fetching media:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Use useApi hook for fetching media
+  const { data: media = [], loading, error: fetchError, execute: refetchMedia } = useApi<Media[]>(
+    () => mediaApi.getByPersonId(personId)
+  );
 
-    fetchMedia();
-  }, [personId]);
+  useEffect(() => {
+    refetchMedia();
+  }, [personId, refetchMedia]);
+
+  useEffect(() => {
+    if (fetchError) {
+      setErrorMessage(fetchError);
+    }
+  }, [fetchError]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -151,16 +124,8 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
       });
 
       if (response.ok) {
-        // Перезагрузить галерею
-        const apiUrl = typeof window !== 'undefined' && 
-          (window.location.hostname.includes('albardaiforness.org') || 
-           window.location.hostname.includes('alberodipreone.org') ||
-           window.location.hostname.includes('alberodiraveo.org'))
-          ? '' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300');
-        
-        const mediaResponse = await fetch(`${apiUrl}/api/media/person/${personId}`);
-        const data = await mediaResponse.json();
-        setMedia(data);
+        // Перезагрузить галерею через useApi
+        await refetchMedia();
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
         setErrorMessage(errorData.error || t('media.uploadError'));
@@ -222,8 +187,8 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
       });
 
       if (response.ok) {
-        // Удалить из локального состояния
-        setMedia(media.filter(m => m.id !== mediaId));
+        // Перезагрузить галерею через useApi
+        await refetchMedia();
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Delete failed' }));
         setErrorMessage(errorData.error || t('media.deleteError'));

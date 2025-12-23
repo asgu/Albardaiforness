@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { AxiosResponse } from 'axios';
 
 export interface UseApiState<T> {
   data: T | null;
@@ -13,6 +14,7 @@ export interface UseApiReturn<T> extends UseApiState<T> {
 
 /**
  * Custom hook for API calls with loading, error, and data states
+ * Works with axios responses (AxiosResponse<T>)
  * 
  * @example
  * const { data, loading, error, execute } = useApi(personApi.search);
@@ -21,7 +23,7 @@ export interface UseApiReturn<T> extends UseApiState<T> {
  * await execute({ q: 'John' });
  */
 export function useApi<T = any>(
-  apiCall: (...args: any[]) => Promise<{ data: T }>
+  apiCall: (...args: any[]) => Promise<AxiosResponse<T>>
 ): UseApiReturn<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,7 @@ export function useApi<T = any>(
         setData(response.data);
         return response.data;
       } catch (err: any) {
-        const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+        const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'An error occurred';
         setError(errorMessage);
         return null;
       } finally {

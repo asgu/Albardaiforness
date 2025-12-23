@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Person, PersonSummary, PersonSearchResult, Server } from '@/types';
+import { Person, PersonSummary, PersonSearchResult, Server, Media } from '@/types';
 
 interface Duplicate {
   id: number;
@@ -128,6 +128,17 @@ export const duplicateApi = {
   
   reject: (id: number): Promise<AxiosResponse<{ message: string }>> =>
     api.post(`/api/duplicates/${id}/reject`),
+};
+
+export const mediaApi = {
+  getByPersonId: (personId: string): Promise<AxiosResponse<Media[]>> =>
+    api.get<Media[]>(`/api/media/person/${personId}`),
+  
+  getById: (id: string): Promise<AxiosResponse<Media>> =>
+    api.get<Media>(`/api/media/${id}`),
+  
+  getAvatarUrl: (personId: string): Promise<AxiosResponse<{ url: string }>> =>
+    api.get<{ url: string }>(`/api/media/avatar/${personId}`),
 };
 
 export const galleryApi = {

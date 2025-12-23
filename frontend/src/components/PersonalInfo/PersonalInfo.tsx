@@ -9,7 +9,7 @@ import { personApi } from '@/lib/api';
 import PersonInfoRow from '@/components/PersonInfoRow/PersonInfoRow';
 import EditableField from '@/components/EditableField/EditableField';
 import { capitalizeWords } from '@/utils/string';
-import { getPersonUrlId, getGenderIcon, formatDate } from '@/utils/person';
+import { getPersonUrlId, getGenderIcon, formatDate, formatNameWithParts, getGenderTranslationKey } from '@/utils/person';
 import styles from './PersonalInfo.module.scss';
 
 interface PersonalInfoProps {
@@ -54,22 +54,16 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
   };
 
   const formatName = (firstName: string) => {
-    const parts = firstName.split(' ');
-    if (parts.length > 1) {
+    const { prime, secondary } = formatNameWithParts(firstName);
+    if (secondary) {
       return (
         <>
-          <span className={styles.prime}>{parts[0]}</span>{' '}
-          <span className={styles.secondary}>{parts.slice(1).join(' ')}</span>
+          <span className={styles.prime}>{prime}</span>{' '}
+          <span className={styles.secondary}>{secondary}</span>
         </>
       );
     }
-    return <span className={styles.prime}>{firstName}</span>;
-  };
-
-  const getGenderLabel = (gender: string) => {
-    if (gender === 'male') return t('person.male');
-    if (gender === 'female') return t('person.female');
-    return t('person.unknown');
+    return <span className={styles.prime}>{prime}</span>;
   };
 
   return (
@@ -170,7 +164,7 @@ export default function PersonalInfo({ person, isAuthenticated, isEditing, onEdi
               </tr>
             ) : (
               <PersonInfoRow label={t('person.gender')}>
-                {getGenderIcon(person.gender)} {getGenderLabel(person.gender)}
+                {getGenderIcon(person.gender)} {t(getGenderTranslationKey(person.gender) as any)}
               </PersonInfoRow>
             )}
             

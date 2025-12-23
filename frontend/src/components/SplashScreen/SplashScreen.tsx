@@ -16,7 +16,7 @@ export default function SplashScreen({ onClose, serverInfo }: SplashScreenProps)
   return (
     <div className={styles.splashOverlay} onClick={onClose}>
       <Card className={styles.splashScreen} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.splashRow} style={{ height: '40%' }}>
+        <div className={`${styles.splashRow} ${styles.topRow}`}>
           <div className={styles.savorgnani}>
             <h2>{t('splash.title')}</h2>
             <div className={styles.emblem}>
@@ -26,7 +26,7 @@ export default function SplashScreen({ onClose, serverInfo }: SplashScreenProps)
           </div>
         </div>
         
-        <div className={styles.splashRow} style={{ height: '60%' }}>
+        <div className={`${styles.splashRow} ${styles.bottomRow}`}>
           <div className={`${styles.forni} ${styles.diSopra}`}>
             <div className={styles.wrapper}>
               <div className={styles.pennant}></div>
