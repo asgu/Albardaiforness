@@ -55,19 +55,29 @@ async function assignPersonPhotosCategory() {
     console.log(`   📊 Найдено медиафайлов без категории: ${mediaWithoutCategory.length}`);
 
     if (mediaWithoutCategory.length > 0) {
-      // Обновить все медиафайлы
-      const result = await prisma.media.updateMany({
-        where: {
-          id: {
-            in: mediaWithoutCategory.map(m => m.id),
-          },
-        },
-        data: {
-          categoryId: category.id,
-        },
-      });
+      // Обновить медиафайлы батчами (по 500 штук)
+      const batchSize = 500;
+      let updated = 0;
 
-      console.log(`   ✅ Обновлено медиафайлов: ${result.count}\n`);
+      for (let i = 0; i < mediaWithoutCategory.length; i += batchSize) {
+        const batch = mediaWithoutCategory.slice(i, i + batchSize);
+        
+        const result = await prisma.media.updateMany({
+          where: {
+            id: {
+              in: batch.map(m => m.id),
+            },
+          },
+          data: {
+            categoryId: category.id,
+          },
+        });
+
+        updated += result.count;
+        console.log(`   ⏳ Обновлено ${updated} из ${mediaWithoutCategory.length}...`);
+      }
+
+      console.log(`   ✅ Обновлено медиафайлов: ${updated}\n`);
     } else {
       console.log(`   ℹ️  Нет медиафайлов для обновления\n`);
     }
