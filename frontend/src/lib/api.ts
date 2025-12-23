@@ -28,13 +28,19 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor для добавления токена
+// Request interceptor для добавления токена и server host
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Добавляем текущий домен для определения сервера
+    if (typeof window !== 'undefined') {
+      config.headers['x-server-host'] = window.location.hostname;
+    }
+    
     return config;
   },
   (error) => {
