@@ -107,15 +107,6 @@ export default function GalleryContent({
     setCurrentPage(1);
   };
 
-  const handleCategoryChange = (categoryId: string | undefined) => {
-    setSelectedCategory(categoryId);
-    setCurrentPage(1);
-  };
-
-  const handleTagChange = (tagId: string | undefined) => {
-    setSelectedTag(tagId);
-    setCurrentPage(1);
-  };
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0 || !isAuthenticated) return;
