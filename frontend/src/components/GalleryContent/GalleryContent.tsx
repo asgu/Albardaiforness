@@ -164,9 +164,6 @@ export default function GalleryContent({
             <Button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
               {uploading ? t('common.loading') : t('gallery.uploadMedia')}
             </Button>
-            <Button variant="secondary" onClick={() => router.push('/gallery/admin')}>
-              {t('common.admin')}
-            </Button>
           </>
         )}
       </div>
