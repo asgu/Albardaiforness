@@ -131,6 +131,8 @@ export interface PersonSummary {
   birthYear?: number;
   deathYear?: number;
   avatarMediaId?: string;
+  motherId?: string;
+  fatherId?: string;
 }
 
 /**

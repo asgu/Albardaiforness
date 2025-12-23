@@ -95,6 +95,8 @@ export class PersonService {
             deathYear: true,
             gender: true,
             avatarMediaId: true,
+            motherId: true,
+            fatherId: true,
           },
         },
         childrenAsFather: {
@@ -108,6 +110,8 @@ export class PersonService {
             deathYear: true,
             gender: true,
             avatarMediaId: true,
+            motherId: true,
+            fatherId: true,
           },
         },
         marriagesAsPerson1: {
@@ -196,6 +200,8 @@ export class PersonService {
             deathYear: true,
             gender: true,
             avatarMediaId: true,
+            motherId: true,
+            fatherId: true,
           },
         },
         childrenAsFather: {
@@ -209,6 +215,8 @@ export class PersonService {
             deathYear: true,
             gender: true,
             avatarMediaId: true,
+            motherId: true,
+            fatherId: true,
           },
         },
         marriagesAsPerson1: {

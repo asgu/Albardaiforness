@@ -38,66 +38,35 @@ export default function RelativeInfo({ person, isAuthenticated, isEditing }: Rel
     }
   };
 
-  // Определяем детей от каждой жены на основе дат браков
+  // Определяем детей от каждого супруга на основе motherId/fatherId
   const childrenBySpouse = useMemo(() => {
     if (!person.spouses || !person.children) return new Map<string, string[]>();
 
     const map = new Map<string, string[]>();
     
-    // Сортируем браки по дате
-    const sortedMarriages = [...person.spouses].sort((a, b) => {
-      const yearA = a.marriageYear || 0;
-      const yearB = b.marriageYear || 0;
-      return yearA - yearB;
-    });
-
-    // Для каждого ребенка определяем, от какого брака он
+    // Для каждого ребенка определяем, от какого супруга он
     person.children.forEach(child => {
-      if (!child.birthYear) return;
-
-      // Находим брак, в период которого родился ребенок
-      for (let i = 0; i < sortedMarriages.length; i++) {
-        const marriage = sortedMarriages[i];
-        const nextMarriage = sortedMarriages[i + 1];
-        
-        const marriageStart = marriage.marriageYear || 0;
-        const marriageEnd = marriage.divorceYear || (nextMarriage?.marriageYear || Infinity);
-
-        // Ребенок родился в период этого брака
-        if (child.birthYear >= marriageStart && child.birthYear < marriageEnd) {
-          const spouseId = marriage.person?.id;
-          if (spouseId) {
-            if (!map.has(spouseId)) {
-              map.set(spouseId, []);
-            }
-            map.get(spouseId)!.push(child.id);
-          }
-          break;
+      // Если текущая персона - мужчина (отец), ищем детей по motherId
+      if (person.gender === 'male' && child.motherId) {
+        const motherId = child.motherId;
+        if (!map.has(motherId)) {
+          map.set(motherId, []);
         }
+        map.get(motherId)!.push(child.id);
       }
-
-      // Если не нашли подходящий брак, проверяем последний брак
-      if (sortedMarriages.length > 0) {
-        const lastMarriage = sortedMarriages[sortedMarriages.length - 1];
-        const lastMarriageStart = lastMarriage.marriageYear || 0;
-        
-        if (child.birthYear >= lastMarriageStart) {
-          const spouseId = lastMarriage.person?.id;
-          if (spouseId) {
-            if (!map.has(spouseId)) {
-              map.set(spouseId, []);
-            }
-            // Проверяем, не добавили ли уже этого ребенка
-            if (!map.get(spouseId)!.includes(child.id)) {
-              map.get(spouseId)!.push(child.id);
-            }
-          }
+      
+      // Если текущая персона - женщина (мать), ищем детей по fatherId
+      if (person.gender === 'female' && child.fatherId) {
+        const fatherId = child.fatherId;
+        if (!map.has(fatherId)) {
+          map.set(fatherId, []);
         }
+        map.get(fatherId)!.push(child.id);
       }
     });
 
     return map;
-  }, [person.spouses, person.children]);
+  }, [person.spouses, person.children, person.gender]);
 
   // Получаем список ID детей для подсветки
   const highlightedChildrenIds = hoveredSpouseId ? (childrenBySpouse.get(hoveredSpouseId) || []) : [];
