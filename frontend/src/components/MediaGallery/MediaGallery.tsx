@@ -264,11 +264,6 @@ export default function MediaGallery({ personId, isEditing = false }: MediaGalle
                   alt={photo.title || photo.fileName}
                   className={styles.thumbnail}
                 />
-                {photo.isPrimary && (
-                  <div className={styles.primaryBadge}>
-                    {t('media.primary')}
-                  </div>
-                )}
                 {isAuthenticated && isEditing && (
                   <button
                     className={styles.deleteButton}
