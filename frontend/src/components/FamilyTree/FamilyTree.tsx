@@ -132,22 +132,27 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     const addSiblings = (p: Person, x: number, y: number) => {
       if (!p.siblings || p.siblings.length === 0) return;
       
-      p.siblings.forEach((sibling, index) => {
+      let currentX = x + 2.5; // Start further right to avoid overlap with main person's spouse
+      
+      p.siblings.forEach((sibling) => {
         if (!addedPersons.has(sibling.id)) {
-          const siblingX = x + (index + 1) * 1.3;
-          addNode(sibling, siblingX, y);
+          addNode(sibling, currentX, y);
+          currentX += 1.2; // Move right for next sibling
           
           // Add sibling's spouse if any
           if (sibling.spouses && sibling.spouses.length > 0) {
-            sibling.spouses.forEach((marriage, spouseIndex) => {
+            sibling.spouses.forEach((marriage) => {
               if (marriage.person && !addedPersons.has(marriage.person.id)) {
-                addNode(marriage.person, siblingX + 1.2, y);
+                addNode(marriage.person, currentX, y);
+                currentX += 1.2; // Move right after spouse
               }
             });
           }
           
           // Add sibling's children
-          addChildren(sibling, siblingX, y);
+          addChildren(sibling, currentX - 1.2, y); // Children under the sibling
+          
+          currentX += 0.5; // Add gap before next sibling
         }
       });
     };
