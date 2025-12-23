@@ -411,18 +411,18 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
       const card = document.createElement('div');
       card.className = `${styles.card} ${e.k ? styles.current : ''} ${styles[e.p.gender || 'unknown']}`;
       
-      const photo = document.createElement('div');
-      photo.className = styles.photo;
+      const avatar = document.createElement('div');
+      avatar.className = styles.avatar;
       
       if (e.p.avatarMediaId) {
         const img = document.createElement('img');
         img.src = `/api/media/${e.p.avatarMediaId}`;
         img.alt = getFullName(e.p);
-        photo.appendChild(img);
+        avatar.appendChild(img);
       } else {
         const noPhoto = document.createElement('div');
         noPhoto.className = styles.noPhoto;
-        photo.appendChild(noPhoto);
+        avatar.appendChild(noPhoto);
       }
       
       const info = document.createElement('div');
@@ -446,7 +446,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
         info.appendChild(nickname);
       }
       
-      card.appendChild(photo);
+      card.appendChild(avatar);
       card.appendChild(info);
       node.appendChild(card);
       canvas.appendChild(node);
