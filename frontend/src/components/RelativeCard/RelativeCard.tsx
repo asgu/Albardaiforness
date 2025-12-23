@@ -66,58 +66,58 @@ export default function RelativeCard({
   const marriage = showMarriageInfo ? formatMarriageDate() : null;
 
   return (
-    <Link 
-      href={`/person/${getPersonUrlId(person)}`} 
-      className={`${styles.relativeCard} ${isHighlighted ? styles.highlighted : ''}`}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <div className={styles.avatar}>
-        {person.avatarMediaId ? (
-          <img 
-            src={`/api/media/${person.avatarMediaId}`} 
-            alt={`${person.firstName} ${person.lastName}`}
-          />
-        ) : (
-          <div className={styles.noPhoto}>
-            <span>{getGenderIcon(person.gender)}</span>
-          </div>
-        )}
-      </div>
-
-      <div className={styles.info}>
-        <div className={styles.name}>
-          <span className={styles.lastName}>{capitalizeWords(person.lastName)}</span>
-          <span className={styles.firstName}>{capitalizeWords(person.firstName)}</span>
+    <>
+      <Link 
+        href={`/person/${getPersonUrlId(person)}`} 
+        className={`${styles.relativeCard} ${isHighlighted ? styles.highlighted : ''}`}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <div className={styles.avatar}>
+          {person.avatarMediaId ? (
+            <img 
+              src={`/api/media/${person.avatarMediaId}`} 
+              alt={`${person.firstName} ${person.lastName}`}
+            />
+          ) : (
+            <div className={styles.noPhoto}>
+              <span>{getGenderIcon(person.gender)}</span>
+            </div>
+          )}
         </div>
 
-        {isAuthenticated && (person.originalId || person.id) && (
-          <div className={styles.personId}>ID: {person.originalId || person.id}</div>
-        )}
-
-        {person.nickName && (
-          <div className={styles.nickName}>"{capitalizeWords(person.nickName)}"</div>
-        )}
-
-        {person.maidenName && person.gender === 'female' && (
-          <div className={styles.maidenName}>({capitalizeWords(person.maidenName)})</div>
-        )}
-
-        {lifespan && lifespan !== '?' && (
-          <div className={styles.lifespan}>
-            {lifespan}
+        <div className={styles.info}>
+          <div className={styles.name}>
+            <span className={styles.lastName}>{capitalizeWords(person.lastName)}</span>
+            <span className={styles.firstName}>{capitalizeWords(person.firstName)}</span>
           </div>
-        )}
 
-        {marriage && (
-          <div className={styles.marriage}>
-            ⚭ {marriage}
-          </div>
-        )}
-      </div>
+          {isAuthenticated && (person.originalId || person.id) && (
+            <div className={styles.personId}>ID: {person.originalId || person.id}</div>
+          )}
 
-      {isEditing && onRemove && (
-        <>
+          {person.nickName && (
+            <div className={styles.nickName}>"{capitalizeWords(person.nickName)}"</div>
+          )}
+
+          {person.maidenName && person.gender === 'female' && (
+            <div className={styles.maidenName}>({capitalizeWords(person.maidenName)})</div>
+          )}
+
+          {lifespan && lifespan !== '?' && (
+            <div className={styles.lifespan}>
+              {lifespan}
+            </div>
+          )}
+
+          {marriage && (
+            <div className={styles.marriage}>
+              ⚭ {marriage}
+            </div>
+          )}
+        </div>
+
+        {isEditing && onRemove && (
           <button 
             className={styles.removeButton}
             onClick={handleRemoveClick}
@@ -125,22 +125,24 @@ export default function RelativeCard({
           >
             ×
           </button>
+        )}
+      </Link>
 
-          <ConfirmModal
-            isOpen={showConfirm}
-            title={t('person.removeRelativeTitle')}
-            message={t('person.removeRelativeMessage', { 
-              name: `${capitalizeWords(person.firstName)} ${capitalizeWords(person.lastName)}` 
-            })}
-            confirmText={t('common.remove')}
-            cancelText={t('common.cancel')}
-            variant="danger"
-            onConfirm={handleConfirmRemove}
-            onCancel={handleCancelRemove}
-          />
-        </>
+      {isEditing && onRemove && (
+        <ConfirmModal
+          isOpen={showConfirm}
+          title={t('person.removeRelativeTitle')}
+          message={t('person.removeRelativeMessage', { 
+            name: `${capitalizeWords(person.firstName)} ${capitalizeWords(person.lastName)}` 
+          })}
+          confirmText={t('common.remove')}
+          cancelText={t('common.cancel')}
+          variant="danger"
+          onConfirm={handleConfirmRemove}
+          onCancel={handleCancelRemove}
+        />
       )}
-    </Link>
+    </>
   );
 }
 
