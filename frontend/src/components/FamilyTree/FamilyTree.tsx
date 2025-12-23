@@ -38,73 +38,151 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
     const horizontalGap = 40;
     const verticalGap = 120;
 
-    // Build tree structure recursively
-    const addNode = (p: Person, generation: number, position: number) => {
-      if (addedPersons.has(p.id)) return;
-      
-      const x = position * (nodeWidth + horizontalGap);
-      const y = generation * (nodeHeight + verticalGap);
+    // Build tree structure like Family Echo algorithm
+    const addNode = (p: Person, x: number, y: number) => {
+      if (addedPersons.has(p.id)) return { x, y };
       
       treeNodes.push({
         person: p,
-        x,
-        y,
-        generation,
+        x: x * (nodeWidth + horizontalGap),
+        y: y * (nodeHeight + verticalGap),
+        generation: y,
       });
       addedPersons.add(p.id);
-
-      // Add parents recursively (going up)
-      if (p.mother || p.father) {
-        const parentGeneration = generation - 1;
-        
-        if (p.father) {
-          addNode(p.father, parentGeneration, position - 0.6);
-          // Add father's parents (grandparents)
-          if (p.father.mother) addNode(p.father.mother, parentGeneration - 1, position - 1.2);
-          if (p.father.father) addNode(p.father.father, parentGeneration - 1, position - 0.8);
-        }
-        if (p.mother) {
-          addNode(p.mother, parentGeneration, position + 0.6);
-          // Add mother's parents (grandparents)
-          if (p.mother.mother) addNode(p.mother.mother, parentGeneration - 1, position + 1.2);
-          if (p.mother.father) addNode(p.mother.father, parentGeneration - 1, position + 0.8);
-        }
-      }
-
-      // Add siblings
-      if (p.siblings && p.siblings.length > 0) {
-        p.siblings.forEach((sibling, index) => {
-          if (!addedPersons.has(sibling.id)) {
-            const siblingPosition = position + (index + 1) * 1.5;
-            addNode(sibling, generation, siblingPosition);
-          }
-        });
-      }
-
-      // Add spouses
-      if (p.spouses && p.spouses.length > 0) {
-        p.spouses.forEach((marriage, index) => {
-          if (marriage.person && !addedPersons.has(marriage.person.id)) {
-            const spousePosition = position + 1.2 + (index * 0.5);
-            addNode(marriage.person, generation, spousePosition);
-          }
-        });
-      }
-
-      // Add children
-      if (p.children && p.children.length > 0) {
-        const childGeneration = generation + 1;
-        const startPosition = position - (p.children.length - 1) * 0.5;
-        p.children.forEach((child, index) => {
-          if (!addedPersons.has(child.id)) {
-            const childPosition = startPosition + index;
-            addNode(child, childGeneration, childPosition);
-          }
-        });
-      }
+      return { x, y };
     };
 
-    addNode(person, 0, 0);
+    // Add person with parents above
+    const addPersonWithAncestors = (p: Person, x: number, y: number, maxGenerations: number): { minX: number; maxX: number } => {
+      if (addedPersons.has(p.id)) return { minX: x, maxX: x };
+      
+      addNode(p, x, y);
+      
+      let minX = x;
+      let maxX = x;
+
+      // Add parents above if we haven't reached max generations
+      if (maxGenerations > 0 && (p.father || p.mother)) {
+        const parentY = y - 1;
+        
+        if (p.father && p.mother) {
+          // Both parents - place them side by side
+          const fatherX = x - 0.6;
+          const motherX = x + 0.6;
+          
+          if (!addedPersons.has(p.father.id)) {
+            addNode(p.father, fatherX, parentY);
+            minX = Math.min(minX, fatherX);
+          }
+          
+          if (!addedPersons.has(p.mother.id)) {
+            addNode(p.mother, motherX, parentY);
+            maxX = Math.max(maxX, motherX);
+          }
+          
+          // Add grandparents
+          if (maxGenerations > 1) {
+            if (p.father.father && !addedPersons.has(p.father.father.id)) {
+              addNode(p.father.father, fatherX - 0.6, parentY - 1);
+              minX = Math.min(minX, fatherX - 0.6);
+            }
+            if (p.father.mother && !addedPersons.has(p.father.mother.id)) {
+              addNode(p.father.mother, fatherX + 0.6, parentY - 1);
+            }
+            if (p.mother.father && !addedPersons.has(p.mother.father.id)) {
+              addNode(p.mother.father, motherX - 0.6, parentY - 1);
+            }
+            if (p.mother.mother && !addedPersons.has(p.mother.mother.id)) {
+              addNode(p.mother.mother, motherX + 0.6, parentY - 1);
+              maxX = Math.max(maxX, motherX + 0.6);
+            }
+          }
+        } else {
+          // Single parent
+          const parent = p.father || p.mother;
+          if (parent && !addedPersons.has(parent.id)) {
+            addNode(parent, x, parentY);
+          }
+        }
+      }
+
+      return { minX, maxX };
+    };
+
+    // Add children below person
+    const addChildren = (p: Person, x: number, y: number) => {
+      if (!p.children || p.children.length === 0) return;
+      
+      const childY = y + 1;
+      const childCount = p.children.length;
+      const startX = x - (childCount - 1) * 0.5;
+      
+      p.children.forEach((child, index) => {
+        if (!addedPersons.has(child.id)) {
+          const childX = startX + index;
+          addNode(child, childX, childY);
+          
+          // Recursively add their children
+          addChildren(child, childX, childY);
+        }
+      });
+    };
+
+    // Add siblings horizontally
+    const addSiblings = (p: Person, x: number, y: number) => {
+      if (!p.siblings || p.siblings.length === 0) return;
+      
+      p.siblings.forEach((sibling, index) => {
+        if (!addedPersons.has(sibling.id)) {
+          const siblingX = x + (index + 1) * 1.3;
+          addNode(sibling, siblingX, y);
+          
+          // Add sibling's spouse if any
+          if (sibling.spouses && sibling.spouses.length > 0) {
+            sibling.spouses.forEach((marriage, spouseIndex) => {
+              if (marriage.person && !addedPersons.has(marriage.person.id)) {
+                addNode(marriage.person, siblingX + 1.2, y);
+              }
+            });
+          }
+          
+          // Add sibling's children
+          addChildren(sibling, siblingX, y);
+        }
+      });
+    };
+
+    // Add spouse next to person
+    const addSpouse = (p: Person, x: number, y: number) => {
+      if (!p.spouses || p.spouses.length === 0) return x;
+      
+      let spouseX = x + 1.2;
+      p.spouses.forEach((marriage) => {
+        if (marriage.person && !addedPersons.has(marriage.person.id)) {
+          addNode(marriage.person, spouseX, y);
+          spouseX += 1.2;
+        }
+      });
+      
+      return spouseX;
+    };
+
+    // Start building from center person
+    const centerX = 0;
+    const centerY = 0;
+    
+    // Add main person with ancestors
+    addPersonWithAncestors(person, centerX, centerY, 2);
+    
+    // Add spouse(s)
+    addSpouse(person, centerX, centerY);
+    
+    // Add siblings
+    addSiblings(person, centerX, centerY);
+    
+    // Add children
+    addChildren(person, centerX, centerY);
+
     setNodes(treeNodes);
   };
 
@@ -181,47 +259,70 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
             {nodes.map((node, index) => {
               const lines: JSX.Element[] = [];
               const nodeCenter = { x: node.x + 90, y: node.y + 50 };
+              const nodeTop = { x: node.x + 90, y: node.y };
+              const nodeBottom = { x: node.x + 90, y: node.y + 100 };
               
-              // Draw line to father
-              if (node.person.father) {
-                const fatherNode = nodes.find(n => n.person.id === node.person.father?.id);
-                if (fatherNode) {
-                  const fatherCenter = { x: fatherNode.x + 90, y: fatherNode.y + 50 };
+              // Draw connection to parents (T-shaped)
+              if (node.person.father || node.person.mother) {
+                const fatherNode = node.person.father ? nodes.find(n => n.person.id === node.person.father?.id) : null;
+                const motherNode = node.person.mother ? nodes.find(n => n.person.id === node.person.mother?.id) : null;
+                
+                if (fatherNode && motherNode) {
+                  // Both parents exist - draw T-connection
+                  const fatherBottom = { x: fatherNode.x + 90, y: fatherNode.y + 100 };
+                  const motherBottom = { x: motherNode.x + 90, y: motherNode.y + 100 };
+                  const midY = nodeTop.y - 30;
+                  const parentMidX = (fatherBottom.x + motherBottom.x) / 2;
+                  
+                  // Horizontal line between parents
+                  lines.push(
+                    <line
+                      key={`parent-line-${index}`}
+                      x1={fatherBottom.x}
+                      y1={fatherBottom.y}
+                      x2={motherBottom.x}
+                      y2={motherBottom.y}
+                      stroke="#94a3b8"
+                      strokeWidth="2"
+                    />
+                  );
+                  
+                  // Vertical line from parents to child
                   lines.push(
                     <path
-                      key={`father-${index}`}
-                      d={`M ${nodeCenter.x} ${nodeCenter.y} L ${nodeCenter.x} ${nodeCenter.y - 30} L ${fatherCenter.x} ${fatherCenter.y + 80} L ${fatherCenter.x} ${fatherCenter.y + 50}`}
-                      stroke="#3b82f6"
+                      key={`child-line-${index}`}
+                      d={`M ${parentMidX} ${fatherBottom.y} L ${parentMidX} ${midY} L ${nodeTop.x} ${midY} L ${nodeTop.x} ${nodeTop.y}`}
+                      stroke="#94a3b8"
                       strokeWidth="2"
                       fill="none"
                     />
                   );
-                }
-              }
-              
-              // Draw line to mother
-              if (node.person.mother) {
-                const motherNode = nodes.find(n => n.person.id === node.person.mother?.id);
-                if (motherNode) {
-                  const motherCenter = { x: motherNode.x + 90, y: motherNode.y + 50 };
-                  lines.push(
-                    <path
-                      key={`mother-${index}`}
-                      d={`M ${nodeCenter.x} ${nodeCenter.y} L ${nodeCenter.x} ${nodeCenter.y - 30} L ${motherCenter.x} ${motherCenter.y + 80} L ${motherCenter.x} ${motherCenter.y + 50}`}
-                      stroke="#ec4899"
-                      strokeWidth="2"
-                      fill="none"
-                    />
-                  );
+                } else if (fatherNode || motherNode) {
+                  // Single parent
+                  const parentNode = fatherNode || motherNode;
+                  if (parentNode) {
+                    const parentBottom = { x: parentNode.x + 90, y: parentNode.y + 100 };
+                    lines.push(
+                      <line
+                        key={`single-parent-${index}`}
+                        x1={parentBottom.x}
+                        y1={parentBottom.y}
+                        x2={nodeTop.x}
+                        y2={nodeTop.y}
+                        stroke="#94a3b8"
+                        strokeWidth="2"
+                      />
+                    );
+                  }
                 }
               }
 
-              // Draw line to spouse (horizontal)
+              // Draw line to spouse (horizontal, marriage line)
               if (node.person.spouses && node.person.spouses.length > 0) {
                 node.person.spouses.forEach((marriage, spouseIndex) => {
                   if (marriage.person) {
                     const spouseNode = nodes.find(n => n.person.id === marriage.person?.id);
-                    if (spouseNode) {
+                    if (spouseNode && spouseNode.generation === node.generation) {
                       const spouseCenter = { x: spouseNode.x + 90, y: spouseNode.y + 50 };
                       lines.push(
                         <line
@@ -231,8 +332,7 @@ export default function FamilyTree({ person }: FamilyTreeProps) {
                           x2={spouseCenter.x}
                           y2={spouseCenter.y}
                           stroke="#10b981"
-                          strokeWidth="2"
-                          strokeDasharray="5,5"
+                          strokeWidth="3"
                         />
                       );
                     }
