@@ -1,12 +1,14 @@
-@import '@/styles/variables';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
 
 .galleryLayout {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 60px); // Header height
+  min-height: calc(100vh - 60px); // Header height
+  background: #f5f7fa; // Тот же фон, что и на странице персоны
   overflow: hidden;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     flex-direction: column;
   }
 }
